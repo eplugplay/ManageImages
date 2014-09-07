@@ -18,6 +18,7 @@ namespace ManageImages
 {
     public partial class ManageImages : Form
     {
+        private string imgSize { get; set; }
         ArrayList PicArr = new ArrayList(); 
         private System.Windows.Forms.OpenFileDialog folderBrowserDlg;
         int locX = 20;
@@ -29,23 +30,11 @@ namespace ManageImages
             InitializeComponent();
         }
 
-        private void ManageImages_Load(object sender, EventArgs e)
-        {
-            this.folderBrowserDlg = new System.Windows.Forms.OpenFileDialog();
-            locX = 20;
-            locY = 10;
-            sizeWidth = 30;
-            sizeHeight = 30;
-
-            // load sections
-            ddlSections.SelectedIndex = 0;
-            //LoadSections();
-        }
-
         public void LoadSections()
         {
+            ddlSections.DisplayMember = "category";
+            ddlSections.ValueMember = "id";
             ddlSections.DataSource = Data.LoadSections();
-            ddlSections.DisplayMember = "folder";
         }
 
         private void loadImagestoPanel(String imageName, String ImageFullName, int newLocX, int newLocY)
@@ -61,24 +50,27 @@ namespace ManageImages
             pnControls.Controls.Add(ctrl);
         }
 
-        private void control_MouseMove(object sender, MouseEventArgs e)
+        public void Check()
         {
-            //Control control = (Control)sender;
-            //PictureBox pic = (PictureBox)control;
-            //PreviewPictureBox.Image = pic.Image;
+            if (Data.CheckImgExist(txtFilename.Text, ddlSections.SelectedValue.ToString()) == true)
+            {
+                btnSaveEdit.Enabled = true;
+                btnDeleteImg.Enabled = true;
+                btnUploadImage.Enabled = false;
+                btnDeleteImg.Enabled = true;
+                btnUploadImage.Enabled = false;
+            }
+            else
+            {
+                btnSaveEdit.Enabled = false;
+                btnDeleteImg.Enabled = false;
+                btnUploadImage.Enabled = true;
+                btnDeleteImg.Enabled = false;
+                btnUploadImage.Enabled = true;
+            }
         }
 
-        private void control_MouseClick(object sender, MouseEventArgs e)
-        {
-            Control control = (Control)sender;
-            PictureBox pic = (PictureBox)control;
-            PreviewPictureBox.Image = pic.Image;
-
-            // load image info
-            txtFilename.Text = PicArr[control.TabIndex].ToString();
-            string s = Data.GetGenderInfo(txtFilename.Text, ddlSections.Text);
-            ddlGender.SelectedIndex = ddlGender.FindStringExact(Data.GetGenderInfo(txtFilename.Text, ddlSections.Text));
-        }
+        #region toolStrips
 
         private void loadControls()
         {
@@ -108,6 +100,26 @@ namespace ManageImages
 
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
+            imgSize = "x-small";
+            int SaveVal = 0;
+            locX = 20;
+            locY = 10;
+            sizeWidth = 30;
+            sizeHeight = 30;
+            foreach (Control p in pnControls.Controls)
+            {
+                SaveVal = SaveVal + 1;
+            }
+            if (SaveVal > 0)
+            {
+                loadControls();
+            }
+        }
+
+
+        private void toolStripButton2_Click(object sender, EventArgs e)
+        {
+            imgSize = "small";
             int SaveVal = 0;
             locX = 20;
             locY = 10;
@@ -123,26 +135,10 @@ namespace ManageImages
             }
         }
 
-        private void toolStripButton5_Click(object sender, EventArgs e)
-        {
-            int SaveVal = 0;
-            locX = 20;
-            locY = 10;
-            sizeWidth = 160;
-            sizeHeight = 160;
-            foreach (Control p in pnControls.Controls)
-            {
-                SaveVal = SaveVal + 1;
-            }
-            if (SaveVal > 0)
-            {
-                loadControls();
-            }
-        }
-
 
         private void toolStripButton3_Click(object sender, EventArgs e)
         {
+            imgSize = "medium";
             int SaveVal = 0;
             locX = 20;
             locY = 10;
@@ -158,17 +154,61 @@ namespace ManageImages
             }
         }
 
+
+
         private void toolStripButton4_Click(object sender, EventArgs e)
         {
+            imgSize = "large";
+            int SaveVal = 0;
             locX = 20;
             locY = 10;
-            sizeWidth = 30;
-            sizeHeight = 30;
-            if (pnControls.Controls.Count > 0)
+            sizeWidth = 160;
+            sizeHeight = 160;
+            foreach (Control p in pnControls.Controls)
+            {
+                SaveVal = SaveVal + 1;
+            }
+            if (SaveVal > 0)
             {
                 loadControls();
             }
         }
+        #endregion
+
+        #region Events
+
+        private void ManageImages_Load(object sender, EventArgs e)
+        {
+            this.folderBrowserDlg = new System.Windows.Forms.OpenFileDialog();
+            locX = 20;
+            locY = 10;
+            sizeWidth = 30;
+            sizeHeight = 30;
+
+            // load sections
+            LoadSections();
+        }
+
+        private void control_MouseMove(object sender, MouseEventArgs e)
+        {
+            //Control control = (Control)sender;
+            //PictureBox pic = (PictureBox)control;
+            //PreviewPictureBox.Image = pic.Image;
+        }
+
+        private void control_MouseClick(object sender, MouseEventArgs e)
+        {
+            Control control = (Control)sender;
+            PictureBox pic = (PictureBox)control;
+            PreviewPictureBox.Image = pic.Image;
+
+            // load image info
+            txtFilename.Text = PicArr[control.TabIndex].ToString();
+            txtDescription.Text = Data.GetDescriptionInfo(txtFilename.Text, ddlSections.SelectedValue.ToString());
+            ddlGender.SelectedIndex = ddlGender.FindStringExact(Data.GetGenderInfo(txtFilename.Text, ddlSections.SelectedValue.ToString()));
+            Check();
+        }
+
 
         private void loadImageToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -181,38 +221,18 @@ namespace ManageImages
                 // save local
                 SaveLocal(file, split[split.Length -1]);
                 file.Close();
-                LoadImages(ddlSections.Text);
+                LoadImages(ddlSections.SelectedValue.ToString());
                 MessageBox.Show("Imported.");
             }
         }
 
-        private void btnSave_Click(object sender, EventArgs e)
-        {
-            Bitmap bmp = new Bitmap(pnControls.Width, pnControls.Height);
-            pnControls.DrawToBitmap(bmp, new Rectangle(0, 0, pnControls.Width, pnControls.Height));
-            SaveFileDialog dlg = new SaveFileDialog();
-            // dlg.Filter = "JPG Files (*.JPG)|*.JPG";
-            dlg.FileName = "*";
-            dlg.DefaultExt = "bmp";
-            dlg.ValidateNames = true;
-            dlg.Filter = "Bitmap Image (.bmp)|*.bmp|Gif Image (.gif)|*.gif |JPEG Image (.jpeg)|*.jpeg |Png Image (.png)|*.png";
-            if (dlg.ShowDialog() == DialogResult.OK)
-            {
-                PreviewPictureBox.Image.Save(dlg.FileName);
-            }
-        }
 
         private void btnUploadImage_Click(object sender, EventArgs e)
         {
-            string FolderName = ddlSections.Text;
-            string FileName = "";
-            if (txtFilename.Text == "")
+            if (PreviewPictureBox.Image == null)
             {
-                FileName = PreviewPictureBox.Name;
-            }
-            else
-            {
-                FileName = txtFilename.Text;
+                MessageBox.Show("Select image first.");
+                return;
             }
             if (txtDescription.Text == "")
             {
@@ -224,56 +244,172 @@ namespace ManageImages
                 MessageBox.Show("Select Male or Female.");
                 return;
             }
-            FileInfo toUpload = new FileInfo("FileName");
-            FtpWebRequest request = (FtpWebRequest)WebRequest.Create("ftp://208.118.63.29/site2/" + FolderName + "/" + FileName);
-            request.KeepAlive = true;
-            request.Proxy = null;
-            request.UseBinary = true;
-            request.Method = WebRequestMethods.Ftp.UploadFile;
-            request.Credentials = new NetworkCredential("eplugplay-001", ConfigurationManager.ConnectionStrings["ftp"].ToString());
-            Stream ftpStream = request.GetRequestStream();
-            FileStream file = File.OpenRead(GetLocalImgPath(ddlSections.Text) + "\\" + txtFilename.Text);
-            int length = 1024;
-            byte[] buffer = new byte[length];
-            int bytesRead = 0;
-            do
+            if (Data.CheckImgExist(txtFilename.Text, ddlSections.SelectedValue.ToString()) == true)
             {
-                bytesRead = file.Read(buffer, 0, length);
-                ftpStream.Write(buffer, 0, bytesRead);
+                MessageBox.Show("Already exist in website.");
+                return;
             }
-            while (bytesRead != 0);
-            //// save local
-            //SaveLocal(file);
-            file.Close();
-            ftpStream.Close();
-            //save to db
-            Data.SaveImageToDb(FileName, txtDescription.Text, ddlGender.Text, FolderName);
-            MessageBox.Show("Saved.");
+
+            if (MessageBox.Show("Upload?", "Upload?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                string FolderName = ddlSections.SelectedValue.ToString();
+                string FileName = "";
+                if (txtFilename.Text == "")
+                {
+                    FileName = PreviewPictureBox.Name;
+                }
+                else
+                {
+                    FileName = txtFilename.Text;
+                }
+                FileInfo toUpload = new FileInfo("FileName");
+                FtpWebRequest request = (FtpWebRequest)WebRequest.Create("ftp://208.118.63.29/site2/" + FolderName + "/" + FileName);
+                request.KeepAlive = true;
+                request.Proxy = null;
+                request.UseBinary = true;
+                request.Method = WebRequestMethods.Ftp.UploadFile;
+                request.Credentials = new NetworkCredential("eplugplay-001", ConfigurationManager.ConnectionStrings["ftp"].ToString());
+                Stream ftpStream = request.GetRequestStream();
+                FileStream file = File.OpenRead(GetLocalImgPath(ddlSections.SelectedValue.ToString()) + "\\" + txtFilename.Text);
+                int length = 1024;
+                byte[] buffer = new byte[length];
+                int bytesRead = 0;
+                do
+                {
+                    bytesRead = file.Read(buffer, 0, length);
+                    ftpStream.Write(buffer, 0, bytesRead);
+                }
+                while (bytesRead != 0);
+                //// save local
+                //SaveLocal(file);
+                file.Close();
+                ftpStream.Close();
+                //save to db
+                Data.SaveImageToDb(FileName, txtDescription.Text, ddlGender.Text, FolderName);
+                Check();
+                MessageBox.Show("Saved.");
+            }
         }
+
+
+        private void btnDeleteImg_Click(object sender, EventArgs e)
+        {
+            if (PreviewPictureBox.Image == null)
+            {
+                MessageBox.Show("Select image first.");
+                return;
+            }
+            if (MessageBox.Show("Upload?", "Upload?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                // delete from server
+                DeleteServerImg(ddlSections.SelectedValue.ToString(), txtFilename.Text);
+                // delete from db
+                Data.DeleteImageDb(txtFilename.Text, ddlGender.Text, ddlSections.SelectedValue.ToString());
+                // delete from local
+                if (File.Exists(GetLocalImgPath(ddlSections.SelectedValue.ToString()) + "\\" + txtFilename.Text))
+                {
+                    try
+                    {
+                        //Directory.Delete(GetLocalImgPath(ddlSections.SelectedValue.ToString()));
+                        File.Delete(GetLocalImgPath(ddlSections.SelectedValue.ToString()) + "\\" + txtFilename.Text);
+                    }
+                    catch (Exception)
+                    {
+
+                    }
+                }
+                LoadImages(ddlSections.SelectedValue.ToString());
+                Check();
+                MessageBox.Show("Deleted.");
+            }
+        }
+
+        private void pnControls_Click(object sender, EventArgs e)
+        {
+            string s = PreviewPictureBox.Name;
+        }
+
+        private void ddlSections_SelectedIndexChanged_1(object sender, EventArgs e)
+        {
+            PreviewPictureBox.Image = null;
+            txtDescription.Text = "";
+            ddlGender.SelectedIndex = -1;
+            txtFilename.Text = "";
+            btnDeleteImg.Enabled = false;
+            btnUploadImage.Enabled = false;
+
+            switch (ddlSections.SelectedIndex)
+            {
+                case 0: txtSection.Text = "Apparels"; break;
+                case 1: txtSection.Text = "New Arrivals"; break;
+                case 2: txtSection.Text = "Pants"; break;
+                case 3: txtSection.Text = "Rhinestones"; break;
+                case 4: txtSection.Text = "Shirts"; break;
+                case 5: txtSection.Text = "Women's Shoes"; break;
+            }
+
+            if (ddlSections.DataSource != null)
+            {
+                if (ddlSections.SelectedIndex != -1)
+                {
+                    if (LoadImages(ddlSections.SelectedValue.ToString()) == true)
+                    {
+                        LoadImages(ddlSections.SelectedValue.ToString());
+                    }
+                }
+            }
+            if (ddlSections.SelectedIndex == 5)
+            {
+                ddlGender.SelectedIndex = 0;
+                ddlGender.Enabled = false;
+            }
+            else
+            {
+                ddlGender.Enabled = true;
+            }
+        }
+
+        private void btnSaveEdit_Click(object sender, EventArgs e)
+        {
+            if (Data.CheckImgExist(txtFilename.Text, ddlSections.SelectedValue.ToString()) == false)
+            {
+                MessageBox.Show("Selected image does not exist in server. Upload first before editing.");
+                return;
+            }
+            if (PreviewPictureBox.Image == null)
+            {
+                MessageBox.Show("Select image first.");
+                return;
+            }
+            if (txtDescription.Text == "")
+            {
+                MessageBox.Show("Enter Description.");
+                return;
+            }
+            if (ddlGender.Text == "")
+            {
+                MessageBox.Show("Select Male or Female.");
+                return;
+            }
+            if (MessageBox.Show("Save Edit?", "Save Edit?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                Data.UpdateImageDb(txtFilename.Text, ddlGender.Text, txtDescription.Text);
+                MessageBox.Show("Updated.");
+            }
+        }
+
+        #endregion
 
         public void SaveLocal(FileStream file, string _fileName = "")
         {
-            // save local
-            //if (File.Exists(GetLocalImgPath(ddlSections.Text) + "\\" + txtFilename.Text))
-            //{
-                //File.SetAttributes(GetLocalImgPath(ddlSections.Text), FileAttributes.Normal);
-                try
-                {
-                    //Directory.Delete(GetLocalImgPath(ddlSections.Text));
-                    //if (_fileName == "")
-                    //{
-                        File.Copy(file.Name, GetLocalImgPath(ddlSections.Text) + "\\" + _fileName);
-                    //}
-                    //else
-                    //{
-                    //    File.Copy(_fileName, GetLocalImgPath(ddlSections.Text));
-                    //}
-                }
-                catch (Exception)
-                {
+            try
+            {
+                File.Copy(file.Name, GetLocalImgPath(ddlSections.SelectedValue.ToString()) + "\\" + _fileName);
+            }
+            catch (Exception)
+            {
 
-                }
-            //}
+            }
         }
 
         public string GetLocalImgPath(string folder)
@@ -331,6 +467,13 @@ namespace ManageImages
             }
             // load images from folder
             pnControls.Controls.Clear();
+            switch (imgSize)
+            {
+                case "x-small": locX = 20; locY = 10; sizeWidth = 30; sizeHeight = 30; break;
+                case "small": locX = 20; locY = 10; sizeWidth = 50; sizeHeight = 50; break;
+                case "medium": locX = 20; locY = 0; sizeWidth = 80; sizeHeight = 80; break;
+                case "large": locX = 20; locY = 10; sizeWidth = 160; sizeHeight = 160; break;
+            }
             int locnewX = locX;
             int locnewY = locY;
             foreach (FileInfo img in Images)
@@ -470,55 +613,14 @@ namespace ManageImages
             }
             catch (WebException wEx)
             {
-                MessageBox.Show(wEx.Message, "Download Error");
+                MessageBox.Show(wEx.Message, "Delete Error");
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Download Error");
+                MessageBox.Show(ex.Message, "Delete Error");
             }
         }
 
-        private void btnDeleteImg_Click(object sender, EventArgs e)
-        {
-            // delete from server
-            DeleteServerImg(ddlSections.Text, txtFilename.Text);
-            // delete from db
-            Data.DeleteImageDb(txtFilename.Text, ddlGender.Text, ddlSections.Text);
-            // delete from local
-            if (File.Exists(GetLocalImgPath(ddlSections.Text) + "\\" + txtFilename.Text))
-            {
-                File.SetAttributes(GetLocalImgPath("RhinestoneImages"), FileAttributes.Normal);
-                try
-                {
-                    //Directory.Delete(GetLocalImgPath(ddlSections.Text));
-                    File.Delete(GetLocalImgPath(ddlSections.Text) + "\\" + txtFilename.Text);
-                }
-                catch (Exception)
-                {
-
-                }
-            }
-            LoadImages(ddlSections.Text);
-            MessageBox.Show("Deleted.");
-        }
-
-        private void pnControls_Click(object sender, EventArgs e)
-        {
-            string s = PreviewPictureBox.Name;
-        }
-
-        private void ddlSections_SelectedIndexChanged_1(object sender, EventArgs e)
-        {
-            //if (ddlSections.DataSource != null)
-            //{
-                //if (ddlSections.Text != "System.Data.DataRowView")
-                //{
-                    if (LoadImages(ddlSections.Text) == true)
-                    {
-                        LoadImages(ddlSections.Text);
-                    }
-                //}
-            //}
-        }
+     
     }
 }
