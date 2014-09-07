@@ -11,7 +11,7 @@ using System.Net;
 using System.Threading;
 using System.Collections;
 using System.IO;
-
+using System.Configuration;
 
 
 namespace ManageImages
@@ -19,7 +19,7 @@ namespace ManageImages
     public partial class ManageImages : Form
     {
         ArrayList PicArr = new ArrayList(); 
-        private System.Windows.Forms.FolderBrowserDialog folderBrowserDlg;
+        private System.Windows.Forms.OpenFileDialog folderBrowserDlg;
         int locX = 20;
         int locY = 10;
         int sizeWidth = 30;
@@ -31,14 +31,15 @@ namespace ManageImages
 
         private void ManageImages_Load(object sender, EventArgs e)
         {
-            this.folderBrowserDlg = new System.Windows.Forms.FolderBrowserDialog();
+            this.folderBrowserDlg = new System.Windows.Forms.OpenFileDialog();
             locX = 20;
             locY = 10;
             sizeWidth = 30;
             sizeHeight = 30;
 
             // load sections
-            LoadSections();
+            ddlSections.SelectedIndex = 0;
+            //LoadSections();
         }
 
         public void LoadSections()
@@ -171,42 +172,17 @@ namespace ManageImages
 
         private void loadImageToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            DirectoryInfo Folder;
-            FileInfo[] Images;
-            this.folderBrowserDlg.RootFolder = System.Environment.SpecialFolder.MyComputer;
-            this.folderBrowserDlg.ShowNewFolderButton = false;
+            this.folderBrowserDlg.Filter = "(*.bmp, *.jpg, *.jpeg, *png)|*.bmp;*.jpg;*.jpeg;*.png";
             DialogResult result = this.folderBrowserDlg.ShowDialog();
             if (result == DialogResult.OK)
             {
-                Folder = new DirectoryInfo(folderBrowserDlg.SelectedPath);
-                Images = Folder.GetFiles();
-
-                pnControls.Controls.Clear();
-
-                int locnewX = locX;
-                int locnewY = locY;
-                foreach (FileInfo img in Images)
-                {
-                    if (img.Extension.ToLower() == ".png" || img.Extension.ToLower() == ".jpg" || img.Extension.ToLower() == ".gif" || img.Extension.ToLower() == ".jpeg" || img.Extension.ToLower() == ".bmp" || img.Extension.ToLower() == ".tif")
-                    {
-
-                        if (locnewX >= pnControls.Width - sizeWidth - 10)
-                        {
-                            locnewX = locX;
-                            locY = locY + sizeHeight + 30;
-                            locnewY = locY;
-                        }
-                        else
-                        {
-
-                            locnewY = locY;
-                        }
-
-                        loadImagestoPanel(img.Name, img.FullName, locnewX, locnewY);
-                        locnewY = locY + sizeHeight + 10;
-                        locnewX = locnewX + sizeWidth + 10;
-                    }
-                }
+                string[] split = folderBrowserDlg.FileName.Split('\\');
+                FileStream file = File.OpenRead(folderBrowserDlg.FileName);
+                // save local
+                SaveLocal(file, split[split.Length -1]);
+                file.Close();
+                LoadImages(ddlSections.Text);
+                MessageBox.Show("Imported.");
             }
         }
 
@@ -243,13 +219,18 @@ namespace ManageImages
                 MessageBox.Show("Enter Description.");
                 return;
             }
+            if (ddlGender.Text == "")
+            {
+                MessageBox.Show("Select Male or Female.");
+                return;
+            }
             FileInfo toUpload = new FileInfo("FileName");
             FtpWebRequest request = (FtpWebRequest)WebRequest.Create("ftp://208.118.63.29/site2/" + FolderName + "/" + FileName);
             request.KeepAlive = true;
             request.Proxy = null;
             request.UseBinary = true;
             request.Method = WebRequestMethods.Ftp.UploadFile;
-            request.Credentials = new NetworkCredential("eplugplay-001", "Wutsup4321@");
+            request.Credentials = new NetworkCredential("eplugplay-001", ConfigurationManager.ConnectionStrings["ftp"].ToString());
             Stream ftpStream = request.GetRequestStream();
             FileStream file = File.OpenRead(GetLocalImgPath(ddlSections.Text) + "\\" + txtFilename.Text);
             int length = 1024;
@@ -261,20 +242,38 @@ namespace ManageImages
                 ftpStream.Write(buffer, 0, bytesRead);
             }
             while (bytesRead != 0);
+            //// save local
+            //SaveLocal(file);
             file.Close();
             ftpStream.Close();
-
             //save to db
             Data.SaveImageToDb(FileName, txtDescription.Text, ddlGender.Text, FolderName);
             MessageBox.Show("Saved.");
         }
 
-        private void loadWebsiteImagesToolStripMenuItem_Click(object sender, EventArgs e)
+        public void SaveLocal(FileStream file, string _fileName = "")
         {
-            if (LoadImages(ddlSections.Text) == true)
-            {
-                LoadImages(ddlSections.Text);
-            }
+            // save local
+            //if (File.Exists(GetLocalImgPath(ddlSections.Text) + "\\" + txtFilename.Text))
+            //{
+                //File.SetAttributes(GetLocalImgPath(ddlSections.Text), FileAttributes.Normal);
+                try
+                {
+                    //Directory.Delete(GetLocalImgPath(ddlSections.Text));
+                    //if (_fileName == "")
+                    //{
+                        File.Copy(file.Name, GetLocalImgPath(ddlSections.Text) + "\\" + _fileName);
+                    //}
+                    //else
+                    //{
+                    //    File.Copy(_fileName, GetLocalImgPath(ddlSections.Text));
+                    //}
+                }
+                catch (Exception)
+                {
+
+                }
+            //}
         }
 
         public string GetLocalImgPath(string folder)
@@ -284,7 +283,7 @@ namespace ManageImages
             //System.IO.DirectoryInfo directoryInfo2 = System.IO.Directory.GetParent(directoryInfo.FullName);
             //string path = directoryInfo2.FullName + @"\Images\" + folder;
 
-            string[] Directories = new string[] { "C:\\ManageImages\\", "C:\\ManageImages\\NewArrivalsImages", "C:\\ManageImages\\RhinestoneImages" };
+            string[] Directories = new string[] { "C:\\ManageImages\\", "C:\\ManageImages\\ApparelsImages", "C:\\ManageImages\\NewArrivalsImages", "C:\\ManageImages\\PantsImages", "C:\\ManageImages\\RhinestoneImages", "C:\\ManageImages\\ShirtsImages", "C:\\ManageImages\\ShoesImages" };
 
             try
             {
@@ -304,7 +303,6 @@ namespace ManageImages
 
             string path = "C:\\ManageImages\\" + folder;
             //string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData).ToString() + "\\ManageImages\\" + folder;
-
             return path;
         }
 
@@ -313,9 +311,6 @@ namespace ManageImages
             bool AddedNew = false;
             DirectoryInfo Folder;
             FileInfo[] Images;
-            this.folderBrowserDlg.RootFolder = System.Environment.SpecialFolder.MyComputer;
-            this.folderBrowserDlg.ShowNewFolderButton = false;
-            string s = GetLocalImgPath(folder);
             Folder = new DirectoryInfo(GetLocalImgPath(folder));
             Images = Folder.GetFiles();
             // download images from folder
@@ -374,7 +369,7 @@ namespace ManageImages
                 FtpWebRequest reqFTP;
                 reqFTP = (FtpWebRequest)FtpWebRequest.Create(new Uri("ftp://208.118.63.29/site2/" + folder));
                 reqFTP.UseBinary = true;
-                reqFTP.Credentials = new NetworkCredential("eplugplay-001", "Wutsup4321@");
+                reqFTP.Credentials = new NetworkCredential("eplugplay-001", ConfigurationManager.ConnectionStrings["ftp"].ToString());
                 reqFTP.Method = WebRequestMethods.Ftp.ListDirectory;
                 reqFTP.Proxy = null;
                 reqFTP.KeepAlive = false;
@@ -421,7 +416,7 @@ namespace ManageImages
                     }
                     FtpWebRequest reqFTP;
                     reqFTP = (FtpWebRequest)FtpWebRequest.Create(new Uri("ftp://208.118.63.29/site2/" + folder + "/" + file));
-                    reqFTP.Credentials = new NetworkCredential("eplugplay-001", "Wutsup4321@");
+                    reqFTP.Credentials = new NetworkCredential("eplugplay-001", ConfigurationManager.ConnectionStrings["ftp"].ToString());
                     reqFTP.KeepAlive = false;
                     reqFTP.Method = WebRequestMethods.Ftp.DownloadFile;
                     reqFTP.UseBinary = true;
@@ -464,7 +459,7 @@ namespace ManageImages
                 }
                 FtpWebRequest reqFTP;
                 reqFTP = (FtpWebRequest)FtpWebRequest.Create(new Uri("ftp://208.118.63.29/site2/" + folder + "/" + file));
-                reqFTP.Credentials = new NetworkCredential("eplugplay-001", "Wutsup4321@");
+                reqFTP.Credentials = new NetworkCredential("eplugplay-001", ConfigurationManager.ConnectionStrings["ftp"].ToString());
                 reqFTP.KeepAlive = false;
                 reqFTP.Method = WebRequestMethods.Ftp.DeleteFile;
                 reqFTP.UseBinary = true;
@@ -486,14 +481,22 @@ namespace ManageImages
         private void btnDeleteImg_Click(object sender, EventArgs e)
         {
             // delete from server
-            //DeleteServerImg(ddlSections.Text, txtFilename.Text);
+            DeleteServerImg(ddlSections.Text, txtFilename.Text);
             // delete from db
-            //Data.DeleteImageDb(txtFilename.Text, ddlGender.Text, ddlSections.Text);
+            Data.DeleteImageDb(txtFilename.Text, ddlGender.Text, ddlSections.Text);
             // delete from local
-            if (File.Exists(GetLocalImgPath("RhinestoneImages") + "\\" + "sample.jpg"))
+            if (File.Exists(GetLocalImgPath(ddlSections.Text) + "\\" + txtFilename.Text))
             {
                 File.SetAttributes(GetLocalImgPath("RhinestoneImages"), FileAttributes.Normal);
-                File.Delete(GetLocalImgPath("RhinestoneImages"));
+                try
+                {
+                    //Directory.Delete(GetLocalImgPath(ddlSections.Text));
+                    File.Delete(GetLocalImgPath(ddlSections.Text) + "\\" + txtFilename.Text);
+                }
+                catch (Exception)
+                {
+
+                }
             }
             LoadImages(ddlSections.Text);
             MessageBox.Show("Deleted.");
@@ -506,16 +509,16 @@ namespace ManageImages
 
         private void ddlSections_SelectedIndexChanged_1(object sender, EventArgs e)
         {
-            if (ddlSections.DataSource != null)
-            {
-                if (ddlSections.Text != "System.Data.DataRowView")
-                {
+            //if (ddlSections.DataSource != null)
+            //{
+                //if (ddlSections.Text != "System.Data.DataRowView")
+                //{
                     if (LoadImages(ddlSections.Text) == true)
                     {
                         LoadImages(ddlSections.Text);
                     }
-                }
-            }
+                //}
+            //}
         }
     }
 }

@@ -31,7 +31,6 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ManageImages));
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.loadWebsiteImagesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pnControls = new System.Windows.Forms.Panel();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
@@ -73,24 +72,16 @@
             // fileToolStripMenuItem
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.loadWebsiteImagesToolStripMenuItem,
             this.loadImageToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
             // 
-            // loadWebsiteImagesToolStripMenuItem
-            // 
-            this.loadWebsiteImagesToolStripMenuItem.Name = "loadWebsiteImagesToolStripMenuItem";
-            this.loadWebsiteImagesToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
-            this.loadWebsiteImagesToolStripMenuItem.Text = "Load Website Images";
-            this.loadWebsiteImagesToolStripMenuItem.Click += new System.EventHandler(this.loadWebsiteImagesToolStripMenuItem_Click);
-            // 
             // loadImageToolStripMenuItem
             // 
             this.loadImageToolStripMenuItem.Name = "loadImageToolStripMenuItem";
-            this.loadImageToolStripMenuItem.Size = new System.Drawing.Size(196, 22);
-            this.loadImageToolStripMenuItem.Text = "Load Images to Upload";
+            this.loadImageToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.loadImageToolStripMenuItem.Text = "Import Image";
             this.loadImageToolStripMenuItem.Click += new System.EventHandler(this.loadImageToolStripMenuItem_Click);
             // 
             // pnControls
@@ -317,6 +308,13 @@
             // 
             this.ddlSections.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ddlSections.FormattingEnabled = true;
+            this.ddlSections.Items.AddRange(new object[] {
+            "New Arrivals",
+            "ApparelsImages",
+            "ShirtsImages",
+            "PantsImages",
+            "ShoesImages",
+            "RhinestoneImages"});
             this.ddlSections.Location = new System.Drawing.Point(683, 119);
             this.ddlSections.Name = "ddlSections";
             this.ddlSections.Size = new System.Drawing.Size(186, 21);
@@ -367,7 +365,6 @@
         private System.Windows.Forms.PictureBox PreviewPictureBox;
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.ToolStripMenuItem loadImageToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem loadWebsiteImagesToolStripMenuItem;
         private System.Windows.Forms.Button btnUploadImage;
         private System.Windows.Forms.Label lblFileName;
         private System.Windows.Forms.TextBox txtFilename;
