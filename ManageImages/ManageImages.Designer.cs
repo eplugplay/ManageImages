@@ -33,6 +33,7 @@
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pnControls = new System.Windows.Forms.Panel();
+            this.pbStatus = new System.Windows.Forms.ProgressBar();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
             this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
@@ -47,15 +48,19 @@
             this.lblDescription = new System.Windows.Forms.Label();
             this.txtDescription = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label4 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.txtSection = new System.Windows.Forms.TextBox();
+            this.lblSection = new System.Windows.Forms.Label();
             this.btnSaveEdit = new System.Windows.Forms.Button();
+            this.ddlSections = new System.Windows.Forms.ComboBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.btnDeleteImg = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.ddlSections = new System.Windows.Forms.ComboBox();
-            this.txtSection = new System.Windows.Forms.TextBox();
-            this.lblSection = new System.Windows.Forms.Label();
+            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            this.backgroundWorker2 = new System.ComponentModel.BackgroundWorker();
+            this.backgroundWorker3 = new System.ComponentModel.BackgroundWorker();
+            this.lblStatus = new System.Windows.Forms.Label();
             this.menuStrip.SuspendLayout();
             this.toolStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.PreviewPictureBox)).BeginInit();
@@ -85,7 +90,7 @@
             // loadImageToolStripMenuItem
             // 
             this.loadImageToolStripMenuItem.Name = "loadImageToolStripMenuItem";
-            this.loadImageToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.loadImageToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.loadImageToolStripMenuItem.Text = "Import Image";
             this.loadImageToolStripMenuItem.Click += new System.EventHandler(this.loadImageToolStripMenuItem_Click);
             // 
@@ -99,6 +104,14 @@
             this.pnControls.Size = new System.Drawing.Size(857, 694);
             this.pnControls.TabIndex = 19;
             this.pnControls.Click += new System.EventHandler(this.pnControls_Click);
+            // 
+            // pbStatus
+            // 
+            this.pbStatus.Location = new System.Drawing.Point(19, 192);
+            this.pbStatus.Name = "pbStatus";
+            this.pbStatus.Size = new System.Drawing.Size(100, 23);
+            this.pbStatus.TabIndex = 38;
+            this.pbStatus.Visible = false;
             // 
             // toolStrip
             // 
@@ -253,8 +266,19 @@
             this.groupBox1.TabIndex = 37;
             this.groupBox1.TabStop = false;
             // 
+            // label4
+            // 
+            this.label4.Font = new System.Drawing.Font("Verdana", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.Location = new System.Drawing.Point(532, 21);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(139, 25);
+            this.label4.TabIndex = 39;
+            this.label4.Text = "Select Section:";
+            // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.lblStatus);
+            this.groupBox2.Controls.Add(this.pbStatus);
             this.groupBox2.Controls.Add(this.txtSection);
             this.groupBox2.Controls.Add(this.lblSection);
             this.groupBox2.Controls.Add(this.txtFilename);
@@ -271,6 +295,23 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Info:";
             // 
+            // txtSection
+            // 
+            this.txtSection.Location = new System.Drawing.Point(139, 35);
+            this.txtSection.Name = "txtSection";
+            this.txtSection.ReadOnly = true;
+            this.txtSection.Size = new System.Drawing.Size(251, 20);
+            this.txtSection.TabIndex = 39;
+            // 
+            // lblSection
+            // 
+            this.lblSection.Font = new System.Drawing.Font("Verdana", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblSection.Location = new System.Drawing.Point(51, 35);
+            this.lblSection.Name = "lblSection";
+            this.lblSection.Size = new System.Drawing.Size(78, 25);
+            this.lblSection.TabIndex = 40;
+            this.lblSection.Text = "Section:";
+            // 
             // btnSaveEdit
             // 
             this.btnSaveEdit.BackColor = System.Drawing.Color.SlateGray;
@@ -284,6 +325,18 @@
             this.btnSaveEdit.Text = "Save Edit";
             this.btnSaveEdit.UseVisualStyleBackColor = false;
             this.btnSaveEdit.Click += new System.EventHandler(this.btnSaveEdit_Click);
+            // 
+            // ddlSections
+            // 
+            this.ddlSections.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.ddlSections.FormattingEnabled = true;
+            this.ddlSections.Items.AddRange(new object[] {
+            "-- Select"});
+            this.ddlSections.Location = new System.Drawing.Point(677, 21);
+            this.ddlSections.Name = "ddlSections";
+            this.ddlSections.Size = new System.Drawing.Size(186, 21);
+            this.ddlSections.TabIndex = 40;
+            this.ddlSections.SelectedIndexChanged += new System.EventHandler(this.ddlSections_SelectedIndexChanged);
             // 
             // groupBox3
             // 
@@ -320,43 +373,30 @@
             this.label3.TabIndex = 38;
             this.label3.Text = "Images From Website";
             // 
-            // label4
+            // backgroundWorker1
             // 
-            this.label4.Font = new System.Drawing.Font("Verdana", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(532, 21);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(139, 25);
-            this.label4.TabIndex = 39;
-            this.label4.Text = "Select Section:";
+            this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
+            this.backgroundWorker1.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker1_RunWorkerCompleted);
             // 
-            // ddlSections
+            // backgroundWorker2
             // 
-            this.ddlSections.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.ddlSections.FormattingEnabled = true;
-            this.ddlSections.Items.AddRange(new object[] {
-            "-- Select"});
-            this.ddlSections.Location = new System.Drawing.Point(677, 21);
-            this.ddlSections.Name = "ddlSections";
-            this.ddlSections.Size = new System.Drawing.Size(186, 21);
-            this.ddlSections.TabIndex = 40;
-            this.ddlSections.SelectedIndexChanged += new System.EventHandler(this.ddlSections_SelectedIndexChanged_1);
+            this.backgroundWorker2.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker2_DoWork);
+            this.backgroundWorker2.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker2_RunWorkerCompleted);
             // 
-            // txtSection
+            // backgroundWorker3
             // 
-            this.txtSection.Location = new System.Drawing.Point(139, 35);
-            this.txtSection.Name = "txtSection";
-            this.txtSection.ReadOnly = true;
-            this.txtSection.Size = new System.Drawing.Size(251, 20);
-            this.txtSection.TabIndex = 39;
+            this.backgroundWorker3.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker3_DoWork);
+            this.backgroundWorker3.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker3_RunWorkerCompleted);
             // 
-            // lblSection
+            // lblStatus
             // 
-            this.lblSection.Font = new System.Drawing.Font("Verdana", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblSection.Location = new System.Drawing.Point(51, 35);
-            this.lblSection.Name = "lblSection";
-            this.lblSection.Size = new System.Drawing.Size(78, 25);
-            this.lblSection.TabIndex = 40;
-            this.lblSection.Text = "Section:";
+            this.lblStatus.AutoSize = true;
+            this.lblStatus.Location = new System.Drawing.Point(29, 174);
+            this.lblStatus.Name = "lblStatus";
+            this.lblStatus.Size = new System.Drawing.Size(87, 13);
+            this.lblStatus.TabIndex = 41;
+            this.lblStatus.Text = "Please Wait...";
+            this.lblStatus.Visible = false;
             // 
             // ManageImages
             // 
@@ -414,6 +454,11 @@
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.TextBox txtSection;
         private System.Windows.Forms.Label lblSection;
+        private System.Windows.Forms.ProgressBar pbStatus;
+        private System.ComponentModel.BackgroundWorker backgroundWorker1;
+        private System.ComponentModel.BackgroundWorker backgroundWorker2;
+        private System.ComponentModel.BackgroundWorker backgroundWorker3;
+        private System.Windows.Forms.Label lblStatus;
     }
 }
 

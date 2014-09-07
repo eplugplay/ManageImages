@@ -28,6 +28,7 @@ namespace ManageImages
         public ManageImages()
         {
             InitializeComponent();
+
         }
 
         public void LoadSections()
@@ -47,28 +48,49 @@ namespace ManageImages
             ctrl.SizeMode = PictureBoxSizeMode.StretchImage;
             ctrl.MouseMove += new MouseEventHandler(control_MouseMove);
             ctrl.MouseClick += new MouseEventHandler(control_MouseClick);
-            pnControls.Controls.Add(ctrl);
+            pnControls.InvokeEx(x => x.Controls.Add(ctrl));
         }
 
-        public void Check()
+        public void Check(string filename, string folder)
         {
-            if (Data.CheckImgExist(txtFilename.Text, ddlSections.SelectedValue.ToString()) == true)
+            if (Data.CheckImgExist(filename, folder) == true)
             {
-                btnSaveEdit.Enabled = true;
-                btnDeleteImg.Enabled = true;
-                btnUploadImage.Enabled = false;
-                btnDeleteImg.Enabled = true;
-                btnUploadImage.Enabled = false;
+                btnSaveEdit.InvokeEx(x => x.Enabled = true);
+                btnDeleteImg.InvokeEx(x => x.Enabled = true);
+                btnUploadImage.InvokeEx(x => x.Enabled = false);
+                btnDeleteImg.InvokeEx(x => x.Enabled = true);
+                btnUploadImage.InvokeEx(x => x.Enabled = false);
             }
             else
             {
-                btnSaveEdit.Enabled = false;
-                btnDeleteImg.Enabled = false;
-                btnUploadImage.Enabled = true;
-                btnDeleteImg.Enabled = false;
-                btnUploadImage.Enabled = true;
+                btnSaveEdit.InvokeEx(x => x.Enabled = false);
+                btnDeleteImg.InvokeEx(x => x.Enabled = false);
+                btnUploadImage.InvokeEx(x => x.Enabled = true);
+                btnDeleteImg.InvokeEx(x => x.Enabled = false);
+                btnUploadImage.InvokeEx(x => x.Enabled = true);
             }
         }
+
+        #region private class
+
+        private class data
+        {
+            public data(string _folder, string _description, string _gender, string _filename, int _sectionIndex)
+            {
+                folder = _folder;
+                description = _description;
+                gender = _gender;
+                filename = _filename;
+                sectionIndex = _sectionIndex;
+            }
+            public string folder { get; set; }
+            public string description { get; set; }
+            public string gender { get; set; }
+            public string filename { get; set; }
+            public int sectionIndex { get; set; }
+        }
+
+        #endregion
 
         #region toolStrips
 
@@ -189,6 +211,175 @@ namespace ManageImages
             LoadSections();
         }
 
+        private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
+        {
+            if (MessageBox.Show("Upload?", "Upload?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                //lblStatus.InvokeEx(x => x.Visible = true);
+                pbStatus.InvokeEx(x => x.Visible = true);
+                lblStatus.InvokeEx(x => x.Visible = true);
+                data _data = (data)e.Argument;
+                string FolderName = _data.folder;
+                string FileName = _data.filename;
+                string Gender = _data.gender;
+                string Description = _data.description;
+
+                // 10% bar
+                pbStatus.InvokeEx(x => x.Value = 10);
+                FileInfo toUpload = new FileInfo("FileName");
+                FtpWebRequest request = (FtpWebRequest)WebRequest.Create("ftp://208.118.63.29/site2/" + FolderName + "/" + FileName);
+                request.KeepAlive = true;
+                request.Proxy = null;
+                request.UseBinary = true;
+                // 20% bar
+                pbStatus.InvokeEx(x => x.Value = 20);
+                request.Method = WebRequestMethods.Ftp.UploadFile;
+                // 30% bar
+                pbStatus.InvokeEx(x => x.Value = 40);
+                request.Credentials = new NetworkCredential("eplugplay-001", ConfigurationManager.ConnectionStrings["ftp"].ToString());
+                Stream ftpStream = request.GetRequestStream();
+                FileStream file = File.OpenRead(GetLocalImgPath(FolderName) + "\\" + txtFilename.Text);
+                int length = 1024;
+                byte[] buffer = new byte[length];
+                int bytesRead = 0;
+                do
+                {
+                    bytesRead = file.Read(buffer, 0, length);
+                    ftpStream.Write(buffer, 0, bytesRead);
+                }
+                while (bytesRead != 0);
+                // 60% bar
+                pbStatus.InvokeEx(x => x.Value = 60);
+                //// save local
+                //SaveLocal(file);
+                file.Close();
+                ftpStream.Close();
+                // 70% bar
+                pbStatus.InvokeEx(x => x.Value = 70);
+                //save to db
+                Data.SaveImageToDb(FileName, Description, Gender, FolderName);
+                // 80% bar
+                pbStatus.InvokeEx(x => x.Value = 80);
+                Check(FileName, FolderName);
+            }
+        }
+
+        private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            pbStatus.InvokeEx(x => x.Visible = false);
+            lblStatus.InvokeEx(x => x.Visible = false);
+            MessageBox.Show("Saved.");
+        }
+
+
+        private void backgroundWorker2_DoWork(object sender, DoWorkEventArgs e)
+        {
+            if (MessageBox.Show("Delete?", "Delete?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                data _data = (data)e.Argument;
+                string FolderName = _data.folder;
+                string FileName = _data.filename;
+                string Gender = _data.gender;
+                string Description = _data.description;
+
+                pbStatus.InvokeEx(x => x.Visible = true);
+                lblStatus.InvokeEx(x => x.Visible = true);
+                // 20% bar
+                pbStatus.InvokeEx(x => x.Value = 20);
+                // delete from server
+                DeleteServerImg(FolderName, FileName);
+                // 40% bar
+                pbStatus.InvokeEx(x => x.Value = 40);
+                // delete from db
+                Data.DeleteImageDb(FileName, Gender, FolderName);
+                // 60% bar
+                pbStatus.InvokeEx(x => x.Value = 60);
+                // delete from local
+                if (File.Exists(GetLocalImgPath(FolderName) + "\\" + FileName))
+                {
+                    try
+                    {
+                        //Directory.Delete(GetLocalImgPath(ddlSections.SelectedValue.ToString()));
+                        File.Delete(GetLocalImgPath(FolderName) + "\\" + FileName);
+                    }
+                    catch (Exception)
+                    {
+
+                    }
+                }
+                // 80% bar
+                pbStatus.InvokeEx(x => x.Value = 80);
+                LoadImages(FolderName, 80);
+                Check(FileName, FolderName);
+                pbStatus.InvokeEx(x => x.Value = 100);
+            }
+        }
+
+
+        private void backgroundWorker2_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            pbStatus.InvokeEx(x => x.Visible = false);
+            lblStatus.InvokeEx(x => x.Visible = false);
+            MessageBox.Show("Deleted.");
+        }
+
+        private void backgroundWorker3_DoWork(object sender, DoWorkEventArgs e)
+        {
+            data _data = (data)e.Argument;
+            pbStatus.InvokeEx(x => x.Visible = true);
+            lblStatus.InvokeEx(x => x.Visible = true);
+            ddlSections.InvokeEx(x => x.Enabled = false);
+            // 20% bar
+            pbStatus.InvokeEx(x => x.Value = 20);
+            string FolderName = _data.folder;
+            string FileName = _data.filename;
+            string Gender = _data.gender;
+            string Description = _data.description;
+            int SelectedIndex = _data.sectionIndex;
+
+            PreviewPictureBox.InvokeEx(x => x.Image = null);
+            txtDescription.InvokeEx(x => x.Text = "");
+            ddlGender.InvokeEx(x => x.SelectedIndex = -1);
+            txtFilename.InvokeEx(x => x.Text = "");
+            btnDeleteImg.InvokeEx(x => x.Enabled = false);
+            btnUploadImage.InvokeEx(x => x.Enabled = false);
+            // 40% bar
+            pbStatus.InvokeEx(x => x.Value = 40);
+            switch (SelectedIndex)
+            {
+                case 0: txtSection.InvokeEx(x => x.Text = "Apparels"); break;
+                case 1: txtSection.InvokeEx(x => x.Text = "New Arrivals"); break;
+                case 2: txtSection.InvokeEx(x => x.Text = "Pants"); break;
+                case 3: txtSection.InvokeEx(x => x.Text = "Rhinestones"); break;
+                case 4: txtSection.InvokeEx(x => x.Text = "Shirts"); break;
+                case 5: txtSection.InvokeEx(x => x.Text = "Women's Shoes"); break;
+            }
+            if (SelectedIndex != -1)
+            {
+                if (LoadImages(FolderName, 40) == true)
+                {
+                    LoadImages(FolderName, 100);
+                }
+            }
+            if (SelectedIndex == 5)
+            {
+                ddlGender.InvokeEx(x => x.SelectedIndex = 0);
+                ddlGender.InvokeEx(x => x.Enabled = false);
+            }
+            else
+            {
+                ddlGender.InvokeEx(x => x.Enabled = true);
+            }
+            pbStatus.InvokeEx(x => x.Value = 100);
+        }
+
+        private void backgroundWorker3_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            pbStatus.InvokeEx(x => x.Visible = false);
+            lblStatus.InvokeEx(x => x.Visible = false);
+            ddlSections.InvokeEx(x => x.Enabled = true);
+        }
+
         private void control_MouseMove(object sender, MouseEventArgs e)
         {
             //Control control = (Control)sender;
@@ -198,6 +389,11 @@ namespace ManageImages
 
         private void control_MouseClick(object sender, MouseEventArgs e)
         {
+            if (backgroundWorker1.IsBusy || backgroundWorker2.IsBusy || backgroundWorker3.IsBusy)
+            {
+                MessageBox.Show("Please wait until process is finished.");
+                return;
+            }
             Control control = (Control)sender;
             PictureBox pic = (PictureBox)control;
             PreviewPictureBox.Image = pic.Image;
@@ -206,12 +402,26 @@ namespace ManageImages
             txtFilename.Text = PicArr[control.TabIndex].ToString();
             txtDescription.Text = Data.GetDescriptionInfo(txtFilename.Text, ddlSections.SelectedValue.ToString());
             ddlGender.SelectedIndex = ddlGender.FindStringExact(Data.GetGenderInfo(txtFilename.Text, ddlSections.SelectedValue.ToString()));
-            Check();
+            Check(txtFilename.Text, ddlSections.SelectedValue.ToString());
+        }
+
+
+        private void ddlSections_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (ddlSections.DataSource != null)
+            {
+                backgroundWorker3.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedIndex));
+            }
         }
 
 
         private void loadImageToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (backgroundWorker1.IsBusy || backgroundWorker2.IsBusy || backgroundWorker3.IsBusy)
+            {
+                MessageBox.Show("Please wait until process is finished.");
+                return;
+            }
             this.folderBrowserDlg.Filter = "(*.bmp, *.jpg, *.jpeg, *png)|*.bmp;*.jpg;*.jpeg;*.png";
             DialogResult result = this.folderBrowserDlg.ShowDialog();
             if (result == DialogResult.OK)
@@ -221,7 +431,7 @@ namespace ManageImages
                 // save local
                 SaveLocal(file, split[split.Length -1]);
                 file.Close();
-                LoadImages(ddlSections.SelectedValue.ToString());
+                LoadImages(ddlSections.SelectedValue.ToString(), 100);
                 MessageBox.Show("Imported.");
             }
         }
@@ -229,6 +439,10 @@ namespace ManageImages
 
         private void btnUploadImage_Click(object sender, EventArgs e)
         {
+            if (backgroundWorker1.IsBusy || backgroundWorker2.IsBusy || backgroundWorker3.IsBusy)
+            {
+                return;
+            }
             if (PreviewPictureBox.Image == null)
             {
                 MessageBox.Show("Select image first.");
@@ -250,78 +464,22 @@ namespace ManageImages
                 return;
             }
 
-            if (MessageBox.Show("Upload?", "Upload?", MessageBoxButtons.YesNo) == DialogResult.Yes)
-            {
-                string FolderName = ddlSections.SelectedValue.ToString();
-                string FileName = "";
-                if (txtFilename.Text == "")
-                {
-                    FileName = PreviewPictureBox.Name;
-                }
-                else
-                {
-                    FileName = txtFilename.Text;
-                }
-                FileInfo toUpload = new FileInfo("FileName");
-                FtpWebRequest request = (FtpWebRequest)WebRequest.Create("ftp://208.118.63.29/site2/" + FolderName + "/" + FileName);
-                request.KeepAlive = true;
-                request.Proxy = null;
-                request.UseBinary = true;
-                request.Method = WebRequestMethods.Ftp.UploadFile;
-                request.Credentials = new NetworkCredential("eplugplay-001", ConfigurationManager.ConnectionStrings["ftp"].ToString());
-                Stream ftpStream = request.GetRequestStream();
-                FileStream file = File.OpenRead(GetLocalImgPath(ddlSections.SelectedValue.ToString()) + "\\" + txtFilename.Text);
-                int length = 1024;
-                byte[] buffer = new byte[length];
-                int bytesRead = 0;
-                do
-                {
-                    bytesRead = file.Read(buffer, 0, length);
-                    ftpStream.Write(buffer, 0, bytesRead);
-                }
-                while (bytesRead != 0);
-                //// save local
-                //SaveLocal(file);
-                file.Close();
-                ftpStream.Close();
-                //save to db
-                Data.SaveImageToDb(FileName, txtDescription.Text, ddlGender.Text, FolderName);
-                Check();
-                MessageBox.Show("Saved.");
-            }
+            backgroundWorker1.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedIndex));
         }
 
 
         private void btnDeleteImg_Click(object sender, EventArgs e)
         {
+            if (backgroundWorker1.IsBusy || backgroundWorker2.IsBusy || backgroundWorker3.IsBusy)
+            {
+                return;
+            }
             if (PreviewPictureBox.Image == null)
             {
                 MessageBox.Show("Select image first.");
                 return;
             }
-            if (MessageBox.Show("Upload?", "Upload?", MessageBoxButtons.YesNo) == DialogResult.Yes)
-            {
-                // delete from server
-                DeleteServerImg(ddlSections.SelectedValue.ToString(), txtFilename.Text);
-                // delete from db
-                Data.DeleteImageDb(txtFilename.Text, ddlGender.Text, ddlSections.SelectedValue.ToString());
-                // delete from local
-                if (File.Exists(GetLocalImgPath(ddlSections.SelectedValue.ToString()) + "\\" + txtFilename.Text))
-                {
-                    try
-                    {
-                        //Directory.Delete(GetLocalImgPath(ddlSections.SelectedValue.ToString()));
-                        File.Delete(GetLocalImgPath(ddlSections.SelectedValue.ToString()) + "\\" + txtFilename.Text);
-                    }
-                    catch (Exception)
-                    {
-
-                    }
-                }
-                LoadImages(ddlSections.SelectedValue.ToString());
-                Check();
-                MessageBox.Show("Deleted.");
-            }
+            backgroundWorker2.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedIndex));
         }
 
         private void pnControls_Click(object sender, EventArgs e)
@@ -329,48 +487,12 @@ namespace ManageImages
             string s = PreviewPictureBox.Name;
         }
 
-        private void ddlSections_SelectedIndexChanged_1(object sender, EventArgs e)
-        {
-            PreviewPictureBox.Image = null;
-            txtDescription.Text = "";
-            ddlGender.SelectedIndex = -1;
-            txtFilename.Text = "";
-            btnDeleteImg.Enabled = false;
-            btnUploadImage.Enabled = false;
-
-            switch (ddlSections.SelectedIndex)
-            {
-                case 0: txtSection.Text = "Apparels"; break;
-                case 1: txtSection.Text = "New Arrivals"; break;
-                case 2: txtSection.Text = "Pants"; break;
-                case 3: txtSection.Text = "Rhinestones"; break;
-                case 4: txtSection.Text = "Shirts"; break;
-                case 5: txtSection.Text = "Women's Shoes"; break;
-            }
-
-            if (ddlSections.DataSource != null)
-            {
-                if (ddlSections.SelectedIndex != -1)
-                {
-                    if (LoadImages(ddlSections.SelectedValue.ToString()) == true)
-                    {
-                        LoadImages(ddlSections.SelectedValue.ToString());
-                    }
-                }
-            }
-            if (ddlSections.SelectedIndex == 5)
-            {
-                ddlGender.SelectedIndex = 0;
-                ddlGender.Enabled = false;
-            }
-            else
-            {
-                ddlGender.Enabled = true;
-            }
-        }
-
         private void btnSaveEdit_Click(object sender, EventArgs e)
         {
+            if (backgroundWorker1.IsBusy || backgroundWorker2.IsBusy || backgroundWorker3.IsBusy)
+            {
+                return;
+            }
             if (Data.CheckImgExist(txtFilename.Text, ddlSections.SelectedValue.ToString()) == false)
             {
                 MessageBox.Show("Selected image does not exist in server. Upload first before editing.");
@@ -396,6 +518,7 @@ namespace ManageImages
                 Data.UpdateImageDb(txtFilename.Text, ddlGender.Text, txtDescription.Text);
                 MessageBox.Show("Updated.");
             }
+
         }
 
         #endregion
@@ -442,7 +565,7 @@ namespace ManageImages
             return path;
         }
 
-        public bool LoadImages(string folder)
+        public bool LoadImages(string folder, int cntBar)
         {
             bool AddedNew = false;
             DirectoryInfo Folder;
@@ -461,12 +584,21 @@ namespace ManageImages
             {
                 if (!PicArr.Contains(file))
                 {
-                    AddedNew = true;
-                    Download(folder, file);
+                    if (!file.Contains(".xml"))
+                    {
+                        AddedNew = true;
+                        Download(folder, file);
+                        cntBar += cntBar / files.Length;
+                        if (cntBar > 100)
+                        {
+                            cntBar = 80;
+                        }
+                        pbStatus.InvokeEx(x => x.Value = cntBar);
+                    }
                 }
             }
             // load images from folder
-            pnControls.Controls.Clear();
+            pnControls.InvokeEx(x => x.Controls.Clear());
             switch (imgSize)
             {
                 case "x-small": locX = 20; locY = 10; sizeWidth = 30; sizeHeight = 30; break;
@@ -496,6 +628,13 @@ namespace ManageImages
                     loadImagestoPanel(img.Name, img.FullName, locnewX, locnewY);
                     locnewY = locY + sizeHeight + 10;
                     locnewX = locnewX + sizeWidth + 10;
+
+                    cntBar += (int)(cntBar / Images.Length) + 3;
+                    if (cntBar > 100)
+                    {
+                        cntBar = 90;
+                    }
+                    pbStatus.InvokeEx(x => x.Value = cntBar);
                 }
             }
             return AddedNew;
@@ -620,7 +759,5 @@ namespace ManageImages
                 MessageBox.Show(ex.Message, "Delete Error");
             }
         }
-
-     
     }
 }

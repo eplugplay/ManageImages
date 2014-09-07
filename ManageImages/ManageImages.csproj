@@ -68,6 +68,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="uti.cs" />
     <EmbeddedResource Include="ManageImages.resx">
       <DependentUpon>ManageImages.cs</DependentUpon>
     </EmbeddedResource>
