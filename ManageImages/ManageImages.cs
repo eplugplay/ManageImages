@@ -215,9 +215,9 @@ namespace ManageImages
         {
             if (MessageBox.Show("Upload?", "Upload?", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
-                //lblStatus.InvokeEx(x => x.Visible = true);
                 pbStatus.InvokeEx(x => x.Visible = true);
                 lblStatus.InvokeEx(x => x.Visible = true);
+                lblStatus.InvokeEx(x => x.Text = "Uploading..");
                 data _data = (data)e.Argument;
                 string FolderName = _data.folder;
                 string FileName = _data.filename;
@@ -284,6 +284,7 @@ namespace ManageImages
 
                 pbStatus.InvokeEx(x => x.Visible = true);
                 lblStatus.InvokeEx(x => x.Visible = true);
+                lblStatus.InvokeEx(x => x.Text = "Deleting..");
                 // 20% bar
                 pbStatus.InvokeEx(x => x.Value = 20);
                 // delete from server
@@ -391,7 +392,6 @@ namespace ManageImages
         {
             if (backgroundWorker1.IsBusy || backgroundWorker2.IsBusy || backgroundWorker3.IsBusy)
             {
-                MessageBox.Show("Please wait until process is finished.");
                 return;
             }
             Control control = (Control)sender;
@@ -401,7 +401,14 @@ namespace ManageImages
             // load image info
             txtFilename.Text = PicArr[control.TabIndex].ToString();
             txtDescription.Text = Data.GetDescriptionInfo(txtFilename.Text, ddlSections.SelectedValue.ToString());
-            ddlGender.SelectedIndex = ddlGender.FindStringExact(Data.GetGenderInfo(txtFilename.Text, ddlSections.SelectedValue.ToString()));
+            if (ddlSections.SelectedIndex == 5)
+            {
+                ddlGender.SelectedIndex = 0;
+            }
+            else
+            {
+                ddlGender.SelectedIndex = ddlGender.FindStringExact(Data.GetGenderInfo(txtFilename.Text, ddlSections.SelectedValue.ToString()));
+            }
             Check(txtFilename.Text, ddlSections.SelectedValue.ToString());
         }
 
@@ -422,15 +429,27 @@ namespace ManageImages
                 MessageBox.Show("Please wait until process is finished.");
                 return;
             }
+            FileStream file;
             this.folderBrowserDlg.Filter = "(*.bmp, *.jpg, *.jpeg, *png)|*.bmp;*.jpg;*.jpeg;*.png";
+            this.folderBrowserDlg.Multiselect = true;
             DialogResult result = this.folderBrowserDlg.ShowDialog();
             if (result == DialogResult.OK)
             {
-                string[] split = folderBrowserDlg.FileName.Split('\\');
-                FileStream file = File.OpenRead(folderBrowserDlg.FileName);
-                // save local
-                SaveLocal(file, split[split.Length -1]);
-                file.Close();
+                //string[] split = folderBrowserDlg.FileName.Split('\\');
+                //file = File.OpenRead(folderBrowserDlg.FileName);
+                //// save local
+                //SaveLocal(file, split[split.Length - 1]);
+                //file.Close();
+                //LoadImages(ddlSections.SelectedValue.ToString(), 100);
+                foreach (var f in folderBrowserDlg.FileNames)
+                {
+                    string[] split = f.Split('\\');
+                    //file = File.OpenRead(folderBrowserDlg.FileName);
+                    file = File.OpenRead(f);
+                    // save local
+                    SaveLocal(file, split[split.Length - 1]);
+                    file.Close();
+                }
                 LoadImages(ddlSections.SelectedValue.ToString(), 100);
                 MessageBox.Show("Imported.");
             }
@@ -450,6 +469,7 @@ namespace ManageImages
             }
             if (txtDescription.Text == "")
             {
+                txtDescription.Focus();
                 MessageBox.Show("Enter Description.");
                 return;
             }
@@ -505,6 +525,7 @@ namespace ManageImages
             }
             if (txtDescription.Text == "")
             {
+                txtDescription.Focus();
                 MessageBox.Show("Enter Description.");
                 return;
             }
@@ -588,6 +609,7 @@ namespace ManageImages
                     {
                         AddedNew = true;
                         Download(folder, file);
+                        lblStatus.InvokeEx(x => x.Text = "Copying images..");
                         cntBar += cntBar / files.Length;
                         if (cntBar > 100)
                         {
@@ -597,6 +619,7 @@ namespace ManageImages
                     }
                 }
             }
+            lblStatus.InvokeEx(x => x.Text = "Finished copying images..");
             // load images from folder
             pnControls.InvokeEx(x => x.Controls.Clear());
             switch (imgSize)
@@ -608,11 +631,11 @@ namespace ManageImages
             }
             int locnewX = locX;
             int locnewY = locY;
+            lblStatus.InvokeEx(x => x.Text = "Loading images..");
             foreach (FileInfo img in Images)
             {
                 if (img.Extension.ToLower() == ".png" || img.Extension.ToLower() == ".jpg" || img.Extension.ToLower() == ".gif" || img.Extension.ToLower() == ".jpeg" || img.Extension.ToLower() == ".bmp" || img.Extension.ToLower() == ".tif")
                 {
-
                     if (locnewX >= pnControls.Width - sizeWidth - 10)
                     {
                         locnewX = locX;
