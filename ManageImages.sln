@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManageImages", "ManageImages\ManageImages.csproj", "{91067973-BEA3-44D4-96D6-8D222BF8F600}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "ManageImagesInstall", "ManageImagesInstall\ManageImagesInstall.vdproj", "{A00F7A0D-0249-4AE2-A5D4-8A928ED2C2F8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -13,6 +15,8 @@ Global
 		{91067973-BEA3-44D4-96D6-8D222BF8F600}.Debug|x86.Build.0 = Debug|x86
 		{91067973-BEA3-44D4-96D6-8D222BF8F600}.Release|x86.ActiveCfg = Release|x86
 		{91067973-BEA3-44D4-96D6-8D222BF8F600}.Release|x86.Build.0 = Release|x86
+		{A00F7A0D-0249-4AE2-A5D4-8A928ED2C2F8}.Debug|x86.ActiveCfg = Debug
+		{A00F7A0D-0249-4AE2-A5D4-8A928ED2C2F8}.Release|x86.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

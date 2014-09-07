@@ -10,6 +10,9 @@ using System.IO;
 using System.Net;
 using System.Threading;
 using System.Collections;
+using System.IO;
+
+
 
 namespace ManageImages
 {
@@ -74,7 +77,6 @@ namespace ManageImages
             txtFilename.Text = PicArr[control.TabIndex].ToString();
             string s = Data.GetGenderInfo(txtFilename.Text, ddlSections.Text);
             ddlGender.SelectedIndex = ddlGender.FindStringExact(Data.GetGenderInfo(txtFilename.Text, ddlSections.Text));
-
         }
 
         private void loadControls()
@@ -249,7 +251,7 @@ namespace ManageImages
             request.Method = WebRequestMethods.Ftp.UploadFile;
             request.Credentials = new NetworkCredential("eplugplay-001", "Wutsup4321@");
             Stream ftpStream = request.GetRequestStream();
-            FileStream file = File.OpenRead("C:\\RhinestoneImages\\sample.jpg");
+            FileStream file = File.OpenRead(GetLocalImgPath(ddlSections.Text) + "\\" + txtFilename.Text);
             int length = 1024;
             byte[] buffer = new byte[length];
             int bytesRead = 0;
@@ -277,10 +279,32 @@ namespace ManageImages
 
         public string GetLocalImgPath(string folder)
         {
-            string appPath = Path.GetDirectoryName(Application.ExecutablePath);
-            System.IO.DirectoryInfo directoryInfo = System.IO.Directory.GetParent(appPath);
-            System.IO.DirectoryInfo directoryInfo2 = System.IO.Directory.GetParent(directoryInfo.FullName);
-            string path = directoryInfo2.FullName + @"\Images\" + folder;
+            //string appPath = Path.GetDirectoryName(Application.ExecutablePath);
+            //System.IO.DirectoryInfo directoryInfo = System.IO.Directory.GetParent(appPath);
+            //System.IO.DirectoryInfo directoryInfo2 = System.IO.Directory.GetParent(directoryInfo.FullName);
+            //string path = directoryInfo2.FullName + @"\Images\" + folder;
+
+            string[] Directories = new string[] { "C:\\ManageImages\\", "C:\\ManageImages\\NewArrivalsImages", "C:\\ManageImages\\RhinestoneImages" };
+
+            try
+            {
+                for (int i = 0; i < Directories.Length; i++)
+                {
+                    // If the directory doesn't exist, create it.
+                    if (!Directory.Exists(Directories[i].ToString()))
+                    {
+                        Directory.CreateDirectory(Directories[i].ToString());
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // Fail silently
+            }
+
+            string path = "C:\\ManageImages\\" + folder;
+            //string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData).ToString() + "\\ManageImages\\" + folder;
+
             return path;
         }
 
@@ -462,10 +486,15 @@ namespace ManageImages
         private void btnDeleteImg_Click(object sender, EventArgs e)
         {
             // delete from server
-            DeleteServerImg(ddlSections.Text, txtFilename.Text);
+            //DeleteServerImg(ddlSections.Text, txtFilename.Text);
             // delete from db
-            Data.DeleteImageDb(txtFilename.Text, ddlGender.Text, ddlSections.Text);
+            //Data.DeleteImageDb(txtFilename.Text, ddlGender.Text, ddlSections.Text);
             // delete from local
+            if (File.Exists(GetLocalImgPath("RhinestoneImages") + "\\" + "sample.jpg"))
+            {
+                File.SetAttributes(GetLocalImgPath("RhinestoneImages"), FileAttributes.Normal);
+                File.Delete(GetLocalImgPath("RhinestoneImages"));
+            }
             LoadImages(ddlSections.Text);
             MessageBox.Show("Deleted.");
         }

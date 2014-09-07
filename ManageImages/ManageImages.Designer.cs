@@ -201,7 +201,7 @@
             this.btnUploadImage.BackColor = System.Drawing.Color.SlateGray;
             this.btnUploadImage.Font = new System.Drawing.Font("Gulim", 12F, System.Drawing.FontStyle.Bold);
             this.btnUploadImage.ForeColor = System.Drawing.Color.White;
-            this.btnUploadImage.Location = new System.Drawing.Point(637, 405);
+            this.btnUploadImage.Location = new System.Drawing.Point(610, 405);
             this.btnUploadImage.Name = "btnUploadImage";
             this.btnUploadImage.Size = new System.Drawing.Size(146, 41);
             this.btnUploadImage.TabIndex = 28;
