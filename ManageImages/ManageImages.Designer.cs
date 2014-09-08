@@ -99,9 +99,9 @@
             this.pnControls.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.pnControls.AutoScroll = true;
             this.pnControls.BackColor = System.Drawing.Color.White;
-            this.pnControls.Location = new System.Drawing.Point(6, 68);
+            this.pnControls.Location = new System.Drawing.Point(6, 80);
             this.pnControls.Name = "pnControls";
-            this.pnControls.Size = new System.Drawing.Size(522, 406);
+            this.pnControls.Size = new System.Drawing.Size(522, 437);
             this.pnControls.TabIndex = 19;
             this.pnControls.Click += new System.EventHandler(this.pnControls_Click);
             // 
@@ -397,7 +397,7 @@
             this.groupBox4.Controls.Add(this.ddlSections);
             this.groupBox4.Location = new System.Drawing.Point(29, 98);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(542, 500);
+            this.groupBox4.Size = new System.Drawing.Size(542, 524);
             this.groupBox4.TabIndex = 41;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "All Images";
