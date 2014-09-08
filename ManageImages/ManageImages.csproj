@@ -41,6 +41,9 @@
     <GenerateManifests>false</GenerateManifests>
   </PropertyGroup>
   <PropertyGroup />
+  <PropertyGroup>
+    <ApplicationIcon>Manage Images.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="MySql.Data, Version=6.4.4.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -96,42 +99,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Images\NewArrivalsImages\1-wo.jpg" />
-    <Content Include="Images\NewArrivalsImages\1.jpg" />
-    <Content Include="Images\NewArrivalsImages\2-wo.jpg" />
-    <Content Include="Images\NewArrivalsImages\2.jpg" />
-    <Content Include="Images\NewArrivalsImages\3-wo.jpg" />
-    <Content Include="Images\NewArrivalsImages\3.jpg" />
-    <Content Include="Images\NewArrivalsImages\4-wo.jpg" />
-    <Content Include="Images\NewArrivalsImages\4.jpg" />
-    <Content Include="Images\NewArrivalsImages\5-wo.jpeg" />
-    <Content Include="Images\NewArrivalsImages\5-wo.jpg" />
-    <Content Include="Images\NewArrivalsImages\5.jpg" />
-    <Content Include="Images\NewArrivalsImages\6-wo.jpg" />
-    <Content Include="Images\NewArrivalsImages\6.jpg" />
-    <Content Include="Images\NewArrivalsImages\7-wo.jpg" />
-    <Content Include="Images\NewArrivalsImages\7.jpg" />
-    <Content Include="Images\NewArrivalsImages\8-wo.jpg" />
-    <Content Include="Images\NewArrivalsImages\8.jpg" />
-    <Content Include="Images\NewArrivalsImages\ImageMetaData.xml" />
-    <Content Include="Images\RhinestoneImages\1-wo.jpg" />
-    <Content Include="Images\RhinestoneImages\1.jpg" />
-    <Content Include="Images\RhinestoneImages\2-wo.jpg" />
-    <Content Include="Images\RhinestoneImages\2.jpg" />
-    <Content Include="Images\RhinestoneImages\3-wo.jpg" />
-    <Content Include="Images\RhinestoneImages\3.jpg" />
-    <Content Include="Images\RhinestoneImages\4-wo.jpg" />
-    <Content Include="Images\RhinestoneImages\4.jpg" />
-    <Content Include="Images\RhinestoneImages\5-wo.jpg" />
-    <Content Include="Images\RhinestoneImages\5.jpg" />
-    <Content Include="Images\RhinestoneImages\6-wo.jpg" />
-    <Content Include="Images\RhinestoneImages\6.jpg" />
-    <Content Include="Images\RhinestoneImages\7-wo.jpg" />
-    <Content Include="Images\RhinestoneImages\7.jpg" />
-    <Content Include="Images\RhinestoneImages\8-wo.jpg" />
-    <Content Include="Images\RhinestoneImages\8.jpg" />
-    <Content Include="Images\RhinestoneImages\ImageMetaData.xml" />
-    <Content Include="Images\RhinestoneImages\sample.jpg" />
+    <Content Include="Manage Images.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="Resources\photos-128.png" />
     <Content Include="Resources\photos-1281.png" />
     <Content Include="Resources\photos-20.png" />
