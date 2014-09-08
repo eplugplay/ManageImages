@@ -38,11 +38,20 @@ namespace ManageImages
             ddlSections.DataSource = Data.LoadSections();
         }
 
-        private void loadImagestoPanel(String imageName, String ImageFullName, int newLocX, int newLocY)
+        private void loadImagestoPanel(String imageName, String ImageFullName, int newLocX, int newLocY, bool live)
         {
             PictureBox ctrl = new PictureBox();
             ctrl.Image = Image.FromFile(ImageFullName);
-            ctrl.BackColor = Color.Black;
+            ctrl.BorderStyle = BorderStyle.FixedSingle;
+            
+            if (live == true)
+            {
+                ctrl.BackColor = Color.Green;
+            }
+            else
+            {
+                ctrl.BackColor = Color.Red;
+            }
             ctrl.Location = new Point(newLocX, newLocY);
             ctrl.Size = new System.Drawing.Size(sizeWidth, sizeHeight);
             ctrl.SizeMode = PictureBoxSizeMode.StretchImage;
@@ -122,6 +131,10 @@ namespace ManageImages
 
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
+            if (backgroundWorker1.IsBusy || backgroundWorker2.IsBusy || backgroundWorker3.IsBusy)
+            {
+                return;
+            }
             imgSize = "x-small";
             int SaveVal = 0;
             locX = 20;
@@ -141,6 +154,10 @@ namespace ManageImages
 
         private void toolStripButton2_Click(object sender, EventArgs e)
         {
+            if (backgroundWorker1.IsBusy || backgroundWorker2.IsBusy || backgroundWorker3.IsBusy)
+            {
+                return;
+            }
             imgSize = "small";
             int SaveVal = 0;
             locX = 20;
@@ -160,6 +177,10 @@ namespace ManageImages
 
         private void toolStripButton3_Click(object sender, EventArgs e)
         {
+            if (backgroundWorker1.IsBusy || backgroundWorker2.IsBusy || backgroundWorker3.IsBusy)
+            {
+                return;
+            }
             imgSize = "medium";
             int SaveVal = 0;
             locX = 20;
@@ -180,6 +201,10 @@ namespace ManageImages
 
         private void toolStripButton4_Click(object sender, EventArgs e)
         {
+            if (backgroundWorker1.IsBusy || backgroundWorker2.IsBusy || backgroundWorker3.IsBusy)
+            {
+                return;
+            }
             imgSize = "large";
             int SaveVal = 0;
             locX = 20;
@@ -310,7 +335,7 @@ namespace ManageImages
                 }
                 // 80% bar
                 pbStatus.InvokeEx(x => x.Value = 80);
-                LoadImages(FolderName, 80);
+                LoadImages(FolderName, 80, FileName);
                 Check(FileName, FolderName);
                 pbStatus.InvokeEx(x => x.Value = 100);
             }
@@ -357,9 +382,9 @@ namespace ManageImages
             }
             if (SelectedIndex != -1)
             {
-                if (LoadImages(FolderName, 40) == true)
+                if (LoadImages(FolderName, 40, FileName) == true)
                 {
-                    LoadImages(FolderName, 100);
+                    LoadImages(FolderName, 100, FileName);
                 }
             }
             if (SelectedIndex == 5)
@@ -450,7 +475,7 @@ namespace ManageImages
                     SaveLocal(file, split[split.Length - 1]);
                     file.Close();
                 }
-                LoadImages(ddlSections.SelectedValue.ToString(), 100);
+                LoadImages(ddlSections.SelectedValue.ToString(), 100, txtFilename.Text);
                 MessageBox.Show("Imported.");
             }
         }
@@ -586,7 +611,7 @@ namespace ManageImages
             return path;
         }
 
-        public bool LoadImages(string folder, int cntBar)
+        public bool LoadImages(string folder, int cntBar, string filename)
         {
             bool AddedNew = false;
             DirectoryInfo Folder;
@@ -644,11 +669,16 @@ namespace ManageImages
                     }
                     else
                     {
-
                         locnewY = locY;
                     }
-
-                    loadImagestoPanel(img.Name, img.FullName, locnewX, locnewY);
+                    if (Data.CheckImgExist(filename, folder) == true)
+                    {
+                        loadImagestoPanel(img.Name, img.FullName, locnewX, locnewY, true);
+                    }
+                    else
+                    {
+                        loadImagestoPanel(img.Name, img.FullName, locnewX, locnewY, false);
+                    }
                     locnewY = locY + sizeHeight + 10;
                     locnewX = locnewX + sizeWidth + 10;
 

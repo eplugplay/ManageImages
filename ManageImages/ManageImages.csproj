@@ -42,7 +42,8 @@
   </PropertyGroup>
   <PropertyGroup />
   <PropertyGroup>
-    <ApplicationIcon>Manage Images.ico</ApplicationIcon>
+    <ApplicationIcon>
+    </ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="MySql.Data, Version=6.4.4.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
@@ -99,9 +100,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Manage Images.ico">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Content Include="icon.ico" />
     <Content Include="Resources\photos-128.png" />
     <Content Include="Resources\photos-1281.png" />
     <Content Include="Resources\photos-20.png" />

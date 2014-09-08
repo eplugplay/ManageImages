@@ -47,7 +47,6 @@
             this.label2 = new System.Windows.Forms.Label();
             this.lblDescription = new System.Windows.Forms.Label();
             this.txtDescription = new System.Windows.Forms.TextBox();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.label4 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.txtSection = new System.Windows.Forms.TextBox();
@@ -61,12 +60,13 @@
             this.backgroundWorker2 = new System.ComponentModel.BackgroundWorker();
             this.backgroundWorker3 = new System.ComponentModel.BackgroundWorker();
             this.lblStatus = new System.Windows.Forms.Label();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.menuStrip.SuspendLayout();
             this.toolStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.PreviewPictureBox)).BeginInit();
-            this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
+            this.groupBox4.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip
@@ -75,7 +75,7 @@
             this.fileToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(1379, 24);
+            this.menuStrip.Size = new System.Drawing.Size(977, 24);
             this.menuStrip.TabIndex = 0;
             this.menuStrip.Text = "menuStrip1";
             // 
@@ -90,7 +90,7 @@
             // loadImageToolStripMenuItem
             // 
             this.loadImageToolStripMenuItem.Name = "loadImageToolStripMenuItem";
-            this.loadImageToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            this.loadImageToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.loadImageToolStripMenuItem.Text = "Import Image";
             this.loadImageToolStripMenuItem.Click += new System.EventHandler(this.loadImageToolStripMenuItem_Click);
             // 
@@ -99,15 +99,15 @@
             this.pnControls.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.pnControls.AutoScroll = true;
             this.pnControls.BackColor = System.Drawing.Color.White;
-            this.pnControls.Location = new System.Drawing.Point(6, 56);
+            this.pnControls.Location = new System.Drawing.Point(6, 68);
             this.pnControls.Name = "pnControls";
-            this.pnControls.Size = new System.Drawing.Size(857, 694);
+            this.pnControls.Size = new System.Drawing.Size(522, 406);
             this.pnControls.TabIndex = 19;
             this.pnControls.Click += new System.EventHandler(this.pnControls_Click);
             // 
             // pbStatus
             // 
-            this.pbStatus.Location = new System.Drawing.Point(19, 192);
+            this.pbStatus.Location = new System.Drawing.Point(183, 32);
             this.pbStatus.Name = "pbStatus";
             this.pbStatus.Size = new System.Drawing.Size(100, 23);
             this.pbStatus.TabIndex = 38;
@@ -115,6 +115,8 @@
             // 
             // toolStrip
             // 
+            this.toolStrip.AutoSize = false;
+            this.toolStrip.Font = new System.Drawing.Font("Segoe UI", 8F);
             this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripButton1,
             this.toolStripButton2,
@@ -122,7 +124,7 @@
             this.toolStripButton4});
             this.toolStrip.Location = new System.Drawing.Point(0, 24);
             this.toolStrip.Name = "toolStrip";
-            this.toolStrip.Size = new System.Drawing.Size(1379, 71);
+            this.toolStrip.Size = new System.Drawing.Size(977, 71);
             this.toolStrip.TabIndex = 20;
             this.toolStrip.Text = "toolStrip1";
             // 
@@ -175,10 +177,11 @@
             // 
             // PreviewPictureBox
             // 
+            this.PreviewPictureBox.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.PreviewPictureBox.BackColor = System.Drawing.Color.WhiteSmoke;
-            this.PreviewPictureBox.Location = new System.Drawing.Point(28, 33);
+            this.PreviewPictureBox.Location = new System.Drawing.Point(13, 19);
             this.PreviewPictureBox.Name = "PreviewPictureBox";
-            this.PreviewPictureBox.Size = new System.Drawing.Size(382, 430);
+            this.PreviewPictureBox.Size = new System.Drawing.Size(259, 259);
             this.PreviewPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.PreviewPictureBox.TabIndex = 26;
             this.PreviewPictureBox.TabStop = false;
@@ -187,11 +190,11 @@
             // 
             this.btnUploadImage.BackColor = System.Drawing.Color.SlateGray;
             this.btnUploadImage.Enabled = false;
-            this.btnUploadImage.Font = new System.Drawing.Font("Gulim", 12F, System.Drawing.FontStyle.Bold);
+            this.btnUploadImage.Font = new System.Drawing.Font("Gulim", 8.5F, System.Drawing.FontStyle.Bold);
             this.btnUploadImage.ForeColor = System.Drawing.Color.White;
-            this.btnUploadImage.Location = new System.Drawing.Point(264, 469);
+            this.btnUploadImage.Location = new System.Drawing.Point(191, 284);
             this.btnUploadImage.Name = "btnUploadImage";
-            this.btnUploadImage.Size = new System.Drawing.Size(146, 41);
+            this.btnUploadImage.Size = new System.Drawing.Size(81, 29);
             this.btnUploadImage.TabIndex = 28;
             this.btnUploadImage.Text = "Upload";
             this.btnUploadImage.UseVisualStyleBackColor = false;
@@ -199,19 +202,19 @@
             // 
             // lblFileName
             // 
-            this.lblFileName.Font = new System.Drawing.Font("Verdana", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblFileName.Location = new System.Drawing.Point(29, 65);
+            this.lblFileName.Font = new System.Drawing.Font("Verdana", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblFileName.Location = new System.Drawing.Point(36, 64);
             this.lblFileName.Name = "lblFileName";
-            this.lblFileName.Size = new System.Drawing.Size(104, 25);
+            this.lblFileName.Size = new System.Drawing.Size(79, 20);
             this.lblFileName.TabIndex = 30;
             this.lblFileName.Text = "File Name:";
             // 
             // txtFilename
             // 
-            this.txtFilename.Location = new System.Drawing.Point(139, 65);
+            this.txtFilename.Location = new System.Drawing.Point(121, 62);
             this.txtFilename.Name = "txtFilename";
             this.txtFilename.ReadOnly = true;
-            this.txtFilename.Size = new System.Drawing.Size(251, 20);
+            this.txtFilename.Size = new System.Drawing.Size(185, 20);
             this.txtFilename.TabIndex = 0;
             // 
             // ddlGender
@@ -221,94 +224,78 @@
             this.ddlGender.Items.AddRange(new object[] {
             "Women",
             "Men"});
-            this.ddlGender.Location = new System.Drawing.Point(139, 136);
+            this.ddlGender.Location = new System.Drawing.Point(121, 131);
             this.ddlGender.Name = "ddlGender";
-            this.ddlGender.Size = new System.Drawing.Size(251, 21);
+            this.ddlGender.Size = new System.Drawing.Size(185, 21);
             this.ddlGender.TabIndex = 34;
             // 
             // label2
             // 
-            this.label2.Font = new System.Drawing.Font("Verdana", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(51, 136);
+            this.label2.Font = new System.Drawing.Font("Verdana", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(49, 133);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(80, 25);
+            this.label2.Size = new System.Drawing.Size(66, 18);
             this.label2.TabIndex = 33;
             this.label2.Text = "Gender:";
             // 
             // lblDescription
             // 
-            this.lblDescription.Font = new System.Drawing.Font("Verdana", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblDescription.Location = new System.Drawing.Point(16, 99);
+            this.lblDescription.Font = new System.Drawing.Font("Verdana", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblDescription.Location = new System.Drawing.Point(25, 99);
             this.lblDescription.Name = "lblDescription";
-            this.lblDescription.Size = new System.Drawing.Size(113, 25);
+            this.lblDescription.Size = new System.Drawing.Size(90, 16);
             this.lblDescription.TabIndex = 35;
             this.lblDescription.Text = "Description:";
             // 
             // txtDescription
             // 
-            this.txtDescription.Location = new System.Drawing.Point(139, 100);
+            this.txtDescription.Location = new System.Drawing.Point(121, 97);
             this.txtDescription.Name = "txtDescription";
-            this.txtDescription.Size = new System.Drawing.Size(251, 20);
+            this.txtDescription.Size = new System.Drawing.Size(185, 20);
             this.txtDescription.TabIndex = 36;
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this.label4);
-            this.groupBox1.Controls.Add(this.groupBox2);
-            this.groupBox1.Controls.Add(this.ddlSections);
-            this.groupBox1.Controls.Add(this.groupBox3);
-            this.groupBox1.Controls.Add(this.label3);
-            this.groupBox1.Controls.Add(this.pnControls);
-            this.groupBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.groupBox1.Location = new System.Drawing.Point(12, 98);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(1342, 789);
-            this.groupBox1.TabIndex = 37;
-            this.groupBox1.TabStop = false;
             // 
             // label4
             // 
-            this.label4.Font = new System.Drawing.Font("Verdana", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(532, 21);
+            this.label4.Font = new System.Drawing.Font("Verdana", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.Location = new System.Drawing.Point(300, 37);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(139, 25);
+            this.label4.Size = new System.Drawing.Size(108, 18);
             this.label4.TabIndex = 39;
             this.label4.Text = "Select Section:";
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.lblStatus);
-            this.groupBox2.Controls.Add(this.pbStatus);
+            this.groupBox2.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.groupBox2.Controls.Add(this.txtSection);
+            this.groupBox2.Controls.Add(this.btnSaveEdit);
             this.groupBox2.Controls.Add(this.lblSection);
             this.groupBox2.Controls.Add(this.txtFilename);
-            this.groupBox2.Controls.Add(this.btnSaveEdit);
             this.groupBox2.Controls.Add(this.label2);
             this.groupBox2.Controls.Add(this.ddlGender);
             this.groupBox2.Controls.Add(this.lblDescription);
             this.groupBox2.Controls.Add(this.lblFileName);
             this.groupBox2.Controls.Add(this.txtDescription);
-            this.groupBox2.Location = new System.Drawing.Point(887, 21);
+            this.groupBox2.Location = new System.Drawing.Point(577, 98);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(430, 231);
+            this.groupBox2.Size = new System.Drawing.Size(364, 198);
             this.groupBox2.TabIndex = 39;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Info:";
             // 
             // txtSection
             // 
-            this.txtSection.Location = new System.Drawing.Point(139, 35);
+            this.txtSection.Location = new System.Drawing.Point(121, 32);
             this.txtSection.Name = "txtSection";
             this.txtSection.ReadOnly = true;
-            this.txtSection.Size = new System.Drawing.Size(251, 20);
+            this.txtSection.Size = new System.Drawing.Size(185, 20);
             this.txtSection.TabIndex = 39;
             // 
             // lblSection
             // 
-            this.lblSection.Font = new System.Drawing.Font("Verdana", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblSection.Location = new System.Drawing.Point(51, 35);
+            this.lblSection.Font = new System.Drawing.Font("Verdana", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblSection.Location = new System.Drawing.Point(51, 34);
             this.lblSection.Name = "lblSection";
-            this.lblSection.Size = new System.Drawing.Size(78, 25);
+            this.lblSection.Size = new System.Drawing.Size(64, 18);
             this.lblSection.TabIndex = 40;
             this.lblSection.Text = "Section:";
             // 
@@ -316,11 +303,11 @@
             // 
             this.btnSaveEdit.BackColor = System.Drawing.Color.SlateGray;
             this.btnSaveEdit.Enabled = false;
-            this.btnSaveEdit.Font = new System.Drawing.Font("Gulim", 12F, System.Drawing.FontStyle.Bold);
+            this.btnSaveEdit.Font = new System.Drawing.Font("Gulim", 8.5F, System.Drawing.FontStyle.Bold);
             this.btnSaveEdit.ForeColor = System.Drawing.Color.White;
-            this.btnSaveEdit.Location = new System.Drawing.Point(244, 174);
+            this.btnSaveEdit.Location = new System.Drawing.Point(225, 158);
             this.btnSaveEdit.Name = "btnSaveEdit";
-            this.btnSaveEdit.Size = new System.Drawing.Size(146, 41);
+            this.btnSaveEdit.Size = new System.Drawing.Size(81, 30);
             this.btnSaveEdit.TabIndex = 38;
             this.btnSaveEdit.Text = "Save Edit";
             this.btnSaveEdit.UseVisualStyleBackColor = false;
@@ -332,20 +319,21 @@
             this.ddlSections.FormattingEnabled = true;
             this.ddlSections.Items.AddRange(new object[] {
             "-- Select"});
-            this.ddlSections.Location = new System.Drawing.Point(677, 21);
+            this.ddlSections.Location = new System.Drawing.Point(414, 37);
             this.ddlSections.Name = "ddlSections";
-            this.ddlSections.Size = new System.Drawing.Size(186, 21);
+            this.ddlSections.Size = new System.Drawing.Size(117, 21);
             this.ddlSections.TabIndex = 40;
             this.ddlSections.SelectedIndexChanged += new System.EventHandler(this.ddlSections_SelectedIndexChanged);
             // 
             // groupBox3
             // 
+            this.groupBox3.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.groupBox3.Controls.Add(this.btnDeleteImg);
             this.groupBox3.Controls.Add(this.btnUploadImage);
             this.groupBox3.Controls.Add(this.PreviewPictureBox);
-            this.groupBox3.Location = new System.Drawing.Point(887, 258);
+            this.groupBox3.Location = new System.Drawing.Point(605, 302);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(430, 531);
+            this.groupBox3.Size = new System.Drawing.Size(285, 320);
             this.groupBox3.TabIndex = 38;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Selected Image Preview";
@@ -354,11 +342,11 @@
             // 
             this.btnDeleteImg.BackColor = System.Drawing.Color.SlateGray;
             this.btnDeleteImg.Enabled = false;
-            this.btnDeleteImg.Font = new System.Drawing.Font("Gulim", 12F, System.Drawing.FontStyle.Bold);
+            this.btnDeleteImg.Font = new System.Drawing.Font("Gulim", 8.5F, System.Drawing.FontStyle.Bold);
             this.btnDeleteImg.ForeColor = System.Drawing.Color.White;
-            this.btnDeleteImg.Location = new System.Drawing.Point(28, 469);
+            this.btnDeleteImg.Location = new System.Drawing.Point(13, 284);
             this.btnDeleteImg.Name = "btnDeleteImg";
-            this.btnDeleteImg.Size = new System.Drawing.Size(146, 41);
+            this.btnDeleteImg.Size = new System.Drawing.Size(81, 29);
             this.btnDeleteImg.TabIndex = 37;
             this.btnDeleteImg.Text = "Delete";
             this.btnDeleteImg.UseVisualStyleBackColor = false;
@@ -366,10 +354,10 @@
             // 
             // label3
             // 
-            this.label3.Font = new System.Drawing.Font("Verdana", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(295, 21);
+            this.label3.Font = new System.Drawing.Font("Verdana", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label3.Location = new System.Drawing.Point(6, 39);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(207, 25);
+            this.label3.Size = new System.Drawing.Size(160, 19);
             this.label3.TabIndex = 38;
             this.label3.Text = "Images From Website";
             // 
@@ -391,21 +379,40 @@
             // lblStatus
             // 
             this.lblStatus.AutoSize = true;
-            this.lblStatus.Location = new System.Drawing.Point(16, 174);
+            this.lblStatus.Location = new System.Drawing.Point(180, 14);
             this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(87, 13);
+            this.lblStatus.Size = new System.Drawing.Size(73, 13);
             this.lblStatus.TabIndex = 41;
             this.lblStatus.Text = "Please Wait...";
             this.lblStatus.Visible = false;
+            // 
+            // groupBox4
+            // 
+            this.groupBox4.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.groupBox4.Controls.Add(this.lblStatus);
+            this.groupBox4.Controls.Add(this.pnControls);
+            this.groupBox4.Controls.Add(this.pbStatus);
+            this.groupBox4.Controls.Add(this.label4);
+            this.groupBox4.Controls.Add(this.label3);
+            this.groupBox4.Controls.Add(this.ddlSections);
+            this.groupBox4.Location = new System.Drawing.Point(29, 98);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(542, 500);
+            this.groupBox4.TabIndex = 41;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "All Images";
             // 
             // ManageImages
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1379, 909);
-            this.Controls.Add(this.groupBox1);
+            this.ClientSize = new System.Drawing.Size(977, 634);
+            this.Controls.Add(this.groupBox4);
+            this.Controls.Add(this.groupBox2);
+            this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.toolStrip);
             this.Controls.Add(this.menuStrip);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.MainMenuStrip = this.menuStrip;
             this.Name = "ManageImages";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -416,10 +423,11 @@
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.PreviewPictureBox)).EndInit();
-            this.groupBox1.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.groupBox3.ResumeLayout(false);
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -444,7 +452,6 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label lblDescription;
         private System.Windows.Forms.TextBox txtDescription;
-        private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.ComboBox ddlSections;
@@ -459,6 +466,7 @@
         private System.ComponentModel.BackgroundWorker backgroundWorker2;
         private System.ComponentModel.BackgroundWorker backgroundWorker3;
         private System.Windows.Forms.Label lblStatus;
+        private System.Windows.Forms.GroupBox groupBox4;
     }
 }
 
