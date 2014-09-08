@@ -99,9 +99,9 @@
             this.pnControls.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.pnControls.AutoScroll = true;
             this.pnControls.BackColor = System.Drawing.Color.White;
-            this.pnControls.Location = new System.Drawing.Point(6, 80);
+            this.pnControls.Location = new System.Drawing.Point(6, 64);
             this.pnControls.Name = "pnControls";
-            this.pnControls.Size = new System.Drawing.Size(522, 437);
+            this.pnControls.Size = new System.Drawing.Size(522, 453);
             this.pnControls.TabIndex = 19;
             this.pnControls.Click += new System.EventHandler(this.pnControls_Click);
             // 
