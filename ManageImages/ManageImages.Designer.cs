@@ -50,8 +50,8 @@
             this.label4 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.txtSection = new System.Windows.Forms.TextBox();
-            this.lblSection = new System.Windows.Forms.Label();
             this.btnSaveEdit = new System.Windows.Forms.Button();
+            this.lblSection = new System.Windows.Forms.Label();
             this.ddlSections = new System.Windows.Forms.ComboBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.btnDeleteImg = new System.Windows.Forms.Button();
@@ -90,7 +90,7 @@
             // loadImageToolStripMenuItem
             // 
             this.loadImageToolStripMenuItem.Name = "loadImageToolStripMenuItem";
-            this.loadImageToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.loadImageToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.loadImageToolStripMenuItem.Text = "Import Image";
             this.loadImageToolStripMenuItem.Click += new System.EventHandler(this.loadImageToolStripMenuItem_Click);
             // 
@@ -179,9 +179,9 @@
             // 
             this.PreviewPictureBox.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.PreviewPictureBox.BackColor = System.Drawing.Color.WhiteSmoke;
-            this.PreviewPictureBox.Location = new System.Drawing.Point(13, 19);
+            this.PreviewPictureBox.Location = new System.Drawing.Point(31, 19);
             this.PreviewPictureBox.Name = "PreviewPictureBox";
-            this.PreviewPictureBox.Size = new System.Drawing.Size(259, 259);
+            this.PreviewPictureBox.Size = new System.Drawing.Size(302, 259);
             this.PreviewPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.PreviewPictureBox.TabIndex = 26;
             this.PreviewPictureBox.TabStop = false;
@@ -192,7 +192,7 @@
             this.btnUploadImage.Enabled = false;
             this.btnUploadImage.Font = new System.Drawing.Font("Gulim", 8.5F, System.Drawing.FontStyle.Bold);
             this.btnUploadImage.ForeColor = System.Drawing.Color.White;
-            this.btnUploadImage.Location = new System.Drawing.Point(191, 284);
+            this.btnUploadImage.Location = new System.Drawing.Point(252, 284);
             this.btnUploadImage.Name = "btnUploadImage";
             this.btnUploadImage.Size = new System.Drawing.Size(81, 29);
             this.btnUploadImage.TabIndex = 28;
@@ -290,15 +290,6 @@
             this.txtSection.Size = new System.Drawing.Size(185, 20);
             this.txtSection.TabIndex = 39;
             // 
-            // lblSection
-            // 
-            this.lblSection.Font = new System.Drawing.Font("Verdana", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblSection.Location = new System.Drawing.Point(51, 34);
-            this.lblSection.Name = "lblSection";
-            this.lblSection.Size = new System.Drawing.Size(64, 18);
-            this.lblSection.TabIndex = 40;
-            this.lblSection.Text = "Section:";
-            // 
             // btnSaveEdit
             // 
             this.btnSaveEdit.BackColor = System.Drawing.Color.SlateGray;
@@ -312,6 +303,15 @@
             this.btnSaveEdit.Text = "Save Edit";
             this.btnSaveEdit.UseVisualStyleBackColor = false;
             this.btnSaveEdit.Click += new System.EventHandler(this.btnSaveEdit_Click);
+            // 
+            // lblSection
+            // 
+            this.lblSection.Font = new System.Drawing.Font("Verdana", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblSection.Location = new System.Drawing.Point(51, 34);
+            this.lblSection.Name = "lblSection";
+            this.lblSection.Size = new System.Drawing.Size(64, 18);
+            this.lblSection.TabIndex = 40;
+            this.lblSection.Text = "Section:";
             // 
             // ddlSections
             // 
@@ -331,9 +331,9 @@
             this.groupBox3.Controls.Add(this.btnDeleteImg);
             this.groupBox3.Controls.Add(this.btnUploadImage);
             this.groupBox3.Controls.Add(this.PreviewPictureBox);
-            this.groupBox3.Location = new System.Drawing.Point(605, 302);
+            this.groupBox3.Location = new System.Drawing.Point(577, 302);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(285, 320);
+            this.groupBox3.Size = new System.Drawing.Size(364, 320);
             this.groupBox3.TabIndex = 38;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Selected Image Preview";
@@ -344,7 +344,7 @@
             this.btnDeleteImg.Enabled = false;
             this.btnDeleteImg.Font = new System.Drawing.Font("Gulim", 8.5F, System.Drawing.FontStyle.Bold);
             this.btnDeleteImg.ForeColor = System.Drawing.Color.White;
-            this.btnDeleteImg.Location = new System.Drawing.Point(13, 284);
+            this.btnDeleteImg.Location = new System.Drawing.Point(31, 284);
             this.btnDeleteImg.Name = "btnDeleteImg";
             this.btnDeleteImg.Size = new System.Drawing.Size(81, 29);
             this.btnDeleteImg.TabIndex = 37;
