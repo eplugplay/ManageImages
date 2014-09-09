@@ -46,7 +46,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_17DA3D568F7DBB3D5F13C63D5AD7EE62"
+        "OwnerKey" = "8:_F5FB0CA63C23480AAD0C93A95395A3BB"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -58,7 +58,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_F5FB0CA63C23480AAD0C93A95395A3BB"
+        "OwnerKey" = "8:_17DA3D568F7DBB3D5F13C63D5AD7EE62"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -79,6 +79,27 @@
         "PrivateKeyFile" = "8:"
         "TimeStampServer" = "8:"
         "InstallerBootstrapper" = "3:2"
+            "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+            {
+            "Enabled" = "11:TRUE"
+            "PromptEnabled" = "11:TRUE"
+            "PrerequisitesLocation" = "2:1"
+            "Url" = "8:"
+            "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.0,Profile=Client"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4 Client Profile (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.0,Profile=Client"
+                    }
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.Windows.Installer.3.1"
+                    {
+                    "Name" = "8:Windows Installer 3.1"
+                    "ProductCode" = "8:Microsoft.Windows.Installer.3.1"
+                    }
+                }
+            }
         }
         "Release"
         {
@@ -95,6 +116,14 @@
         "PrivateKeyFile" = "8:"
         "TimeStampServer" = "8:"
         "InstallerBootstrapper" = "3:2"
+            "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+            {
+            "Enabled" = "11:TRUE"
+            "PromptEnabled" = "11:TRUE"
+            "PrerequisitesLocation" = "2:1"
+            "Url" = "8:"
+            "ComponentsUrl" = "8:"
+            }
         }
     }
     "Deployable"
@@ -263,7 +292,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:ManageImagesInstall"
         "ProductCode" = "8:{32D34D7E-39EA-4F8C-A21C-DA567120103D}"
-        "PackageCode" = "8:{7E36A7BF-78AC-469E-AB00-450F9A61D3BF}"
+        "PackageCode" = "8:{6D13B7F1-D632-44C5-91CF-4C45D9B8F220}"
         "UpgradeCode" = "8:{94895F31-23D1-400E-BC2E-30E2BD628F3A}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"

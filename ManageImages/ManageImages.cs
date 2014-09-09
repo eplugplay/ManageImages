@@ -653,6 +653,7 @@ namespace ManageImages
                 case "small": locX = 20; locY = 10; sizeWidth = 50; sizeHeight = 50; break;
                 case "medium": locX = 20; locY = 0; sizeWidth = 80; sizeHeight = 80; break;
                 case "large": locX = 20; locY = 10; sizeWidth = 160; sizeHeight = 160; break;
+                default: locX = 20; locY = 10; sizeWidth = 30; sizeHeight = 30; break;
             }
             int locnewX = locX;
             int locnewY = locY;
