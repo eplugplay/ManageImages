@@ -40,8 +40,12 @@ namespace ManageImages
 
         private void loadImagestoPanel(String imageName, String ImageFullName, int newLocX, int newLocY, bool live)
         {
+            //PictureBox ctrl = new PictureBox();
+            //ctrl.Image = Image.FromFile(ImageFullName);
+            //ctrl.BorderStyle = BorderStyle.FixedSingle;
+
             PictureBox ctrl = new PictureBox();
-            ctrl.Image = Image.FromFile(ImageFullName);
+            ctrl.Image = FromFile(ImageFullName);
             ctrl.BorderStyle = BorderStyle.FixedSingle;
             
             if (live == true)
@@ -58,6 +62,14 @@ namespace ManageImages
             ctrl.MouseMove += new MouseEventHandler(control_MouseMove);
             ctrl.MouseClick += new MouseEventHandler(control_MouseClick);
             pnControls.InvokeEx(x => x.Controls.Add(ctrl));
+        }
+
+        public static Image FromFile(string path)
+        {
+            var bytes = File.ReadAllBytes(path);
+            var ms = new MemoryStream(bytes);
+            var img = Image.FromStream(ms);
+            return img;
         }
 
         public void Check(string filename, string folder)
@@ -240,6 +252,7 @@ namespace ManageImages
         {
             if (MessageBox.Show("Upload?", "Upload?", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
+                int ctr = 0;
                 pbStatus.InvokeEx(x => x.Visible = true);
                 lblStatus.InvokeEx(x => x.Visible = true);
                 lblStatus.InvokeEx(x => x.Text = "Uploading..");
@@ -284,8 +297,9 @@ namespace ManageImages
                 //save to db
                 Data.SaveImageToDb(FileName, Description, Gender, FolderName);
                 // 80% bar
-                pbStatus.InvokeEx(x => x.Value = 80);
+                pbStatus.InvokeEx(x => x.Value = 100);
                 Check(FileName, FolderName);
+                MessageBox.Show("Successfully uploaded.");
             }
         }
 
@@ -293,7 +307,6 @@ namespace ManageImages
         {
             pbStatus.InvokeEx(x => x.Visible = false);
             lblStatus.InvokeEx(x => x.Visible = false);
-            MessageBox.Show("Saved.");
         }
 
 
@@ -333,11 +346,16 @@ namespace ManageImages
 
                     }
                 }
-                // 80% bar
-                pbStatus.InvokeEx(x => x.Value = 80);
+                //// 80% bar
+                //pbStatus.InvokeEx(x => x.Value = 80);
                 LoadImages(FolderName, 80, FileName);
                 Check(FileName, FolderName);
                 pbStatus.InvokeEx(x => x.Value = 100);
+                txtSection.InvokeEx(x => x.Text = "");
+                txtFilename.InvokeEx(x => x.Text = "");
+                txtDescription.InvokeEx(x => x.Text = "");
+                ddlGender.InvokeEx(x => x.SelectedIndex = -1);
+                PreviewPictureBox.InvokeEx(x => x.Image = null);
                 MessageBox.Show("Deleted.");
             }
         }
