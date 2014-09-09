@@ -28,25 +28,40 @@ namespace ManageImages
             }
         }
 
-        public static void SaveImageToDb(string filename, string description, string gender, string folder)
+        public static void SaveImageToDb(string filename, string description, string gender, string folder, int length)
         {
             int id = 0;
+            DataTable dt = new DataTable();
             using (MySqlConnection cnn = new MySqlConnection(ConfigurationManager.ConnectionStrings["MyConnection"].ToString()))
             {
                 cnn.Open();
                 using (var cmd = cnn.CreateCommand())
                 {
-                    cmd.CommandText = "SELECT MAX(id) + 1 FROM mybusiness_images";
-                    id = Convert.ToInt32(cmd.ExecuteScalar());
+                    cmd.CommandText = "SELECT * FROM mybusiness_images";
+                    MySqlDataAdapter da = new MySqlDataAdapter(cmd);
+                    da.Fill(dt);
+                }
+                if (dt.Rows.Count > 0)
+                {
+                    using (var cmd = cnn.CreateCommand())
+                    {
+                        cmd.CommandText = "SELECT MAX(id) + 1 FROM mybusiness_images";
+                        id = Convert.ToInt32(cmd.ExecuteScalar());
+                    }
+                }
+                else
+                {
+                    id = 1;
                 }
                 using (var cmd = cnn.CreateCommand())
                 {
-                    cmd.CommandText = "INSERT INTO mybusiness_images (id, filename, description, gender, folder) VALUES (@id, @filename, @description, @gender, @folder)";
+                    cmd.CommandText = "INSERT INTO mybusiness_images (id, filename, description, gender, folder, length) VALUES (@id, @filename, @description, @gender, @folder, @length)";
                     cmd.Parameters.AddWithValue("id", id);
                     cmd.Parameters.AddWithValue("filename", filename);
                     cmd.Parameters.AddWithValue("description", description);
                     cmd.Parameters.AddWithValue("gender", gender);
                     cmd.Parameters.AddWithValue("folder", folder);
+                    cmd.Parameters.AddWithValue("length", length);
                     cmd.ExecuteNonQuery();
                 }
             }
@@ -69,51 +84,22 @@ namespace ManageImages
         }
 
         // get gender
-        public static string GetGenderInfo(string filename, string folder)
+        public static DataTable GetInfo(string filename, string folder)
         {
-            string gender = "";
+            DataTable dt = new DataTable();
             using (MySqlConnection cnn = new MySqlConnection(ConfigurationManager.ConnectionStrings["MyConnection"].ToString()))
             {
                 cnn.Open();
                 using (var cmd = cnn.CreateCommand())
                 {
-                    cmd.CommandText = "SELECT gender FROM mybusiness_images WHERE filename=@filename AND folder=@folder";
+                    cmd.CommandText = "SELECT gender, description, length FROM mybusiness_images WHERE filename=@filename AND folder=@folder";
                     cmd.Parameters.AddWithValue("filename", filename);
                     cmd.Parameters.AddWithValue("folder", folder);
-                    using (var rdr = cmd.ExecuteReader())
-                    {
-                        while (rdr.Read())
-                        {
-                            gender = rdr["gender"].ToString();
-                        }
-                    }
+                    MySqlDataAdapter da = new MySqlDataAdapter(cmd);
+                    da.Fill(dt);
                 }
             }
-            return gender;
-        }
-
-        // get description
-        public static string GetDescriptionInfo(string filename, string folder)
-        {
-            string Desc = "";
-            using (MySqlConnection cnn = new MySqlConnection(ConfigurationManager.ConnectionStrings["MyConnection"].ToString()))
-            {
-                cnn.Open();
-                using (var cmd = cnn.CreateCommand())
-                {
-                    cmd.CommandText = "SELECT description FROM mybusiness_images WHERE filename=@filename AND folder=@folder";
-                    cmd.Parameters.AddWithValue("filename", filename);
-                    cmd.Parameters.AddWithValue("folder", folder);
-                    using (var rdr = cmd.ExecuteReader())
-                    {
-                        while (rdr.Read())
-                        {
-                            Desc = rdr["description"].ToString();
-                        }
-                    }
-                }
-            }
-            return Desc;
+            return dt;
         }
 
         // check if already exists
