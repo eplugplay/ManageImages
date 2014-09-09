@@ -12,7 +12,7 @@ using System.Threading;
 using System.Collections;
 using System.IO;
 using System.Configuration;
-
+using System.Drawing.Drawing2D;
 
 namespace ManageImages
 {
@@ -46,15 +46,22 @@ namespace ManageImages
 
             PictureBox ctrl = new PictureBox();
             ctrl.Image = FromFile(ImageFullName);
-            ctrl.BorderStyle = BorderStyle.FixedSingle;
-            
+            ctrl.BorderStyle = BorderStyle.None;
+
             if (live == true)
             {
-                ctrl.BackColor = Color.Green;
+                Graphics g = Graphics.FromImage(ctrl.Image);
+                Pen pen1 = new Pen(Color.Blue, 20);
+                g.DrawRectangle(pen1, 0, 0, ctrl.Image.Width, ctrl.Image.Height);
+                g.Save();
+
             }
             else
             {
-                ctrl.BackColor = Color.Red;
+                Graphics g = Graphics.FromImage(ctrl.Image);
+                Pen pen1 = new Pen(Color.Red, 4);
+                g.DrawRectangle(pen1, 0, 0, ctrl.Image.Width, ctrl.Image.Height);
+                g.Save();
             }
             ctrl.Location = new Point(newLocX, newLocY);
             ctrl.Size = new System.Drawing.Size(sizeWidth, sizeHeight);
@@ -683,7 +690,7 @@ namespace ManageImages
                     {
                         locnewY = locY;
                     }
-                    if (Data.CheckImgExist(filename, folder) == true)
+                    if (Data.CheckImgExist(img.Name, folder) == true)
                     {
                         loadImagestoPanel(img.Name, img.FullName, locnewX, locnewY, true);
                     }
