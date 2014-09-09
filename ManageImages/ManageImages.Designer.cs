@@ -103,7 +103,6 @@
             this.pnControls.Name = "pnControls";
             this.pnControls.Size = new System.Drawing.Size(522, 453);
             this.pnControls.TabIndex = 19;
-            this.pnControls.Click += new System.EventHandler(this.pnControls_Click);
             // 
             // pbStatus
             // 

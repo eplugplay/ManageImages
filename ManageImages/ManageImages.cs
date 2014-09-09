@@ -338,6 +338,7 @@ namespace ManageImages
                 LoadImages(FolderName, 80, FileName);
                 Check(FileName, FolderName);
                 pbStatus.InvokeEx(x => x.Value = 100);
+                MessageBox.Show("Deleted.");
             }
         }
 
@@ -346,7 +347,6 @@ namespace ManageImages
         {
             pbStatus.InvokeEx(x => x.Visible = false);
             lblStatus.InvokeEx(x => x.Visible = false);
-            MessageBox.Show("Deleted.");
         }
 
         private void backgroundWorker3_DoWork(object sender, DoWorkEventArgs e)
@@ -384,7 +384,7 @@ namespace ManageImages
             {
                 if (LoadImages(FolderName, 40, FileName) == true)
                 {
-                    LoadImages(FolderName, 100, FileName);
+                    LoadImages(FolderName, 90, FileName);
                 }
             }
             if (SelectedIndex == 5)
@@ -527,11 +527,6 @@ namespace ManageImages
             backgroundWorker2.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedIndex));
         }
 
-        private void pnControls_Click(object sender, EventArgs e)
-        {
-            string s = PreviewPictureBox.Name;
-        }
-
         private void btnSaveEdit_Click(object sender, EventArgs e)
         {
             if (backgroundWorker1.IsBusy || backgroundWorker2.IsBusy || backgroundWorker3.IsBusy)
@@ -636,15 +631,13 @@ namespace ManageImages
                         Download(folder, file);
                         lblStatus.InvokeEx(x => x.Text = "Copying images..");
                         cntBar += cntBar / files.Length;
-                        if (cntBar > 100)
+                        if (cntBar < 100)
                         {
-                            cntBar = 80;
+                            pbStatus.InvokeEx(x => x.Value = cntBar);
                         }
-                        pbStatus.InvokeEx(x => x.Value = cntBar);
                     }
                 }
             }
-            lblStatus.InvokeEx(x => x.Text = "Finished copying images..");
             // load images from folder
             pnControls.InvokeEx(x => x.Controls.Clear());
             switch (imgSize)
@@ -684,13 +677,13 @@ namespace ManageImages
                     locnewX = locnewX + sizeWidth + 10;
 
                     cntBar += (int)(cntBar / Images.Length) + 3;
-                    if (cntBar > 100)
+                    if (cntBar < 100)
                     {
-                        cntBar = 90;
+                        pbStatus.InvokeEx(x => x.Value = cntBar);
                     }
-                    pbStatus.InvokeEx(x => x.Value = cntBar);
                 }
             }
+            //pbStatus.InvokeEx(x => x.Value = 100);
             return AddedNew;
         }
 
