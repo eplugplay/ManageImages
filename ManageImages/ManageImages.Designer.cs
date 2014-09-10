@@ -340,7 +340,6 @@
             // btnDeleteImg
             // 
             this.btnDeleteImg.BackColor = System.Drawing.Color.SlateGray;
-            this.btnDeleteImg.Enabled = false;
             this.btnDeleteImg.Font = new System.Drawing.Font("Gulim", 8.5F, System.Drawing.FontStyle.Bold);
             this.btnDeleteImg.ForeColor = System.Drawing.Color.White;
             this.btnDeleteImg.Location = new System.Drawing.Point(31, 284);

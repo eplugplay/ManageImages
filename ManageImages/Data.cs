@@ -92,7 +92,7 @@ namespace ManageImages
                 cnn.Open();
                 using (var cmd = cnn.CreateCommand())
                 {
-                    cmd.CommandText = "SELECT gender, description, length FROM mybusiness_images WHERE filename=@filename AND folder=@folder";
+                    cmd.CommandText = "SELECT filename, gender, description, length FROM mybusiness_images WHERE filename=@filename AND folder=@folder";
                     cmd.Parameters.AddWithValue("filename", filename);
                     cmd.Parameters.AddWithValue("folder", folder);
                     MySqlDataAdapter da = new MySqlDataAdapter(cmd);

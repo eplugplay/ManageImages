@@ -119,11 +119,8 @@ namespace ManageImages
                     }
                     // add pic name 
                     PicArr.Add(split[split.Length - 1]);
-                    // get length of image
-                    DataTable dt = Data.GetInfo(txtFilename.Text, ddlSections.SelectedValue.ToString());
-                    int length = Convert.ToInt32(dt.Rows[0]["length"]);
                     // add new image
-                    exists = loadImagestoPanel(split[split.Length - 1], f, lastImgX, lastImgY, false, false, "", length);
+                    exists = loadImagestoPanel(split[split.Length - 1], f, lastImgX, lastImgY, false, false, "");
                     // save locally if it doesnt exist
                     if (exists == false)
                     {
@@ -136,10 +133,10 @@ namespace ManageImages
                 }
 
                 //LoadImages(ddlSections.SelectedValue.ToString(), 100, txtFilename.Text, false);
-                if (exists == false)
-                {
-                    MessageBox.Show("Imported.");
-                }
+                //if (exists == false)
+                //{
+                //    MessageBox.Show("Imported.");
+                //}
             }
         }
 
@@ -274,6 +271,7 @@ namespace ManageImages
         {
             pbStatus.InvokeEx(x => x.Visible = false);
             lblStatus.InvokeEx(x => x.Visible = false);
+            lblStatus.InvokeEx(x => x.Text = "Please wait..");
         }
 
         private void btnDeleteImg_Click(object sender, EventArgs e)
@@ -303,16 +301,14 @@ namespace ManageImages
                 pbStatus.InvokeEx(x => x.Visible = true);
                 lblStatus.InvokeEx(x => x.Visible = true);
                 lblStatus.InvokeEx(x => x.Text = "Deleting..");
-                // 20% bar
-                pbStatus.InvokeEx(x => x.Value = 20);
-                // delete from server
-                DeleteServerImg(FolderName, FileName);
-                // 40% bar
                 pbStatus.InvokeEx(x => x.Value = 40);
+                if (btnUploadImage.Enabled == false)
+                {
+                    // delete from server
+                    DeleteServerImg(FolderName, FileName);
+                }
                 // delete from db
                 Data.DeleteImageDb(FileName, Gender, FolderName);
-                // 60% bar
-                pbStatus.InvokeEx(x => x.Value = 60);
                 // delete from local
                 if (File.Exists(GetLocalImgPath(FolderName) + "\\" + FileName))
                 {
@@ -325,11 +321,10 @@ namespace ManageImages
 
                     }
                 }
-                // 80% bar
-                //pbStatus.InvokeEx(x => x.Value = 80);
+                Thread.Sleep(1000);
+                pbStatus.InvokeEx(x => x.Value = 100);
                 //LoadImages(FolderName, 80, FileName, false);
                 //int index = PicArr.IndexOf(currentImg);
-                
                 foreach (PictureBox p in pnControls.Controls)
                 {
                     if (p.Name == currentImg)
@@ -339,9 +334,7 @@ namespace ManageImages
                 }
                 //// reorder index
                 //ReOrderArr(FolderName);
-                //pnControls.InvokeEx(x => x.Controls.RemoveAt(index));
                 Check(FileName, FolderName);
-                pbStatus.InvokeEx(x => x.Value = 100);
                 //switch (imgSize)
                 //{
                 //    case "x-small": LoadToolStrip(20, 10, 30, 30); break;
@@ -350,8 +343,10 @@ namespace ManageImages
                 //    case "large": LoadToolStrip(20, 10, 160, 160); break;
                 //    default: LoadToolStrip(20, 10, 30, 30); break;
                 //}
+                Thread.Sleep(1000);
+                pbStatus.InvokeEx(x => x.Value = 100);
                 ResetInfo();
-                MessageBox.Show("Deleted.");
+                //MessageBox.Show("Deleted.");
             }
         }
 
@@ -373,6 +368,7 @@ namespace ManageImages
         {
             pbStatus.InvokeEx(x => x.Visible = false);
             lblStatus.InvokeEx(x => x.Visible = false);
+            lblStatus.InvokeEx(x => x.Text = "Please wait..");
         }
 
         private void ddlSections_SelectedIndexChanged(object sender, EventArgs e)
@@ -416,7 +412,7 @@ namespace ManageImages
             txtDescription.InvokeEx(x => x.Text = "");
             ddlGender.InvokeEx(x => x.SelectedIndex = -1);
             txtFilename.InvokeEx(x => x.Text = "");
-            btnDeleteImg.InvokeEx(x => x.Enabled = false);
+            //btnDeleteImg.InvokeEx(x => x.Enabled = false);
             btnUploadImage.InvokeEx(x => x.Enabled = false);
             // 40% bar
             pbStatus.InvokeEx(x => x.Value = 40);
@@ -558,6 +554,8 @@ namespace ManageImages
                     locnewY = locY + sizeHeight + 10;
                     locnewX = locnewX + sizeWidth + 10;
                 }
+                lastImgX = locnewX;
+                lastImgY = locnewY;
             }
         }
 
@@ -574,17 +572,13 @@ namespace ManageImages
             if (Data.CheckImgExist(filename, folder) == true)
             {
                 btnSaveEdit.InvokeEx(x => x.Enabled = true);
-                btnDeleteImg.InvokeEx(x => x.Enabled = true);
-                btnUploadImage.InvokeEx(x => x.Enabled = false);
-                btnDeleteImg.InvokeEx(x => x.Enabled = true);
+                //btnDeleteImg.InvokeEx(x => x.Enabled = true);
                 btnUploadImage.InvokeEx(x => x.Enabled = false);
             }
             else
             {
                 btnSaveEdit.InvokeEx(x => x.Enabled = false);
-                btnDeleteImg.InvokeEx(x => x.Enabled = false);
-                btnUploadImage.InvokeEx(x => x.Enabled = true);
-                btnDeleteImg.InvokeEx(x => x.Enabled = false);
+                //btnDeleteImg.InvokeEx(x => x.Enabled = false);
                 btnUploadImage.InvokeEx(x => x.Enabled = true);
             }
         }
@@ -644,90 +638,120 @@ namespace ManageImages
         public bool LoadImages(string folder, int cntBar, string filename, bool uploaded)
         {
             bool AddedNew = false;
-            DirectoryInfo Folder;
-            FileInfo[] Images;
-            Folder = new DirectoryInfo(GetLocalImgPath(folder));
-            Images = Folder.GetFiles();
+            DirectoryInfo Folder = new DirectoryInfo(GetLocalImgPath(folder));
+            FileInfo[] Images = Folder.GetFiles();
             // download images from folder
             string[] files = GetFileList(folder);
             PicArr.Clear();
+            int fileLengthdb = 0;
+            string filenamedb = "";
             foreach (FileInfo file in Images)
             {
                 PicArr.Add(file.Name);
             }
-            foreach (string file in files)
+            try
             {
-                if (!PicArr.Contains(file))
+                foreach (string file in files)
                 {
-                    if (!file.Contains(".xml"))
+                    // get length of image
+                    DataTable dt = Data.GetInfo(file, folder);
+                    if (dt.Rows.Count != 0)
                     {
-                        AddedNew = true;
-                        Download(folder, file);
-                        cntBar += cntBar / files.Length;
-                        if (cntBar < 100)
+                        fileLengthdb = Convert.ToInt32(dt.Rows[0]["length"]);
+                        filenamedb = dt.Rows[0]["filename"].ToString();
+                    }
+                    if (!PicArr.Contains(file))
+                    {
+                        if (!file.Contains(".xml"))
                         {
-                            pbStatus.InvokeEx(x => x.Value = cntBar);
+                            AddedNew = true;
+                            Download(folder, file);
                         }
                     }
-                }
-            }
-            // load images from folder
-            pnControls.InvokeEx(x => x.Controls.Clear());
-            switch (imgSize)
-            {
-                case "x-small": locX = 20; locY = 10; sizeWidth = 30; sizeHeight = 30; break;
-                case "small": locX = 20; locY = 10; sizeWidth = 50; sizeHeight = 50; break;
-                case "medium": locX = 20; locY = 0; sizeWidth = 80; sizeHeight = 80; break;
-                case "large": locX = 20; locY = 10; sizeWidth = 160; sizeHeight = 160; break;
-                default: locX = 20; locY = 10; sizeWidth = 30; sizeHeight = 30; break;
-            }
-            int locnewX = locX;
-            int locnewY = locY;
-            lblStatus.InvokeEx(x => x.Text = "Loading images..");
-            foreach (FileInfo img in Images)
-            {
-                if (img.Extension.ToLower() == ".png" || img.Extension.ToLower() == ".jpg" || img.Extension.ToLower() == ".gif" || img.Extension.ToLower() == ".jpeg" || img.Extension.ToLower() == ".bmp" || img.Extension.ToLower() == ".tif")
-                {
-                    if (locnewX >= pnControls.Width - sizeWidth - 10)
-                    {
-                        locnewX = locX;
-                        locY = locY + sizeHeight + 30;
-                        locnewY = locY;
-                    }
                     else
                     {
-                        locnewY = locY;
+                        int FtpFileLength = Convert.ToInt32(GetFtpFileLength(folder, file));
+                        if (fileLengthdb.Equals(0) && filenamedb == "")
+                        {
+                            Download(folder, file);
+                        }
+                        else if (fileLengthdb != (FtpFileLength) && filenamedb.Equals(file, StringComparison.OrdinalIgnoreCase))
+                        {
+                            Download(folder, file);
+                        }
                     }
-                    if (Data.CheckImgExist(img.Name, folder) == true)
-                    {
-                        loadImagestoPanel(img.Name, img.FullName, locnewX, locnewY, true, uploaded, filename, 0);
-                    }
-                    else
-                    {
-                        loadImagestoPanel(img.Name, img.FullName, locnewX, locnewY, false, uploaded, filename, 0);
-                    }
-                    locnewY = locY + sizeHeight + 10;
-                    locnewX = locnewX + sizeWidth + 10;
-
-                    cntBar += (int)(cntBar / Images.Length) + 3;
-                    if (Images.Length < 6)
-                    {
-                        cntBar += 35;
-                    }
+                    cntBar += cntBar / files.Length;
                     if (cntBar < 100)
                     {
                         pbStatus.InvokeEx(x => x.Value = cntBar);
                     }
                 }
             }
-            lastImgX = locnewX;
-            lastImgY = locnewY;
+            catch
+            {
+
+            }
+            if (AddedNew == false)
+            {
+                // load images from folder
+                pnControls.InvokeEx(x => x.Controls.Clear());
+                switch (imgSize)
+                {
+                    case "x-small": locX = 20; locY = 10; sizeWidth = 30; sizeHeight = 30; break;
+                    case "small": locX = 20; locY = 10; sizeWidth = 50; sizeHeight = 50; break;
+                    case "medium": locX = 20; locY = 0; sizeWidth = 80; sizeHeight = 80; break;
+                    case "large": locX = 20; locY = 10; sizeWidth = 160; sizeHeight = 160; break;
+                    default: locX = 20; locY = 10; sizeWidth = 30; sizeHeight = 30; break;
+                }
+                int locnewX = locX;
+                int locnewY = locY;
+                lblStatus.InvokeEx(x => x.Text = "Loading images..");
+                foreach (FileInfo img in Images)
+                {
+                    if (img.Extension.ToLower() == ".png" || img.Extension.ToLower() == ".jpg" || img.Extension.ToLower() == ".gif" || img.Extension.ToLower() == ".jpeg" || img.Extension.ToLower() == ".bmp" || img.Extension.ToLower() == ".tif")
+                    {
+                        if (locnewX >= pnControls.Width - sizeWidth - 10)
+                        {
+                            locnewX = locX;
+                            locY = locY + sizeHeight + 30;
+                            locnewY = locY;
+                        }
+                        else
+                        {
+                            locnewY = locY;
+                        }
+                        if (Data.CheckImgExist(img.Name, folder) == true)
+                        {
+                            loadImagestoPanel(img.Name, img.FullName, locnewX, locnewY, true, uploaded, filename);
+                        }
+                        else
+                        {
+                            loadImagestoPanel(img.Name, img.FullName, locnewX, locnewY, false, uploaded, filename);
+                        }
+                        locnewY = locY + sizeHeight + 10;
+                        locnewX = locnewX + sizeWidth + 10;
+
+                        cntBar += (int)(cntBar / Images.Length) + 3;
+                        if (Images.Length < 6)
+                        {
+                            cntBar += 35;
+                        }
+                        if (cntBar < 100)
+                        {
+                            pbStatus.InvokeEx(x => x.Value = cntBar);
+                        }
+                    }
+                }
+
+                lastImgX = locnewX;
+                lastImgY = locnewY;
+            }
 
             //pbStatus.InvokeEx(x => x.Value = 100);
             return AddedNew;
         }
 
-        private bool loadImagestoPanel(String imageName, String ImageFullName, int newLocX, int newLocY, bool live, bool uploaded, string uploadedImgName, int imgLength)
+        private bool loadImagestoPanel(String imageName, String ImageFullName, int newLocX, int newLocY, bool live, bool uploaded, string uploadedImgName)
         {
             bool exists = false;
             //PictureBox ctrl = new PictureBox();
@@ -837,6 +861,43 @@ namespace ManageImages
                     response.Close();
                 }
                 downloadFiles = null;
+                return downloadFiles;
+            }
+        }
+
+
+        public long GetFtpFileLength(string folder, string file)
+        {
+            long downloadFiles;
+            StringBuilder result = new StringBuilder();
+            WebResponse response = null;
+            StreamReader reader = null;
+            try
+            {
+                FtpWebRequest reqFTP;
+                reqFTP = (FtpWebRequest)FtpWebRequest.Create(new Uri("ftp://208.118.63.29/site2/" + folder + "//" + file));
+                reqFTP.UseBinary = true;
+                reqFTP.Proxy = null;
+                reqFTP.KeepAlive = false;
+                reqFTP.UsePassive = false;
+                reqFTP.Credentials = new NetworkCredential("eplugplay-001", ConfigurationManager.ConnectionStrings["ftp"].ToString());
+                reqFTP.Method = WebRequestMethods.Ftp.GetFileSize;
+                response = (FtpWebResponse)reqFTP.GetResponse();
+                long size = response.ContentLength;
+                response.Close();
+                return size;
+            }
+            catch (Exception ex)
+            {
+                if (reader != null)
+                {
+                    reader.Close();
+                }
+                if (response != null)
+                {
+                    response.Close();
+                }
+                downloadFiles = 0;
                 return downloadFiles;
             }
         }
