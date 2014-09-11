@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ManageImages));
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -61,6 +62,8 @@
             this.backgroundWorker3 = new System.ComponentModel.BackgroundWorker();
             this.lblStatus = new System.Windows.Forms.Label();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.chkHideImage = new System.Windows.Forms.CheckBox();
+            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.menuStrip.SuspendLayout();
             this.toolStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.PreviewPictureBox)).BeginInit();
@@ -99,6 +102,7 @@
             this.pnControls.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.pnControls.AutoScroll = true;
             this.pnControls.BackColor = System.Drawing.Color.White;
+            this.pnControls.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.pnControls.Location = new System.Drawing.Point(6, 64);
             this.pnControls.Name = "pnControls";
             this.pnControls.Size = new System.Drawing.Size(522, 453);
@@ -189,12 +193,12 @@
             // 
             this.btnUploadImage.BackColor = System.Drawing.Color.SlateGray;
             this.btnUploadImage.Enabled = false;
-            this.btnUploadImage.Font = new System.Drawing.Font("Gulim", 8.5F, System.Drawing.FontStyle.Bold);
+            this.btnUploadImage.Font = new System.Drawing.Font("Gulim", 8.5F);
             this.btnUploadImage.ForeColor = System.Drawing.Color.White;
             this.btnUploadImage.Location = new System.Drawing.Point(252, 284);
             this.btnUploadImage.Name = "btnUploadImage";
             this.btnUploadImage.Size = new System.Drawing.Size(81, 29);
-            this.btnUploadImage.TabIndex = 28;
+            this.btnUploadImage.TabIndex = 5;
             this.btnUploadImage.Text = "Upload";
             this.btnUploadImage.UseVisualStyleBackColor = false;
             this.btnUploadImage.Click += new System.EventHandler(this.btnUploadImage_Click);
@@ -202,7 +206,7 @@
             // lblFileName
             // 
             this.lblFileName.Font = new System.Drawing.Font("Verdana", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblFileName.Location = new System.Drawing.Point(36, 64);
+            this.lblFileName.Location = new System.Drawing.Point(37, 67);
             this.lblFileName.Name = "lblFileName";
             this.lblFileName.Size = new System.Drawing.Size(79, 20);
             this.lblFileName.TabIndex = 30;
@@ -210,28 +214,32 @@
             // 
             // txtFilename
             // 
-            this.txtFilename.Location = new System.Drawing.Point(121, 62);
+            this.txtFilename.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtFilename.Location = new System.Drawing.Point(122, 65);
             this.txtFilename.Name = "txtFilename";
             this.txtFilename.ReadOnly = true;
             this.txtFilename.Size = new System.Drawing.Size(185, 20);
-            this.txtFilename.TabIndex = 0;
+            this.txtFilename.TabIndex = 55;
+            this.txtFilename.TabStop = false;
             // 
             // ddlGender
             // 
             this.ddlGender.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.ddlGender.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ddlGender.FormattingEnabled = true;
+            this.ddlGender.ItemHeight = 13;
             this.ddlGender.Items.AddRange(new object[] {
             "Women",
             "Men"});
-            this.ddlGender.Location = new System.Drawing.Point(121, 131);
+            this.ddlGender.Location = new System.Drawing.Point(122, 133);
             this.ddlGender.Name = "ddlGender";
             this.ddlGender.Size = new System.Drawing.Size(185, 21);
-            this.ddlGender.TabIndex = 34;
+            this.ddlGender.TabIndex = 2;
             // 
             // label2
             // 
             this.label2.Font = new System.Drawing.Font("Verdana", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label2.Location = new System.Drawing.Point(49, 133);
+            this.label2.Location = new System.Drawing.Point(50, 135);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(66, 18);
             this.label2.TabIndex = 33;
@@ -240,7 +248,7 @@
             // lblDescription
             // 
             this.lblDescription.Font = new System.Drawing.Font("Verdana", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblDescription.Location = new System.Drawing.Point(25, 99);
+            this.lblDescription.Location = new System.Drawing.Point(26, 102);
             this.lblDescription.Name = "lblDescription";
             this.lblDescription.Size = new System.Drawing.Size(90, 16);
             this.lblDescription.TabIndex = 35;
@@ -248,10 +256,11 @@
             // 
             // txtDescription
             // 
-            this.txtDescription.Location = new System.Drawing.Point(121, 97);
+            this.txtDescription.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtDescription.Location = new System.Drawing.Point(122, 100);
             this.txtDescription.Name = "txtDescription";
             this.txtDescription.Size = new System.Drawing.Size(185, 20);
-            this.txtDescription.TabIndex = 36;
+            this.txtDescription.TabIndex = 1;
             // 
             // label4
             // 
@@ -265,6 +274,7 @@
             // groupBox2
             // 
             this.groupBox2.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.groupBox2.Controls.Add(this.chkHideImage);
             this.groupBox2.Controls.Add(this.txtSection);
             this.groupBox2.Controls.Add(this.btnSaveEdit);
             this.groupBox2.Controls.Add(this.lblSection);
@@ -274,39 +284,42 @@
             this.groupBox2.Controls.Add(this.lblDescription);
             this.groupBox2.Controls.Add(this.lblFileName);
             this.groupBox2.Controls.Add(this.txtDescription);
+            this.groupBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox2.Location = new System.Drawing.Point(577, 98);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(364, 198);
             this.groupBox2.TabIndex = 39;
             this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Info:";
+            this.groupBox2.Text = "Image Info:";
             // 
             // txtSection
             // 
-            this.txtSection.Location = new System.Drawing.Point(121, 32);
+            this.txtSection.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtSection.Location = new System.Drawing.Point(122, 35);
             this.txtSection.Name = "txtSection";
             this.txtSection.ReadOnly = true;
             this.txtSection.Size = new System.Drawing.Size(185, 20);
             this.txtSection.TabIndex = 39;
+            this.txtSection.TabStop = false;
             // 
             // btnSaveEdit
             // 
             this.btnSaveEdit.BackColor = System.Drawing.Color.SlateGray;
             this.btnSaveEdit.Enabled = false;
-            this.btnSaveEdit.Font = new System.Drawing.Font("Gulim", 8.5F, System.Drawing.FontStyle.Bold);
+            this.btnSaveEdit.Font = new System.Drawing.Font("Gulim", 8.5F);
             this.btnSaveEdit.ForeColor = System.Drawing.Color.White;
             this.btnSaveEdit.Location = new System.Drawing.Point(225, 158);
             this.btnSaveEdit.Name = "btnSaveEdit";
             this.btnSaveEdit.Size = new System.Drawing.Size(81, 30);
-            this.btnSaveEdit.TabIndex = 38;
-            this.btnSaveEdit.Text = "Save Edit";
+            this.btnSaveEdit.TabIndex = 3;
+            this.btnSaveEdit.Text = "Save";
             this.btnSaveEdit.UseVisualStyleBackColor = false;
             this.btnSaveEdit.Click += new System.EventHandler(this.btnSaveEdit_Click);
             // 
             // lblSection
             // 
             this.lblSection.Font = new System.Drawing.Font("Verdana", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblSection.Location = new System.Drawing.Point(51, 34);
+            this.lblSection.Location = new System.Drawing.Point(52, 37);
             this.lblSection.Name = "lblSection";
             this.lblSection.Size = new System.Drawing.Size(64, 18);
             this.lblSection.TabIndex = 40;
@@ -315,13 +328,14 @@
             // ddlSections
             // 
             this.ddlSections.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.ddlSections.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ddlSections.FormattingEnabled = true;
             this.ddlSections.Items.AddRange(new object[] {
             "-- Select"});
             this.ddlSections.Location = new System.Drawing.Point(414, 37);
             this.ddlSections.Name = "ddlSections";
             this.ddlSections.Size = new System.Drawing.Size(117, 21);
-            this.ddlSections.TabIndex = 40;
+            this.ddlSections.TabIndex = 6;
             this.ddlSections.SelectedIndexChanged += new System.EventHandler(this.ddlSections_SelectedIndexChanged);
             // 
             // groupBox3
@@ -330,22 +344,23 @@
             this.groupBox3.Controls.Add(this.btnDeleteImg);
             this.groupBox3.Controls.Add(this.btnUploadImage);
             this.groupBox3.Controls.Add(this.PreviewPictureBox);
+            this.groupBox3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox3.Location = new System.Drawing.Point(577, 302);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(364, 320);
             this.groupBox3.TabIndex = 38;
             this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Selected Image Preview";
+            this.groupBox3.Text = "Image Preview";
             // 
             // btnDeleteImg
             // 
             this.btnDeleteImg.BackColor = System.Drawing.Color.SlateGray;
-            this.btnDeleteImg.Font = new System.Drawing.Font("Gulim", 8.5F, System.Drawing.FontStyle.Bold);
+            this.btnDeleteImg.Font = new System.Drawing.Font("Gulim", 8.5F);
             this.btnDeleteImg.ForeColor = System.Drawing.Color.White;
             this.btnDeleteImg.Location = new System.Drawing.Point(31, 284);
             this.btnDeleteImg.Name = "btnDeleteImg";
             this.btnDeleteImg.Size = new System.Drawing.Size(81, 29);
-            this.btnDeleteImg.TabIndex = 37;
+            this.btnDeleteImg.TabIndex = 4;
             this.btnDeleteImg.Text = "Delete";
             this.btnDeleteImg.UseVisualStyleBackColor = false;
             this.btnDeleteImg.Click += new System.EventHandler(this.btnDeleteImg_Click);
@@ -379,7 +394,7 @@
             this.lblStatus.AutoSize = true;
             this.lblStatus.Location = new System.Drawing.Point(180, 14);
             this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(73, 13);
+            this.lblStatus.Size = new System.Drawing.Size(87, 13);
             this.lblStatus.TabIndex = 41;
             this.lblStatus.Text = "Please Wait...";
             this.lblStatus.Visible = false;
@@ -393,12 +408,22 @@
             this.groupBox4.Controls.Add(this.label4);
             this.groupBox4.Controls.Add(this.label3);
             this.groupBox4.Controls.Add(this.ddlSections);
+            this.groupBox4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.groupBox4.Location = new System.Drawing.Point(29, 98);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(542, 524);
             this.groupBox4.TabIndex = 41;
             this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "All Images";
+            // 
+            // chkHideImage
+            // 
+            this.chkHideImage.AutoSize = true;
+            this.chkHideImage.Location = new System.Drawing.Point(291, 17);
+            this.chkHideImage.Name = "chkHideImage";
+            this.chkHideImage.Size = new System.Drawing.Size(15, 14);
+            this.chkHideImage.TabIndex = 0;
+            this.toolTip.SetToolTip(this.chkHideImage, "Hide Image");
+            this.chkHideImage.UseVisualStyleBackColor = true;
             // 
             // ManageImages
             // 
@@ -465,6 +490,8 @@
         private System.ComponentModel.BackgroundWorker backgroundWorker3;
         private System.Windows.Forms.Label lblStatus;
         private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.CheckBox chkHideImage;
+        private System.Windows.Forms.ToolTip toolTip;
     }
 }
 

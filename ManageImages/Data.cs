@@ -28,8 +28,13 @@ namespace ManageImages
             }
         }
 
-        public static void SaveImageToDb(string filename, string description, string gender, string folder, int length)
+        public static void SaveImageToDb(string filename, string description, string gender, string folder, int length, bool hidden)
         {
+            int hiddenValue = 0;
+            switch (hidden)
+            {
+                case true: hiddenValue = 1; break;
+            }
             int id = 0;
             DataTable dt = new DataTable();
             using (MySqlConnection cnn = new MySqlConnection(ConfigurationManager.ConnectionStrings["MyConnection"].ToString()))
@@ -55,13 +60,14 @@ namespace ManageImages
                 }
                 using (var cmd = cnn.CreateCommand())
                 {
-                    cmd.CommandText = "INSERT INTO mybusiness_images (id, filename, description, gender, folder, length) VALUES (@id, @filename, @description, @gender, @folder, @length)";
+                    cmd.CommandText = "INSERT INTO mybusiness_images (id, filename, description, gender, folder, length, hidden) VALUES (@id, @filename, @description, @gender, @folder, @length, @hidden)";
                     cmd.Parameters.AddWithValue("id", id);
                     cmd.Parameters.AddWithValue("filename", filename);
                     cmd.Parameters.AddWithValue("description", description);
                     cmd.Parameters.AddWithValue("gender", gender);
                     cmd.Parameters.AddWithValue("folder", folder);
                     cmd.Parameters.AddWithValue("length", length);
+                    cmd.Parameters.AddWithValue("hidden", hiddenValue);
                     cmd.ExecuteNonQuery();
                 }
             }
@@ -92,7 +98,7 @@ namespace ManageImages
                 cnn.Open();
                 using (var cmd = cnn.CreateCommand())
                 {
-                    cmd.CommandText = "SELECT filename, gender, description, length FROM mybusiness_images WHERE filename=@filename AND folder=@folder";
+                    cmd.CommandText = "SELECT filename, gender, description, length, hidden FROM mybusiness_images WHERE filename=@filename AND folder=@folder";
                     cmd.Parameters.AddWithValue("filename", filename);
                     cmd.Parameters.AddWithValue("folder", folder);
                     MySqlDataAdapter da = new MySqlDataAdapter(cmd);
@@ -129,17 +135,23 @@ namespace ManageImages
             return false;
         }
 
-        public static void UpdateImageDb(string filename, string gender, string description)
+        public static void UpdateImageDb(string filename, string gender, string description, bool hidden)
         {
+            int hiddenValue = 0;
+            switch (hidden)
+            {
+                case true: hiddenValue = 1; break;
+            }
             using (MySqlConnection cnn = new MySqlConnection(ConfigurationManager.ConnectionStrings["MyConnection"].ToString()))
             {
                 cnn.Open();
                 using (var cmd = cnn.CreateCommand())
                 {
-                    cmd.CommandText = "UPDATE mybusiness_images SET gender=@gender, description=@description WHERE filename=@filename";
+                    cmd.CommandText = "UPDATE mybusiness_images SET gender=@gender, description=@description, hidden=@hidden WHERE filename=@filename";
                     cmd.Parameters.AddWithValue("description", description);
                     cmd.Parameters.AddWithValue("filename", filename);
                     cmd.Parameters.AddWithValue("gender", gender);
+                    cmd.Parameters.AddWithValue("hidden", hiddenValue);
                     cmd.ExecuteNonQuery();
                 }
             }

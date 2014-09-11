@@ -32,26 +32,28 @@ namespace ManageImages
         public ManageImages()
         {
             InitializeComponent();
-
+            this.FormClosing += DeleteLocalOnClose;
         }
 
         #region private class
 
         private class data
         {
-            public data(string _folder, string _description, string _gender, string _filename, int _sectionIndex)
+            public data(string _folder, string _description, string _gender, string _filename, int _sectionIndex, bool _hidden)
             {
                 folder = _folder;
                 description = _description;
                 gender = _gender;
                 filename = _filename;
                 sectionIndex = _sectionIndex;
+                hidden = _hidden;
             }
             public string folder { get; set; }
             public string description { get; set; }
             public string gender { get; set; }
             public string filename { get; set; }
             public int sectionIndex { get; set; }
+            public bool hidden { get; set; }
         }
 
         #endregion
@@ -68,6 +70,56 @@ namespace ManageImages
 
             // load sections
             LoadSections();
+        }
+
+        // delete images that are local but not on web server on exit
+        private void DeleteLocalOnClose(object sender, FormClosingEventArgs e)
+        {
+            string[] Directories = new string[] { "C:\\ManageImages\\", "C:\\ManageImages\\ApparelsImages", "C:\\ManageImages\\NewArrivalsImages", "C:\\ManageImages\\PantsImages", "C:\\ManageImages\\RhinestoneImages", "C:\\ManageImages\\ShirtsImages", "C:\\ManageImages\\ShoesImages" };
+            string folder = "";
+            for (int i = 0; i < Directories.Length; i++)
+            {
+                if (i != 0)
+                {
+                    string[] Tempfolder = Directories[i].ToString().Split('\\');
+                    folder = Tempfolder[2].ToString();
+                    DirectoryInfo Folder = new DirectoryInfo(GetLocalImgPath(folder));
+                    FileInfo[] Images = Folder.GetFiles();
+                    try
+                    {
+                        foreach (FileInfo file in Images)
+                        {
+                            int fileLengthdb = 0;
+                            string filenamedb = "";
+                            // get length of image
+                            DataTable dt = Data.GetInfo(file.Name, folder);
+                            if (dt.Rows.Count != 0)
+                            {
+                                fileLengthdb = Convert.ToInt32(dt.Rows[0]["length"]);
+                                filenamedb = dt.Rows[0]["filename"].ToString();
+                            }
+                            //int FtpFileLength = Convert.ToInt32(GetFtpFileLength(folder, file));
+                            int LocalFileLength = GetLocalFileLength(folder, file.Name);
+                            if (fileLengthdb.Equals(0) && filenamedb == "")
+                            {
+                                File.Delete(GetLocalImgPath(folder) + "\\" + file.Name);
+                                //Download(folder, file);
+                            }
+                            else if (fileLengthdb != (LocalFileLength) && filenamedb.Equals(file.Name, StringComparison.OrdinalIgnoreCase))
+                            {
+                                File.Delete(GetLocalImgPath(folder) + "\\" + file.Name);
+                                //Download(folder, file);
+                            }
+                        }
+
+                    }
+                    catch
+                    {
+
+                    }
+                }
+            }
+            this.FormClosing -= DeleteLocalOnClose;
         }
 
         private void loadImageToolStripMenuItem_Click(object sender, EventArgs e)
@@ -167,6 +219,7 @@ namespace ManageImages
             if (dt.Rows.Count != 0)
             {
                 txtDescription.Text = dt.Rows[0]["description"].ToString();
+                // always selects women if shoe images category selected
                 if (ddlSections.SelectedIndex == 5)
                 {
                     ddlGender.SelectedIndex = 0;
@@ -174,6 +227,12 @@ namespace ManageImages
                 else
                 {
                     ddlGender.SelectedIndex = ddlGender.FindStringExact(dt.Rows[0]["gender"].ToString());
+                }
+
+                switch (Convert.ToInt32(dt.Rows[0]["hidden"]))
+                {
+                    case 0: chkHideImage.Checked = false; break;
+                    case 1: chkHideImage.Checked = true; break;
                 }
             }
             Check(txtFilename.Text, ddlSections.SelectedValue.ToString());
@@ -207,7 +266,7 @@ namespace ManageImages
                 return;
             }
 
-            backgroundWorker1.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedIndex));
+            backgroundWorker1.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedIndex, chkHideImage.Checked));
         }
 
 
@@ -223,6 +282,7 @@ namespace ManageImages
                 string FileName = _data.filename;
                 string Gender = _data.gender;
                 string Description = _data.description;
+                bool Hidden = _data.hidden;
                 // 10% bar
                 pbStatus.InvokeEx(x => x.Value = 10);
                 FileInfo toUpload = new FileInfo(GetLocalImgPath(FolderName) + "\\" + FileName);
@@ -256,7 +316,7 @@ namespace ManageImages
                 // 70% bar
                 pbStatus.InvokeEx(x => x.Value = 70);
                 //save to db
-                Data.SaveImageToDb(FileName, Description, Gender, FolderName, Convert.ToInt32(toUpload.Length));
+                Data.SaveImageToDb(FileName, Description, Gender, FolderName, Convert.ToInt32(toUpload.Length), Hidden);
                 //// reorder index
                 //ReOrderArr(FolderName);
                 // 80% bar
@@ -285,7 +345,7 @@ namespace ManageImages
                 MessageBox.Show("Select image first.");
                 return;
             }
-            backgroundWorker2.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedIndex));
+            backgroundWorker2.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedIndex, chkHideImage.Checked));
         }
 
         private void backgroundWorker2_DoWork(object sender, DoWorkEventArgs e)
@@ -375,7 +435,7 @@ namespace ManageImages
         {
             if (ddlSections.DataSource != null)
             {
-                backgroundWorker3.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedIndex));
+                backgroundWorker3.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedIndex, chkHideImage.Checked));
             }
         }
 
@@ -414,6 +474,7 @@ namespace ManageImages
             txtFilename.InvokeEx(x => x.Text = "");
             //btnDeleteImg.InvokeEx(x => x.Enabled = false);
             btnUploadImage.InvokeEx(x => x.Enabled = false);
+            chkHideImage.InvokeEx(x => x.Checked = false);
             // 40% bar
             pbStatus.InvokeEx(x => x.Value = 40);
             switch (SelectedIndex)
@@ -478,9 +539,9 @@ namespace ManageImages
                 MessageBox.Show("Select Male or Female.");
                 return;
             }
-            if (MessageBox.Show("Save Edit?", "Save Edit?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (MessageBox.Show("Save?", "Save Edit?", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
-                Data.UpdateImageDb(txtFilename.Text, ddlGender.Text, txtDescription.Text);
+                Data.UpdateImageDb(txtFilename.Text, ddlGender.Text, txtDescription.Text, chkHideImage.Checked);
                 MessageBox.Show("Updated.");
             }
 
@@ -591,6 +652,7 @@ namespace ManageImages
             txtDescription.InvokeEx(x => x.Text = "");
             ddlGender.InvokeEx(x => x.SelectedIndex = -1);
             PreviewPictureBox.InvokeEx(x => x.Image = null);
+            chkHideImage.InvokeEx(x => x.Checked = false);
         }
 
         public void SaveLocal(FileStream file, string _fileName = "")
