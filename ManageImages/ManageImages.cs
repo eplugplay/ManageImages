@@ -670,12 +670,13 @@ namespace ManageImages
                     }
                     else
                     {
-                        int FtpFileLength = Convert.ToInt32(GetFtpFileLength(folder, file));
+                        //int FtpFileLength = Convert.ToInt32(GetFtpFileLength(folder, file));
+                        int LocalFileLength = GetLocalFileLength(folder, file);
                         if (fileLengthdb.Equals(0) && filenamedb == "")
                         {
                             Download(folder, file);
                         }
-                        else if (fileLengthdb != (FtpFileLength) && filenamedb.Equals(file, StringComparison.OrdinalIgnoreCase))
+                        else if (fileLengthdb != (LocalFileLength) && filenamedb.Equals(file, StringComparison.OrdinalIgnoreCase))
                         {
                             Download(folder, file);
                         }
@@ -865,41 +866,47 @@ namespace ManageImages
             }
         }
 
+        //// gets file length from ftp
+        //public long GetFtpFileLength(string folder, string file)
+        //{
+        //    long downloadFiles;
+        //    StringBuilder result = new StringBuilder();
+        //    WebResponse response = null;
+        //    StreamReader reader = null;
+        //    try
+        //    {
+        //        FtpWebRequest reqFTP;
+        //        reqFTP = (FtpWebRequest)FtpWebRequest.Create(new Uri("ftp://208.118.63.29/site2/" + folder + "//" + file));
+        //        reqFTP.UseBinary = true;
+        //        reqFTP.Proxy = null;
+        //        reqFTP.KeepAlive = false;
+        //        reqFTP.UsePassive = false;
+        //        reqFTP.Credentials = new NetworkCredential("eplugplay-001", ConfigurationManager.ConnectionStrings["ftp"].ToString());
+        //        reqFTP.Method = WebRequestMethods.Ftp.GetFileSize;
+        //        response = (FtpWebResponse)reqFTP.GetResponse();
+        //        long size = response.ContentLength;
+        //        response.Close();
+        //        return size;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        if (reader != null)
+        //        {
+        //            reader.Close();
+        //        }
+        //        if (response != null)
+        //        {
+        //            response.Close();
+        //        }
+        //        downloadFiles = 0;
+        //        return downloadFiles;
+        //    }
+        //}
 
-        public long GetFtpFileLength(string folder, string file)
+        public int GetLocalFileLength(string FolderName, string FileName)
         {
-            long downloadFiles;
-            StringBuilder result = new StringBuilder();
-            WebResponse response = null;
-            StreamReader reader = null;
-            try
-            {
-                FtpWebRequest reqFTP;
-                reqFTP = (FtpWebRequest)FtpWebRequest.Create(new Uri("ftp://208.118.63.29/site2/" + folder + "//" + file));
-                reqFTP.UseBinary = true;
-                reqFTP.Proxy = null;
-                reqFTP.KeepAlive = false;
-                reqFTP.UsePassive = false;
-                reqFTP.Credentials = new NetworkCredential("eplugplay-001", ConfigurationManager.ConnectionStrings["ftp"].ToString());
-                reqFTP.Method = WebRequestMethods.Ftp.GetFileSize;
-                response = (FtpWebResponse)reqFTP.GetResponse();
-                long size = response.ContentLength;
-                response.Close();
-                return size;
-            }
-            catch (Exception ex)
-            {
-                if (reader != null)
-                {
-                    reader.Close();
-                }
-                if (response != null)
-                {
-                    response.Close();
-                }
-                downloadFiles = 0;
-                return downloadFiles;
-            }
+            FileInfo toReturn = new FileInfo(GetLocalImgPath(FolderName) + "\\" + FileName);
+            return Convert.ToInt32(toReturn.Length);
         }
 
         private void Download(string folder, string file)
