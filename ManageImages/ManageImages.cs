@@ -77,11 +77,11 @@ namespace ManageImages
         {
             string[] Directories = new string[] { "C:\\ManageImages\\", "C:\\ManageImages\\ApparelsImages", "C:\\ManageImages\\NewArrivalsImages", "C:\\ManageImages\\PantsImages", "C:\\ManageImages\\RhinestoneImages", "C:\\ManageImages\\ShirtsImages", "C:\\ManageImages\\ShoesImages" };
             string folder = "";
-            int cntr = 0;
-            lblStatus.Text = "Deleting local files not on web site.";
-            lblStatus.Visible = true;
-            pbStatus.Visible = true;
-            pbStatus.Value = 20;
+            //int cntr = 0;
+            //lblStatus.Text = "Deleting local files not on web site.";
+            //lblStatus.Visible = true;
+            //pbStatus.Visible = true;
+            //pbStatus.Value = 20;
             for (int i = 0; i < Directories.Length; i++)
             {
                 if (i != 0)
@@ -94,7 +94,7 @@ namespace ManageImages
                     {
                         foreach (FileInfo file in Images)
                         {
-                            pbStatus.Value = cntr;
+                            //pbStatus.Value = cntr;
                             int fileLengthdb = 0;
                             string filenamedb = "";
                             // get length of image
@@ -116,10 +116,10 @@ namespace ManageImages
                                 File.Delete(GetLocalImgPath(folder) + "\\" + file.Name);
                                 //Download(folder, file);
                             }
-                            if (cntr < 100)
-                            {
-                                cntr += cntr / Directories.Length;
-                            }
+                            //if (cntr < 100)
+                            //{
+                            //    cntr += cntr / Directories.Length;
+                            //}
                         }
                     }
                     catch
@@ -127,8 +127,8 @@ namespace ManageImages
 
                     }
                 }
-                lblStatus.Text = "Finished.";
-                pbStatus.Value = cntr + Directories.Length;
+                //lblStatus.Text = "Finished.";
+                //pbStatus.Value = cntr + Directories.Length;
             }
             pbStatus.Value = 90;
             this.FormClosing -= DeleteLocalOnClose;
@@ -551,11 +551,11 @@ namespace ManageImages
                 MessageBox.Show("Select Male or Female.");
                 return;
             }
-            if (MessageBox.Show("Save?", "Save Edit?", MessageBoxButtons.YesNo) == DialogResult.Yes)
-            {
+            //if (MessageBox.Show("Save?", "Save Edit?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            //{
                 Data.UpdateImageDb(txtFilename.Text, ddlGender.Text, txtDescription.Text, chkHideImage.Checked);
                 MessageBox.Show("Updated.");
-            }
+            //}
 
         }
 
