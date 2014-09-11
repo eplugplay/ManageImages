@@ -40,28 +40,28 @@ namespace ManageImages
             using (MySqlConnection cnn = new MySqlConnection(ConfigurationManager.ConnectionStrings["MyConnection"].ToString()))
             {
                 cnn.Open();
+                //using (var cmd = cnn.CreateCommand())
+                //{
+                //    cmd.CommandText = "SELECT * FROM mybusiness_images";
+                //    MySqlDataAdapter da = new MySqlDataAdapter(cmd);
+                //    da.Fill(dt);
+                //}
+                //if (dt.Rows.Count > 0)
+                //{
+                //    using (var cmd = cnn.CreateCommand())
+                //    {
+                //        cmd.CommandText = "SELECT MAX(id) + 1 FROM mybusiness_images";
+                //        id = Convert.ToInt32(cmd.ExecuteScalar());
+                //    }
+                //}
+                //else
+                //{
+                //    id = 1;
+                //}
                 using (var cmd = cnn.CreateCommand())
                 {
-                    cmd.CommandText = "SELECT * FROM mybusiness_images";
-                    MySqlDataAdapter da = new MySqlDataAdapter(cmd);
-                    da.Fill(dt);
-                }
-                if (dt.Rows.Count > 0)
-                {
-                    using (var cmd = cnn.CreateCommand())
-                    {
-                        cmd.CommandText = "SELECT MAX(id) + 1 FROM mybusiness_images";
-                        id = Convert.ToInt32(cmd.ExecuteScalar());
-                    }
-                }
-                else
-                {
-                    id = 1;
-                }
-                using (var cmd = cnn.CreateCommand())
-                {
-                    cmd.CommandText = "INSERT INTO mybusiness_images (id, filename, description, gender, folder, length, hidden) VALUES (@id, @filename, @description, @gender, @folder, @length, @hidden)";
-                    cmd.Parameters.AddWithValue("id", id);
+                    cmd.CommandText = "INSERT INTO mybusiness_images (filename, description, gender, folder, length, hidden) VALUES (@filename, @description, @gender, @folder, @length, @hidden)";
+                    //cmd.Parameters.AddWithValue("id", id);
                     cmd.Parameters.AddWithValue("filename", filename);
                     cmd.Parameters.AddWithValue("description", description);
                     cmd.Parameters.AddWithValue("gender", gender);
