@@ -35,33 +35,13 @@ namespace ManageImages
             {
                 case true: hiddenValue = 1; break;
             }
-            int id = 0;
             DataTable dt = new DataTable();
             using (MySqlConnection cnn = new MySqlConnection(ConfigurationManager.ConnectionStrings["MyConnection"].ToString()))
             {
                 cnn.Open();
-                //using (var cmd = cnn.CreateCommand())
-                //{
-                //    cmd.CommandText = "SELECT * FROM mybusiness_images";
-                //    MySqlDataAdapter da = new MySqlDataAdapter(cmd);
-                //    da.Fill(dt);
-                //}
-                //if (dt.Rows.Count > 0)
-                //{
-                //    using (var cmd = cnn.CreateCommand())
-                //    {
-                //        cmd.CommandText = "SELECT MAX(id) + 1 FROM mybusiness_images";
-                //        id = Convert.ToInt32(cmd.ExecuteScalar());
-                //    }
-                //}
-                //else
-                //{
-                //    id = 1;
-                //}
                 using (var cmd = cnn.CreateCommand())
                 {
                     cmd.CommandText = "INSERT INTO mybusiness_images (filename, description, gender, folder, length, hidden) VALUES (@filename, @description, @gender, @folder, @length, @hidden)";
-                    //cmd.Parameters.AddWithValue("id", id);
                     cmd.Parameters.AddWithValue("filename", filename);
                     cmd.Parameters.AddWithValue("description", description);
                     cmd.Parameters.AddWithValue("gender", gender);
@@ -73,17 +53,18 @@ namespace ManageImages
             }
         }
 
-        public static void DeleteImageDb(string filename, string gender, string folder)
+        public static void DeleteImageDb(string filename, string gender, string folder, int length)
         {
             using (MySqlConnection cnn = new MySqlConnection(ConfigurationManager.ConnectionStrings["MyConnection"].ToString()))
             {
                 cnn.Open();
                 using (var cmd = cnn.CreateCommand())
                 {
-                    cmd.CommandText = "DELETE FROM mybusiness_images WHERE filename=@filename AND gender=@gender AND folder=@folder";
+                    cmd.CommandText = "DELETE FROM mybusiness_images WHERE filename=@filename AND gender=@gender AND folder=@folder AND length=@length";
                     cmd.Parameters.AddWithValue("filename", filename);
                     cmd.Parameters.AddWithValue("gender", gender);
                     cmd.Parameters.AddWithValue("folder", folder);
+                    cmd.Parameters.AddWithValue("length", length);
                     cmd.ExecuteNonQuery();
                 }
             }
@@ -135,7 +116,7 @@ namespace ManageImages
             return false;
         }
 
-        public static void UpdateImageDb(string filename, string gender, string description, bool hidden)
+        public static void UpdateImageDb(string filename, string folder, int length, string gender, string description, bool hidden)
         {
             int hiddenValue = 0;
             switch (hidden)
@@ -147,14 +128,33 @@ namespace ManageImages
                 cnn.Open();
                 using (var cmd = cnn.CreateCommand())
                 {
-                    cmd.CommandText = "UPDATE mybusiness_images SET gender=@gender, description=@description, hidden=@hidden WHERE filename=@filename";
+                    cmd.CommandText = "UPDATE mybusiness_images SET gender=@gender, description=@description, hidden=@hidden WHERE filename=@filename AND length=@length";
                     cmd.Parameters.AddWithValue("description", description);
+                    cmd.Parameters.AddWithValue("folder", folder);
                     cmd.Parameters.AddWithValue("filename", filename);
+                    cmd.Parameters.AddWithValue("length", length);
                     cmd.Parameters.AddWithValue("gender", gender);
                     cmd.Parameters.AddWithValue("hidden", hiddenValue);
                     cmd.ExecuteNonQuery();
                 }
             }
         }
+
+        //public static void MoveImageDb(string filename, int length, string folder, string gender, )
+        //{
+        //    using (MySqlConnection cnn = new MySqlConnection(ConfigurationManager.ConnectionStrings["MyConnection"].ToString()))
+        //    {
+        //        cnn.Open();
+        //        using (var cmd = cnn.CreateCommand())
+        //        {
+        //            cmd.CommandText = "UPDATE mybusiness_images SET folder=@folder, gender=@gender WHERE filename=@filename AND length=@length";
+        //            cmd.Parameters.AddWithValue("folder", folder);
+        //            cmd.Parameters.AddWithValue("filename", filename);
+        //            cmd.Parameters.AddWithValue("length", length);
+        //            cmd.Parameters.AddWithValue("gender", gender);
+        //            cmd.ExecuteNonQuery();
+        //        }
+        //    }
+        //}
     }
 }

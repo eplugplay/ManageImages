@@ -35,11 +35,18 @@ namespace ManageImages
             this.FormClosing += DeleteLocalOnClose;
         }
 
+
+
+
+        /******************************************************************
+         ****************************************************************************
+         ***************************************************************************
+         * ************************** Private Class ********************************************/
         #region private class
 
         private class data
         {
-            public data(string _folder, string _description, string _gender, string _filename, int _sectionIndex, bool _hidden)
+            public data(string _folder, string _description, string _gender, string _filename, int _sectionIndex, bool _hidden, string _toFolder)
             {
                 folder = _folder;
                 description = _description;
@@ -47,6 +54,7 @@ namespace ManageImages
                 filename = _filename;
                 sectionIndex = _sectionIndex;
                 hidden = _hidden;
+                ToFolder = _toFolder;
             }
             public string folder { get; set; }
             public string description { get; set; }
@@ -54,9 +62,19 @@ namespace ManageImages
             public string filename { get; set; }
             public int sectionIndex { get; set; }
             public bool hidden { get; set; }
+            public string ToFolder { get; set; }
         }
 
         #endregion
+
+
+
+
+
+        /******************************************************************
+         ****************************************************************************
+         ***************************************************************************
+         * ************************** Events ********************************************/
 
         #region Events
 
@@ -247,12 +265,12 @@ namespace ManageImages
                     case 1: chkHideImage.Checked = true; break;
                 }
             }
-            Check(txtFilename.Text, ddlSections.SelectedValue.ToString());
+            CheckImagesExist(txtFilename.Text, ddlSections.SelectedValue.ToString());
         }
 
         private void btnUploadImage_Click(object sender, EventArgs e)
         {
-            if (backgroundWorker1.IsBusy || backgroundWorker2.IsBusy || backgroundWorker3.IsBusy)
+            if (backgroundWorker1.IsBusy || backgroundWorker2.IsBusy || backgroundWorker3.IsBusy || backgroundWorker4.IsBusy)
             {
                 return;
             }
@@ -278,7 +296,7 @@ namespace ManageImages
                 return;
             }
 
-            backgroundWorker1.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedIndex, chkHideImage.Checked));
+            backgroundWorker1.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedIndex, chkHideImage.Checked, ddlMoveSection.Text));
         }
 
 
@@ -297,43 +315,19 @@ namespace ManageImages
                 bool Hidden = _data.hidden;
                 // 10% bar
                 pbStatus.InvokeEx(x => x.Value = 10);
-                FileInfo toUpload = new FileInfo(GetLocalImgPath(FolderName) + "\\" + FileName);
-                FtpWebRequest request = (FtpWebRequest)WebRequest.Create("ftp://208.118.63.29/site2/" + FolderName + "/" + FileName);
-                request.KeepAlive = true;
-                request.Proxy = null;
-                request.UseBinary = true;
-                // 20% bar
-                pbStatus.InvokeEx(x => x.Value = 20);
-                request.Method = WebRequestMethods.Ftp.UploadFile;
-                // 30% bar
-                pbStatus.InvokeEx(x => x.Value = 40);
-                request.Credentials = new NetworkCredential("eplugplay-001", ConfigurationManager.ConnectionStrings["ftp"].ToString());
-                Stream ftpStream = request.GetRequestStream();
-                FileStream file = File.OpenRead(GetLocalImgPath(FolderName) + "\\" + FileName);
-                int length = 1024;
-                byte[] buffer = new byte[length];
-                int bytesRead = 0;
-                do
-                {
-                    bytesRead = file.Read(buffer, 0, length);
-                    ftpStream.Write(buffer, 0, bytesRead);
-                }
-                while (bytesRead != 0);
+                // upload file
+                UploadServerImg(FolderName, FolderName, FileName, 30);
                 // 60% bar
                 pbStatus.InvokeEx(x => x.Value = 60);
-                //// save local
-                //SaveLocal(file);
-                file.Close();
-                ftpStream.Close();
                 // 70% bar
                 pbStatus.InvokeEx(x => x.Value = 70);
                 //save to db
-                Data.SaveImageToDb(FileName, Description, Gender, FolderName, Convert.ToInt32(toUpload.Length), Hidden);
+                Data.SaveImageToDb(FileName, Description, Gender, FolderName, GetLocalFileLength(FolderName, FileName), Hidden);
                 //// reorder index
                 //ReOrderArr(FolderName);
                 // 80% bar
                 pbStatus.InvokeEx(x => x.Value = 100);
-                Check(FileName, FolderName);
+                CheckImagesExist(FileName, FolderName);
                 //LoadImages(FolderName, 90, FileName, true);
                 MessageBox.Show("Successfully uploaded.");
             }
@@ -348,7 +342,7 @@ namespace ManageImages
 
         private void btnDeleteImg_Click(object sender, EventArgs e)
         {
-            if (backgroundWorker1.IsBusy || backgroundWorker2.IsBusy || backgroundWorker3.IsBusy)
+            if (backgroundWorker1.IsBusy || backgroundWorker2.IsBusy || backgroundWorker3.IsBusy || backgroundWorker4.IsBusy)
             {
                 return;
             }
@@ -357,7 +351,7 @@ namespace ManageImages
                 MessageBox.Show("Select image first.");
                 return;
             }
-            backgroundWorker2.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedIndex, chkHideImage.Checked));
+            backgroundWorker2.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedIndex, chkHideImage.Checked, ddlMoveSection.Text));
         }
 
         private void backgroundWorker2_DoWork(object sender, DoWorkEventArgs e)
@@ -380,7 +374,7 @@ namespace ManageImages
                     DeleteServerImg(FolderName, FileName);
                 }
                 // delete from db
-                Data.DeleteImageDb(FileName, Gender, FolderName);
+                Data.DeleteImageDb(FileName, Gender, FolderName, GetLocalFileLength(FolderName, FileName));
                 // delete from local
                 if (File.Exists(GetLocalImgPath(FolderName) + "\\" + FileName))
                 {
@@ -397,16 +391,11 @@ namespace ManageImages
                 pbStatus.InvokeEx(x => x.Value = 100);
                 //LoadImages(FolderName, 80, FileName, false);
                 //int index = PicArr.IndexOf(currentImg);
-                foreach (PictureBox p in pnControls.Controls)
-                {
-                    if (p.Name == currentImg)
-                    {
-                        pnControls.InvokeEx(x => x.Controls.Remove(p));
-                    }
-                }
+                // reload images
+                ReloadImages();
                 //// reorder index
                 //ReOrderArr(FolderName);
-                Check(FileName, FolderName);
+                CheckImagesExist(FileName, FolderName);
                 //switch (imgSize)
                 //{
                 //    case "x-small": LoadToolStrip(20, 10, 30, 30); break;
@@ -447,12 +436,15 @@ namespace ManageImages
         {
             if (ddlSections.DataSource != null)
             {
-                backgroundWorker3.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedIndex, chkHideImage.Checked));
+                backgroundWorker3.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedIndex, chkHideImage.Checked, ddlMoveSection.Text));
             }
         }
 
         private void backgroundWorker3_DoWork(object sender, DoWorkEventArgs e)
         {
+            // hide move to options
+            btnMoveSection.InvokeEx(x => x.Visible = false);
+            ddlMoveSection.InvokeEx(x => x.Visible = false);
             // clear panel
             pnControls.InvokeEx(x => x.Controls.Clear());
             // reset
@@ -526,7 +518,7 @@ namespace ManageImages
 
         private void btnSaveEdit_Click(object sender, EventArgs e)
         {
-            if (backgroundWorker1.IsBusy || backgroundWorker2.IsBusy || backgroundWorker3.IsBusy)
+            if (backgroundWorker1.IsBusy || backgroundWorker2.IsBusy || backgroundWorker3.IsBusy || backgroundWorker4.IsBusy)
             {
                 return;
             }
@@ -553,10 +545,41 @@ namespace ManageImages
             }
             //if (MessageBox.Show("Save?", "Save Edit?", MessageBoxButtons.YesNo) == DialogResult.Yes)
             //{
-                Data.UpdateImageDb(txtFilename.Text, ddlGender.Text, txtDescription.Text, chkHideImage.Checked);
+            //Data.UpdateImageDb(txtFilename.Text, GetLocalFileLength(ddlSections.Text, txtFilename.Text), ddlGender.Text, txtDescription.Text, chkHideImage.Checked);
                 MessageBox.Show("Updated.");
             //}
 
+        }
+
+        private void backgroundWorker4_DoWork(object sender, DoWorkEventArgs e)
+        {
+            data _data = (data)e.Argument;
+            //MoveImage(_data.folder, _data.filename, _data.ToFolder, _data.gender, _data.description, GetLocalFileLength(_data.folder, _data.filename));
+            MessageBox.Show("Moved");
+        }
+
+        private void backgroundWorker4_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            ddlMoveSection.InvokeEx(x => x.Enabled = true);
+            pbStatus.InvokeEx(x => x.Visible = false);
+            lblStatus.InvokeEx(x => x.Visible = false);
+            lblStatus.InvokeEx(x => x.Text = "Please Wait..");
+        }
+
+        private void btnMoveSection_Click(object sender, EventArgs e)
+        {
+            if (backgroundWorker1.IsBusy || backgroundWorker2.IsBusy || backgroundWorker3.IsBusy || backgroundWorker4.IsBusy)
+            {
+                return;
+            }
+
+            if (ddlSections.Text == ddlMoveSection.Text)
+            {
+                MessageBox.Show("Please select a different section to move.");
+                return;
+            }
+            ddlMoveSection.Enabled = false;
+            backgroundWorker4.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedIndex, chkHideImage.Checked, ddlMoveSection.SelectedValue.ToString()));
         }
 
         private void toolStripButton1_Click(object sender, EventArgs e)
@@ -585,6 +608,16 @@ namespace ManageImages
         }
 
         #endregion
+
+
+
+
+
+
+        /******************************************************************
+         ****************************************************************************
+         ***************************************************************************
+         * ************************** Methods ********************************************/
 
         #region Methods
 
@@ -638,21 +671,31 @@ namespace ManageImages
             ddlSections.DisplayMember = "category";
             ddlSections.ValueMember = "id";
             ddlSections.DataSource = Data.LoadSections();
+
+            ddlMoveSection.DisplayMember = "category";
+            ddlMoveSection.ValueMember = "id";
+            ddlMoveSection.DataSource = Data.LoadSections();
         }
 
-        public void Check(string filename, string folder)
+        public void CheckImagesExist(string filename, string folder)
         {
             if (Data.CheckImgExist(filename, folder) == true)
             {
                 btnSaveEdit.InvokeEx(x => x.Enabled = true);
                 //btnDeleteImg.InvokeEx(x => x.Enabled = true);
                 btnUploadImage.InvokeEx(x => x.Enabled = false);
+                // show move to options
+                btnMoveSection.InvokeEx(x => x.Visible = true);
+                ddlMoveSection.InvokeEx(x => x.Visible = true);
             }
             else
             {
                 btnSaveEdit.InvokeEx(x => x.Enabled = false);
                 //btnDeleteImg.InvokeEx(x => x.Enabled = false);
                 btnUploadImage.InvokeEx(x => x.Enabled = true);
+                // show move to options
+                btnMoveSection.InvokeEx(x => x.Visible = false);
+                ddlMoveSection.InvokeEx(x => x.Visible = false);
             }
         }
 
@@ -665,6 +708,9 @@ namespace ManageImages
             ddlGender.InvokeEx(x => x.SelectedIndex = -1);
             PreviewPictureBox.InvokeEx(x => x.Image = null);
             chkHideImage.InvokeEx(x => x.Checked = false);
+            // hide move to options
+            btnMoveSection.InvokeEx(x => x.Visible = false);
+            ddlMoveSection.InvokeEx(x => x.Visible = false);
         }
 
         public void SaveLocal(FileStream file, string _fileName = "")
@@ -677,36 +723,6 @@ namespace ManageImages
             {
 
             }
-        }
-
-        public string GetLocalImgPath(string folder)
-        {
-            //string appPath = Path.GetDirectoryName(Application.ExecutablePath);
-            //System.IO.DirectoryInfo directoryInfo = System.IO.Directory.GetParent(appPath);
-            //System.IO.DirectoryInfo directoryInfo2 = System.IO.Directory.GetParent(directoryInfo.FullName);
-            //string path = directoryInfo2.FullName + @"\Images\" + folder;
-
-            string[] Directories = new string[] { "C:\\ManageImages\\", "C:\\ManageImages\\ApparelsImages", "C:\\ManageImages\\NewArrivalsImages", "C:\\ManageImages\\PantsImages", "C:\\ManageImages\\RhinestoneImages", "C:\\ManageImages\\ShirtsImages", "C:\\ManageImages\\ShoesImages" };
-
-            try
-            {
-                for (int i = 0; i < Directories.Length; i++)
-                {
-                    // If the directory doesn't exist, create it.
-                    if (!Directory.Exists(Directories[i].ToString()))
-                    {
-                        Directory.CreateDirectory(Directories[i].ToString());
-                    }
-                }
-            }
-            catch (Exception)
-            {
-                // Fail silently
-            }
-
-            string path = "C:\\ManageImages\\" + folder;
-            //string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData).ToString() + "\\ManageImages\\" + folder;
-            return path;
         }
 
         public bool LoadImages(string folder, int cntBar, string filename, bool uploaded)
@@ -890,12 +906,6 @@ namespace ManageImages
             return img;
         }
 
-        public static FileStream FromFileMs(string path)
-        {
-            FileStream writeStream = new FileStream(path, FileMode.Create);
-            return writeStream;
-        }
-
         public string[] GetFileList(string folder)
         {
             string[] downloadFiles;
@@ -1026,6 +1036,63 @@ namespace ManageImages
                 MessageBox.Show(ex.Message, "Download Error");
             }
         }
+
+        public string GetLocalImgPath(string folder)
+        {
+            //string appPath = Path.GetDirectoryName(Application.ExecutablePath);
+            //System.IO.DirectoryInfo directoryInfo = System.IO.Directory.GetParent(appPath);
+            //System.IO.DirectoryInfo directoryInfo2 = System.IO.Directory.GetParent(directoryInfo.FullName);
+            //string path = directoryInfo2.FullName + @"\Images\" + folder;
+
+            string[] Directories = new string[] { "C:\\ManageImages\\", "C:\\ManageImages\\ApparelsImages", "C:\\ManageImages\\NewArrivalsImages", "C:\\ManageImages\\PantsImages", "C:\\ManageImages\\RhinestoneImages", "C:\\ManageImages\\ShirtsImages", "C:\\ManageImages\\ShoesImages" };
+
+            try
+            {
+                for (int i = 0; i < Directories.Length; i++)
+                {
+                    // If the directory doesn't exist, create it.
+                    if (!Directory.Exists(Directories[i].ToString()))
+                    {
+                        Directory.CreateDirectory(Directories[i].ToString());
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                // Fail silently
+            }
+
+            string path = "C:\\ManageImages\\" + folder;
+            //string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData).ToString() + "\\ManageImages\\" + folder;
+            return path;
+        }
+
+
+        public void UploadServerImg(string FromFolderName, string ToFolderName, string FileName, int pbCnt)
+        {
+            FtpWebRequest request = (FtpWebRequest)WebRequest.Create("ftp://208.118.63.29/site2/" + ToFolderName + "/" + FileName);
+            request.KeepAlive = true;
+            request.Proxy = null;
+            request.UseBinary = true;
+            pbStatus.InvokeEx(x => x.Value = pbCnt + 20);
+            request.Method = WebRequestMethods.Ftp.UploadFile;
+            pbStatus.InvokeEx(x => x.Value = pbCnt + 20);
+            request.Credentials = new NetworkCredential("eplugplay-001", ConfigurationManager.ConnectionStrings["ftp"].ToString());
+            Stream ftpStream = request.GetRequestStream();
+            FileStream file = File.OpenRead(GetLocalImgPath(FromFolderName) + "\\" + FileName);
+            int length = 1024;
+            byte[] buffer = new byte[length];
+            int bytesRead = 0;
+            do
+            {
+                bytesRead = file.Read(buffer, 0, length);
+                ftpStream.Write(buffer, 0, bytesRead);
+            }
+            while (bytesRead != 0);
+            file.Close();
+            ftpStream.Close();
+        }
+
         public void DeleteServerImg(string folder, string file)
         {
             try
@@ -1056,7 +1123,43 @@ namespace ManageImages
                 MessageBox.Show(ex.Message, "Delete Error");
             }
         }
-        #endregion
 
+        // copies images to a target folder
+        public void MoveImage(string fromFolder, string filename, string toFolder, string gender, string description, int length, bool hidden)
+        {
+            try
+            {
+                // copy to target server/folder
+                UploadServerImg(fromFolder, toFolder, filename, 20);
+
+                // delete local file
+                File.Delete(GetLocalImgPath(fromFolder) + "//" + filename);
+
+                // delete image from server
+                DeleteServerImg(fromFolder, filename);
+
+                // update to db moved folder
+                //Data.MoveImageDb();
+
+                ReloadImages();
+            }
+            catch
+            {
+
+            }
+        }
+
+        public void ReloadImages()
+        {
+            foreach (PictureBox p in pnControls.Controls)
+            {
+                if (p.Name == currentImg)
+                {
+                    pnControls.InvokeEx(x => x.Controls.Remove(p));
+                }
+            }
+        }
+
+        #endregion
     }
 }
