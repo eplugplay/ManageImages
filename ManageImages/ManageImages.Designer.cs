@@ -121,29 +121,29 @@
             // defaultToolStripMenuItem
             // 
             this.defaultToolStripMenuItem.Name = "defaultToolStripMenuItem";
-            this.defaultToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            this.defaultToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.defaultToolStripMenuItem.Text = "Default";
             this.defaultToolStripMenuItem.Click += new System.EventHandler(this.defaultToolStripMenuItem_Click);
             // 
             // hiddenImagesToolStripMenuItem
             // 
             this.hiddenImagesToolStripMenuItem.Name = "hiddenImagesToolStripMenuItem";
-            this.hiddenImagesToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
-            this.hiddenImagesToolStripMenuItem.Text = "Hidden Images Only";
+            this.hiddenImagesToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.hiddenImagesToolStripMenuItem.Text = "Hidden";
             this.hiddenImagesToolStripMenuItem.Click += new System.EventHandler(this.hiddenImagesToolStripMenuItem_Click);
             // 
             // menToolStripMenuItem
             // 
             this.menToolStripMenuItem.Name = "menToolStripMenuItem";
-            this.menToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
-            this.menToolStripMenuItem.Text = "Men Only";
+            this.menToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.menToolStripMenuItem.Text = "Men";
             this.menToolStripMenuItem.Click += new System.EventHandler(this.menToolStripMenuItem_Click);
             // 
             // womenToolStripMenuItem
             // 
             this.womenToolStripMenuItem.Name = "womenToolStripMenuItem";
-            this.womenToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
-            this.womenToolStripMenuItem.Text = "Women Only";
+            this.womenToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.womenToolStripMenuItem.Text = "Women";
             this.womenToolStripMenuItem.Click += new System.EventHandler(this.womenToolStripMenuItem_Click);
             // 
             // pnControls
