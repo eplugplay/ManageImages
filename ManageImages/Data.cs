@@ -116,7 +116,7 @@ namespace ManageImages
             return false;
         }
 
-        public static void UpdateImageDb(string filename, string folder, int length, string gender, string description, bool hidden)
+        public static void UpdateImageDb(string filename, string folder, int length, string gender, string description, bool hidden, bool isMove)
         {
             int hiddenValue = 0;
             switch (hidden)
@@ -128,9 +128,17 @@ namespace ManageImages
                 cnn.Open();
                 using (var cmd = cnn.CreateCommand())
                 {
-                    cmd.CommandText = "UPDATE mybusiness_images SET gender=@gender, description=@description, hidden=@hidden WHERE filename=@filename AND length=@length";
+                    if (isMove == true)
+                    {
+                        cmd.CommandText = "UPDATE mybusiness_images SET gender=@gender, description=@description, hidden=@hidden, folder=@folder WHERE filename=@filename AND length=@length";
+                        cmd.Parameters.AddWithValue("folder", folder);
+                    }
+                    else
+                    {
+                        cmd.CommandText = "UPDATE mybusiness_images SET gender=@gender, description=@description, hidden=@hidden WHERE filename=@filename AND length=@length";
+                    }
                     cmd.Parameters.AddWithValue("description", description);
-                    cmd.Parameters.AddWithValue("folder", folder);
+
                     cmd.Parameters.AddWithValue("filename", filename);
                     cmd.Parameters.AddWithValue("length", length);
                     cmd.Parameters.AddWithValue("gender", gender);

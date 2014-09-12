@@ -63,10 +63,15 @@
             this.backgroundWorker3 = new System.ComponentModel.BackgroundWorker();
             this.lblStatus = new System.Windows.Forms.Label();
             this.grpbxMain = new System.Windows.Forms.GroupBox();
+            this.btnMoveSection = new System.Windows.Forms.Button();
             this.ddlMoveSection = new System.Windows.Forms.ComboBox();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.backgroundWorker4 = new System.ComponentModel.BackgroundWorker();
-            this.btnMoveSection = new System.Windows.Forms.Button();
+            this.filterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.defaultToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.hiddenImagesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.menToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.womenToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip.SuspendLayout();
             this.toolStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.PreviewPictureBox)).BeginInit();
@@ -88,7 +93,8 @@
             // fileToolStripMenuItem
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.loadImageToolStripMenuItem});
+            this.loadImageToolStripMenuItem,
+            this.filterToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
@@ -106,9 +112,9 @@
             this.pnControls.AutoScroll = true;
             this.pnControls.BackColor = System.Drawing.Color.White;
             this.pnControls.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.pnControls.Location = new System.Drawing.Point(6, 64);
+            this.pnControls.Location = new System.Drawing.Point(6, 67);
             this.pnControls.Name = "pnControls";
-            this.pnControls.Size = new System.Drawing.Size(522, 453);
+            this.pnControls.Size = new System.Drawing.Size(522, 521);
             this.pnControls.TabIndex = 19;
             // 
             // pbStatus
@@ -185,9 +191,9 @@
             // 
             this.PreviewPictureBox.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.PreviewPictureBox.BackColor = System.Drawing.Color.WhiteSmoke;
-            this.PreviewPictureBox.Location = new System.Drawing.Point(31, 19);
+            this.PreviewPictureBox.Location = new System.Drawing.Point(31, 51);
             this.PreviewPictureBox.Name = "PreviewPictureBox";
-            this.PreviewPictureBox.Size = new System.Drawing.Size(302, 259);
+            this.PreviewPictureBox.Size = new System.Drawing.Size(302, 298);
             this.PreviewPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.PreviewPictureBox.TabIndex = 26;
             this.PreviewPictureBox.TabStop = false;
@@ -198,7 +204,7 @@
             this.btnUploadImage.Enabled = false;
             this.btnUploadImage.Font = new System.Drawing.Font("Gulim", 8.5F);
             this.btnUploadImage.ForeColor = System.Drawing.Color.White;
-            this.btnUploadImage.Location = new System.Drawing.Point(252, 284);
+            this.btnUploadImage.Location = new System.Drawing.Point(252, 355);
             this.btnUploadImage.Name = "btnUploadImage";
             this.btnUploadImage.Size = new System.Drawing.Size(81, 29);
             this.btnUploadImage.TabIndex = 5;
@@ -288,7 +294,7 @@
             this.groupBox2.Controls.Add(this.lblFileName);
             this.groupBox2.Controls.Add(this.txtDescription);
             this.groupBox2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.groupBox2.Location = new System.Drawing.Point(577, 98);
+            this.groupBox2.Location = new System.Drawing.Point(575, 98);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(364, 198);
             this.groupBox2.TabIndex = 39;
@@ -298,10 +304,11 @@
             // chkHideImage
             // 
             this.chkHideImage.AutoSize = true;
-            this.chkHideImage.Location = new System.Drawing.Point(291, 17);
+            this.chkHideImage.Location = new System.Drawing.Point(217, 14);
             this.chkHideImage.Name = "chkHideImage";
-            this.chkHideImage.Size = new System.Drawing.Size(15, 14);
+            this.chkHideImage.Size = new System.Drawing.Size(90, 17);
             this.chkHideImage.TabIndex = 0;
+            this.chkHideImage.Text = "Hide Image";
             this.toolTip.SetToolTip(this.chkHideImage, "Hide Image");
             this.chkHideImage.UseVisualStyleBackColor = true;
             // 
@@ -354,13 +361,15 @@
             // groupBox3
             // 
             this.groupBox3.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.groupBox3.Controls.Add(this.btnMoveSection);
             this.groupBox3.Controls.Add(this.btnDeleteImg);
             this.groupBox3.Controls.Add(this.btnUploadImage);
+            this.groupBox3.Controls.Add(this.ddlMoveSection);
             this.groupBox3.Controls.Add(this.PreviewPictureBox);
             this.groupBox3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.groupBox3.Location = new System.Drawing.Point(577, 302);
+            this.groupBox3.Location = new System.Drawing.Point(575, 302);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(364, 320);
+            this.groupBox3.Size = new System.Drawing.Size(364, 398);
             this.groupBox3.TabIndex = 38;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Image Preview";
@@ -370,7 +379,7 @@
             this.btnDeleteImg.BackColor = System.Drawing.Color.SlateGray;
             this.btnDeleteImg.Font = new System.Drawing.Font("Gulim", 8.5F);
             this.btnDeleteImg.ForeColor = System.Drawing.Color.White;
-            this.btnDeleteImg.Location = new System.Drawing.Point(31, 284);
+            this.btnDeleteImg.Location = new System.Drawing.Point(31, 355);
             this.btnDeleteImg.Name = "btnDeleteImg";
             this.btnDeleteImg.Size = new System.Drawing.Size(81, 29);
             this.btnDeleteImg.TabIndex = 4;
@@ -415,20 +424,32 @@
             // grpbxMain
             // 
             this.grpbxMain.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.grpbxMain.Controls.Add(this.btnMoveSection);
             this.grpbxMain.Controls.Add(this.lblStatus);
-            this.grpbxMain.Controls.Add(this.ddlMoveSection);
             this.grpbxMain.Controls.Add(this.pnControls);
             this.grpbxMain.Controls.Add(this.pbStatus);
             this.grpbxMain.Controls.Add(this.label4);
             this.grpbxMain.Controls.Add(this.label3);
             this.grpbxMain.Controls.Add(this.ddlSections);
             this.grpbxMain.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.grpbxMain.Location = new System.Drawing.Point(29, 98);
+            this.grpbxMain.Location = new System.Drawing.Point(27, 98);
             this.grpbxMain.Name = "grpbxMain";
-            this.grpbxMain.Size = new System.Drawing.Size(542, 524);
+            this.grpbxMain.Size = new System.Drawing.Size(542, 602);
             this.grpbxMain.TabIndex = 41;
             this.grpbxMain.TabStop = false;
+            // 
+            // btnMoveSection
+            // 
+            this.btnMoveSection.BackColor = System.Drawing.Color.SlateGray;
+            this.btnMoveSection.Font = new System.Drawing.Font("Gulim", 8.5F);
+            this.btnMoveSection.ForeColor = System.Drawing.Color.White;
+            this.btnMoveSection.Location = new System.Drawing.Point(251, 15);
+            this.btnMoveSection.Name = "btnMoveSection";
+            this.btnMoveSection.Size = new System.Drawing.Size(82, 28);
+            this.btnMoveSection.TabIndex = 44;
+            this.btnMoveSection.Text = "Move";
+            this.btnMoveSection.UseVisualStyleBackColor = false;
+            this.btnMoveSection.Visible = false;
+            this.btnMoveSection.Click += new System.EventHandler(this.btnMoveSection_Click);
             // 
             // ddlMoveSection
             // 
@@ -437,7 +458,7 @@
             this.ddlMoveSection.FormattingEnabled = true;
             this.ddlMoveSection.Items.AddRange(new object[] {
             "-- Select"});
-            this.ddlMoveSection.Location = new System.Drawing.Point(411, 15);
+            this.ddlMoveSection.Location = new System.Drawing.Point(128, 19);
             this.ddlMoveSection.Name = "ddlMoveSection";
             this.ddlMoveSection.Size = new System.Drawing.Size(117, 21);
             this.ddlMoveSection.TabIndex = 42;
@@ -448,25 +469,46 @@
             this.backgroundWorker4.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker4_DoWork);
             this.backgroundWorker4.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker4_RunWorkerCompleted);
             // 
-            // btnMoveSection
+            // filterToolStripMenuItem
             // 
-            this.btnMoveSection.BackColor = System.Drawing.Color.SlateGray;
-            this.btnMoveSection.Font = new System.Drawing.Font("Gulim", 8.5F);
-            this.btnMoveSection.ForeColor = System.Drawing.Color.White;
-            this.btnMoveSection.Location = new System.Drawing.Point(323, 13);
-            this.btnMoveSection.Name = "btnMoveSection";
-            this.btnMoveSection.Size = new System.Drawing.Size(82, 28);
-            this.btnMoveSection.TabIndex = 44;
-            this.btnMoveSection.Text = "Move To";
-            this.btnMoveSection.UseVisualStyleBackColor = false;
-            this.btnMoveSection.Visible = false;
-            this.btnMoveSection.Click += new System.EventHandler(this.btnMoveSection_Click);
+            this.filterToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.defaultToolStripMenuItem,
+            this.hiddenImagesToolStripMenuItem,
+            this.menToolStripMenuItem,
+            this.womenToolStripMenuItem});
+            this.filterToolStripMenuItem.Name = "filterToolStripMenuItem";
+            this.filterToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.filterToolStripMenuItem.Text = "Filter By";
+            // 
+            // defaultToolStripMenuItem
+            // 
+            this.defaultToolStripMenuItem.Name = "defaultToolStripMenuItem";
+            this.defaultToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            this.defaultToolStripMenuItem.Text = "Default";
+            // 
+            // hiddenImagesToolStripMenuItem
+            // 
+            this.hiddenImagesToolStripMenuItem.Name = "hiddenImagesToolStripMenuItem";
+            this.hiddenImagesToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            this.hiddenImagesToolStripMenuItem.Text = "Hidden Images Only";
+            // 
+            // menToolStripMenuItem
+            // 
+            this.menToolStripMenuItem.Name = "menToolStripMenuItem";
+            this.menToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            this.menToolStripMenuItem.Text = "Men Only";
+            // 
+            // womenToolStripMenuItem
+            // 
+            this.womenToolStripMenuItem.Name = "womenToolStripMenuItem";
+            this.womenToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            this.womenToolStripMenuItem.Text = "Women Only";
             // 
             // ManageImages
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(977, 634);
+            this.ClientSize = new System.Drawing.Size(977, 712);
             this.Controls.Add(this.grpbxMain);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox3);
@@ -532,6 +574,11 @@
         private System.Windows.Forms.ComboBox ddlMoveSection;
         private System.ComponentModel.BackgroundWorker backgroundWorker4;
         private System.Windows.Forms.Button btnMoveSection;
+        private System.Windows.Forms.ToolStripMenuItem filterToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem defaultToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem hiddenImagesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem menToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem womenToolStripMenuItem;
     }
 }
 

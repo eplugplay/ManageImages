@@ -545,7 +545,7 @@ namespace ManageImages
             }
             //if (MessageBox.Show("Save?", "Save Edit?", MessageBoxButtons.YesNo) == DialogResult.Yes)
             //{
-            //Data.UpdateImageDb(txtFilename.Text, GetLocalFileLength(ddlSections.Text, txtFilename.Text), ddlGender.Text, txtDescription.Text, chkHideImage.Checked);
+            Data.UpdateImageDb(txtFilename.Text, ddlSections.SelectedValue.ToString(), GetLocalFileLength(ddlSections.SelectedValue.ToString(), txtFilename.Text), ddlGender.Text, txtDescription.Text, chkHideImage.Checked, false);
                 MessageBox.Show("Updated.");
             //}
 
@@ -553,16 +553,19 @@ namespace ManageImages
 
         private void backgroundWorker4_DoWork(object sender, DoWorkEventArgs e)
         {
+            pbStatus.InvokeEx(x => x.Value = 20);
             data _data = (data)e.Argument;
-            //MoveImage(_data.folder, _data.filename, _data.ToFolder, _data.gender, _data.description, GetLocalFileLength(_data.folder, _data.filename));
+            MoveImage(_data.folder, _data.filename, _data.ToFolder, _data.gender, _data.description, GetLocalFileLength(_data.folder, _data.filename), chkHideImage.Checked);
             MessageBox.Show("Moved");
         }
 
         private void backgroundWorker4_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            ddlSections.InvokeEx(x => x.Enabled = true);
             ddlMoveSection.InvokeEx(x => x.Enabled = true);
             pbStatus.InvokeEx(x => x.Visible = false);
             lblStatus.InvokeEx(x => x.Visible = false);
+            ResetInfo();
             lblStatus.InvokeEx(x => x.Text = "Please Wait..");
         }
 
@@ -578,6 +581,7 @@ namespace ManageImages
                 MessageBox.Show("Please select a different section to move.");
                 return;
             }
+            ddlSections.Enabled = false;
             ddlMoveSection.Enabled = false;
             backgroundWorker4.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedIndex, chkHideImage.Checked, ddlMoveSection.SelectedValue.ToString()));
         }
@@ -860,40 +864,47 @@ namespace ManageImages
 
             if (exists == false)
             {
-                PictureBox ctrl = new PictureBox();
-                ctrl.Image = FromFile(ImageFullName);
-                ctrl.BorderStyle = BorderStyle.FixedSingle;
-                ctrl.Tag = imageName;
-                ctrl.Name = imageName;
-                // if just uploaded select uploaded, set uploaded image to preview
-                if (uploaded == true)
+                try
                 {
-                    if (uploadedImgName == imageName)
+                    PictureBox ctrl = new PictureBox();
+                    ctrl.Image = FromFile(ImageFullName);
+                    ctrl.BorderStyle = BorderStyle.FixedSingle;
+                    ctrl.Tag = imageName;
+                    ctrl.Name = imageName;
+                    // if just uploaded select uploaded, set uploaded image to preview
+                    if (uploaded == true)
                     {
-                        PreviewPictureBox.Image = ctrl.Image;
+                        if (uploadedImgName == imageName)
+                        {
+                            PreviewPictureBox.Image = ctrl.Image;
+                        }
                     }
-                }
-                //if (live == true)
-                //{
-                //    Graphics g = Graphics.FromImage(ctrl.Image);
-                //    Pen bluePen = new Pen(Color.Blue, 4);
-                //    g.DrawRectangle(bluePen, 0, 0, ctrl.Image.Width, ctrl.Image.Height);
-                //    g.Save();
+                    //if (live == true)
+                    //{
+                    //    Graphics g = Graphics.FromImage(ctrl.Image);
+                    //    Pen bluePen = new Pen(Color.Blue, 4);
+                    //    g.DrawRectangle(bluePen, 0, 0, ctrl.Image.Width, ctrl.Image.Height);
+                    //    g.Save();
 
-                //}
-                //else
-                //{
-                //    Graphics g = Graphics.FromImage(ctrl.Image);
-                //    Pen redPen = new Pen(Color.Red, 4);
-                //    g.DrawRectangle(redPen, 0, 0, ctrl.Image.Width, ctrl.Image.Height);
-                //    g.Save();
-                //}
-                ctrl.Location = new Point(newLocX, newLocY);
-                ctrl.Size = new System.Drawing.Size(sizeWidth, sizeHeight);
-                ctrl.SizeMode = PictureBoxSizeMode.StretchImage;
-                ctrl.MouseMove += new MouseEventHandler(control_MouseMove);
-                ctrl.MouseClick += new MouseEventHandler(control_MouseClick);
-                pnControls.InvokeEx(x => x.Controls.Add(ctrl));
+                    //}
+                    //else
+                    //{
+                    //    Graphics g = Graphics.FromImage(ctrl.Image);
+                    //    Pen redPen = new Pen(Color.Red, 4);
+                    //    g.DrawRectangle(redPen, 0, 0, ctrl.Image.Width, ctrl.Image.Height);
+                    //    g.Save();
+                    //}
+                    ctrl.Location = new Point(newLocX, newLocY);
+                    ctrl.Size = new System.Drawing.Size(sizeWidth, sizeHeight);
+                    ctrl.SizeMode = PictureBoxSizeMode.StretchImage;
+                    ctrl.MouseMove += new MouseEventHandler(control_MouseMove);
+                    ctrl.MouseClick += new MouseEventHandler(control_MouseClick);
+                    pnControls.InvokeEx(x => x.Controls.Add(ctrl));
+                }
+                catch
+                {
+
+                }
             }
             return exists;
         }
@@ -1129,18 +1140,23 @@ namespace ManageImages
         {
             try
             {
+                pbStatus.InvokeEx(x => x.Value = 40);
                 // copy to target server/folder
                 UploadServerImg(fromFolder, toFolder, filename, 20);
 
+                pbStatus.InvokeEx(x => x.Value = 50);
                 // delete local file
                 File.Delete(GetLocalImgPath(fromFolder) + "//" + filename);
 
+                pbStatus.InvokeEx(x => x.Value = 70);
                 // delete image from server
                 DeleteServerImg(fromFolder, filename);
 
+                pbStatus.InvokeEx(x => x.Value = 90);
                 // update to db moved folder
-                //Data.MoveImageDb();
+                Data.UpdateImageDb(filename, toFolder, length, gender, description, hidden, true);
 
+                pbStatus.InvokeEx(x => x.Value = 100);
                 ReloadImages();
             }
             catch
