@@ -147,22 +147,5 @@ namespace ManageImages
                 }
             }
         }
-
-        //public static void MoveImageDb(string filename, int length, string folder, string gender, )
-        //{
-        //    using (MySqlConnection cnn = new MySqlConnection(ConfigurationManager.ConnectionStrings["MyConnection"].ToString()))
-        //    {
-        //        cnn.Open();
-        //        using (var cmd = cnn.CreateCommand())
-        //        {
-        //            cmd.CommandText = "UPDATE mybusiness_images SET folder=@folder, gender=@gender WHERE filename=@filename AND length=@length";
-        //            cmd.Parameters.AddWithValue("folder", folder);
-        //            cmd.Parameters.AddWithValue("filename", filename);
-        //            cmd.Parameters.AddWithValue("length", length);
-        //            cmd.Parameters.AddWithValue("gender", gender);
-        //            cmd.ExecuteNonQuery();
-        //        }
-        //    }
-        //}
     }
 }

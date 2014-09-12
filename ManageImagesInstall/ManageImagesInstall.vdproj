@@ -305,7 +305,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:ManageImagesInstall"
         "ProductCode" = "8:{32D34D7E-39EA-4F8C-A21C-DA567120103D}"
-        "PackageCode" = "8:{C6436D78-AFDD-45A9-BC34-D64362DA9797}"
+        "PackageCode" = "8:{BD1BAD08-1C3A-404C-9993-BA84ABC357F6}"
         "UpgradeCode" = "8:{94895F31-23D1-400E-BC2E-30E2BD628F3A}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"

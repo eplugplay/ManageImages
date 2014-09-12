@@ -46,7 +46,7 @@ namespace ManageImages
 
         private class data
         {
-            public data(string _folder, string _description, string _gender, string _filename, int _sectionIndex, bool _hidden, string _toFolder)
+            public data(string _folder, string _description, string _gender, string _filename, int _sectionIndex, bool _hidden, string _toFolder, string _filterType)
             {
                 folder = _folder;
                 description = _description;
@@ -55,6 +55,7 @@ namespace ManageImages
                 sectionIndex = _sectionIndex;
                 hidden = _hidden;
                 ToFolder = _toFolder;
+                filterType = _filterType;
             }
             public string folder { get; set; }
             public string description { get; set; }
@@ -63,6 +64,7 @@ namespace ManageImages
             public int sectionIndex { get; set; }
             public bool hidden { get; set; }
             public string ToFolder { get; set; }
+            public string filterType { get; set; }
         }
 
         #endregion
@@ -152,77 +154,7 @@ namespace ManageImages
             this.FormClosing -= DeleteLocalOnClose;
         }
 
-        private void loadImageToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (backgroundWorker1.IsBusy || backgroundWorker2.IsBusy || backgroundWorker3.IsBusy)
-            {
-                MessageBox.Show("Please wait until process is finished.");
-                return;
-            }
-
-            switch (imgSize)
-            {
-                case "x-small": sizeWidth = 30; sizeHeight = 30; break;
-                case "small": sizeWidth = 50; sizeHeight = 50; break;
-                case "medium": sizeWidth = 80; sizeHeight = 80; break;
-                case "large": sizeWidth = 160; sizeHeight = 160; break;
-                default: sizeWidth = 30; sizeHeight = 30; break;
-            }
-            if (pnControls.Controls.Count == 0)
-            {
-                lastImgX = locX;
-                lastImgY = locY;
-            }
-            else
-            {
-                lastImgX = lastImgX;
-                lastImgY = lastImgY;
-            }
-            FileStream file;
-            this.folderBrowserDlg.Filter = "(*.bmp, *.jpg, *.jpeg, *png)|*.bmp;*.jpg;*.jpeg;*.png";
-            this.folderBrowserDlg.Multiselect = true;
-            DialogResult result = this.folderBrowserDlg.ShowDialog();
-            bool exists = false;
-            if (result == DialogResult.OK)
-            {
-                foreach (var f in folderBrowserDlg.FileNames)
-                {
-                    string[] split = f.Split('\\');
-                    file = File.OpenRead(f);
-                    if (lastImgX >= pnControls.Width - sizeWidth - 10)
-                    {
-                        lastImgX = locX;
-                        locY = locY + sizeHeight + 30;
-                        lastImgY = locY;
-                    }
-                    else
-                    {
-                        lastImgY = locY;
-                    }
-                    // add pic name 
-                    PicArr.Add(split[split.Length - 1]);
-                    // add new image
-                    exists = loadImagestoPanel(split[split.Length - 1], f, lastImgX, lastImgY, false, false, "");
-                    // save locally if it doesnt exist
-                    if (exists == false)
-                    {
-                        // save local
-                        SaveLocal(file, split[split.Length - 1]);
-                        lastImgY = locY + sizeHeight + 10;
-                        lastImgX = lastImgX + sizeWidth + 10;
-                    }
-                    file.Close();
-                }
-
-                //LoadImages(ddlSections.SelectedValue.ToString(), 100, txtFilename.Text, false);
-                //if (exists == false)
-                //{
-                //    MessageBox.Show("Imported.");
-                //}
-            }
-        }
-
-
+ 
         private void control_MouseMove(object sender, MouseEventArgs e)
         {
             //Control control = (Control)sender;
@@ -232,7 +164,7 @@ namespace ManageImages
 
         private void control_MouseClick(object sender, MouseEventArgs e)
         {
-            if (backgroundWorker1.IsBusy || backgroundWorker2.IsBusy || backgroundWorker3.IsBusy)
+            if (backgroundWorker1.IsBusy || backgroundWorker2.IsBusy || backgroundWorker3.IsBusy || backgroundWorker4.IsBusy || backgroundWorker5.IsBusy)
             {
                 return;
             }
@@ -268,9 +200,90 @@ namespace ManageImages
             CheckImagesExist(txtFilename.Text, ddlSections.SelectedValue.ToString());
         }
 
+        // save edit
+        #region SaveEdit
+
+        private void btnSaveEdit_Click(object sender, EventArgs e)
+        {
+            if (backgroundWorker1.IsBusy || backgroundWorker2.IsBusy || backgroundWorker3.IsBusy || backgroundWorker4.IsBusy || backgroundWorker5.IsBusy)
+            {
+                return;
+            }
+            if (Data.CheckImgExist(txtFilename.Text, ddlSections.SelectedValue.ToString()) == false)
+            {
+                MessageBox.Show("Selected image does not exist in server. Upload first before editing.");
+                return;
+            }
+            if (PreviewPictureBox.Image == null)
+            {
+                MessageBox.Show("Select image first.");
+                return;
+            }
+            if (txtDescription.Text == "")
+            {
+                txtDescription.Focus();
+                MessageBox.Show("Enter Description.");
+                return;
+            }
+            if (ddlGender.Text == "")
+            {
+                MessageBox.Show("Select Male or Female.");
+                return;
+            }
+            //if (MessageBox.Show("Save?", "Save Edit?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            //{
+            Data.UpdateImageDb(txtFilename.Text, ddlSections.SelectedValue.ToString(), GetLocalFileLength(ddlSections.SelectedValue.ToString(), txtFilename.Text), ddlGender.Text, txtDescription.Text, chkHideImage.Checked, false);
+            MessageBox.Show("Updated.");
+            //}
+        }
+
+        #endregion
+
+        // upload Image
+        #region Upload Image
+
+
+
+        private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
+        {
+            if (MessageBox.Show("Upload?", "Upload?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                pbStatus.InvokeEx(x => x.Visible = true);
+                lblStatus.InvokeEx(x => x.Visible = true);
+                lblStatus.InvokeEx(x => x.Text = "Uploading..");
+                data _data = (data)e.Argument;
+                string FolderName = _data.folder;
+                string FileName = _data.filename;
+                string Gender = _data.gender;
+                string Description = _data.description;
+                bool Hidden = _data.hidden;
+                pbStatus.InvokeEx(x => x.Value = 10);
+                // upload file
+                UploadServerImg(FolderName, FolderName, FileName, 30);
+                pbStatus.InvokeEx(x => x.Value = 60);
+                pbStatus.InvokeEx(x => x.Value = 70);
+                //save to db
+                Data.SaveImageToDb(FileName, Description, Gender, FolderName, GetLocalFileLength(FolderName, FileName), Hidden);
+                pbStatus.InvokeEx(x => x.Value = 100);
+                CheckImagesExist(FileName, FolderName);
+                //LoadImages(FolderName, 90, FileName, true);
+                MessageBox.Show("Successfully uploaded.");
+            }
+        }
+
+        private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            pbStatus.InvokeEx(x => x.Visible = false);
+            lblStatus.InvokeEx(x => x.Visible = false);
+            lblStatus.InvokeEx(x => x.Text = "Please wait..");
+        }
+
+
+
+
         private void btnUploadImage_Click(object sender, EventArgs e)
         {
-            if (backgroundWorker1.IsBusy || backgroundWorker2.IsBusy || backgroundWorker3.IsBusy || backgroundWorker4.IsBusy)
+            if (backgroundWorker1.IsBusy || backgroundWorker2.IsBusy || backgroundWorker3.IsBusy || backgroundWorker4.IsBusy || backgroundWorker5.IsBusy)
             {
                 return;
             }
@@ -296,63 +309,14 @@ namespace ManageImages
                 return;
             }
 
-            backgroundWorker1.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedIndex, chkHideImage.Checked, ddlMoveSection.Text));
+            backgroundWorker1.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedIndex, chkHideImage.Checked, ddlMoveSection.Text, ""));
         }
 
+        #endregion
 
-        private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
-        {
-            if (MessageBox.Show("Upload?", "Upload?", MessageBoxButtons.YesNo) == DialogResult.Yes)
-            {
-                pbStatus.InvokeEx(x => x.Visible = true);
-                lblStatus.InvokeEx(x => x.Visible = true);
-                lblStatus.InvokeEx(x => x.Text = "Uploading..");
-                data _data = (data)e.Argument;
-                string FolderName = _data.folder;
-                string FileName = _data.filename;
-                string Gender = _data.gender;
-                string Description = _data.description;
-                bool Hidden = _data.hidden;
-                // 10% bar
-                pbStatus.InvokeEx(x => x.Value = 10);
-                // upload file
-                UploadServerImg(FolderName, FolderName, FileName, 30);
-                // 60% bar
-                pbStatus.InvokeEx(x => x.Value = 60);
-                // 70% bar
-                pbStatus.InvokeEx(x => x.Value = 70);
-                //save to db
-                Data.SaveImageToDb(FileName, Description, Gender, FolderName, GetLocalFileLength(FolderName, FileName), Hidden);
-                //// reorder index
-                //ReOrderArr(FolderName);
-                // 80% bar
-                pbStatus.InvokeEx(x => x.Value = 100);
-                CheckImagesExist(FileName, FolderName);
-                //LoadImages(FolderName, 90, FileName, true);
-                MessageBox.Show("Successfully uploaded.");
-            }
-        }
+        //delete image
+        #region Delete Image
 
-        private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            pbStatus.InvokeEx(x => x.Visible = false);
-            lblStatus.InvokeEx(x => x.Visible = false);
-            lblStatus.InvokeEx(x => x.Text = "Please wait..");
-        }
-
-        private void btnDeleteImg_Click(object sender, EventArgs e)
-        {
-            if (backgroundWorker1.IsBusy || backgroundWorker2.IsBusy || backgroundWorker3.IsBusy || backgroundWorker4.IsBusy)
-            {
-                return;
-            }
-            if (PreviewPictureBox.Image == null)
-            {
-                MessageBox.Show("Select image first.");
-                return;
-            }
-            backgroundWorker2.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedIndex, chkHideImage.Checked, ddlMoveSection.Text));
-        }
 
         private void backgroundWorker2_DoWork(object sender, DoWorkEventArgs e)
         {
@@ -389,12 +353,8 @@ namespace ManageImages
                 }
                 Thread.Sleep(1000);
                 pbStatus.InvokeEx(x => x.Value = 100);
-                //LoadImages(FolderName, 80, FileName, false);
-                //int index = PicArr.IndexOf(currentImg);
                 // reload images
                 ReloadImages();
-                //// reorder index
-                //ReOrderArr(FolderName);
                 CheckImagesExist(FileName, FolderName);
                 //switch (imgSize)
                 //{
@@ -411,20 +371,6 @@ namespace ManageImages
             }
         }
 
-        //public void ReOrderArr(string folder)
-        //{
-        //    DirectoryInfo Folder;
-        //    FileInfo[] Images;
-        //    Folder = new DirectoryInfo(GetLocalImgPath(folder));
-        //    Images = Folder.GetFiles();
-        //    // download images from folder
-        //    string[] files = GetFileList(folder);
-        //    PicArr.Clear();
-        //    foreach (FileInfo file in Images)
-        //    {
-        //        PicArr.Add(file.Name);
-        //    }
-        //}
         private void backgroundWorker2_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             pbStatus.InvokeEx(x => x.Visible = false);
@@ -432,13 +378,24 @@ namespace ManageImages
             lblStatus.InvokeEx(x => x.Text = "Please wait..");
         }
 
-        private void ddlSections_SelectedIndexChanged(object sender, EventArgs e)
+        private void btnDeleteImg_Click(object sender, EventArgs e)
         {
-            if (ddlSections.DataSource != null)
+            if (backgroundWorker1.IsBusy || backgroundWorker2.IsBusy || backgroundWorker3.IsBusy || backgroundWorker4.IsBusy || backgroundWorker5.IsBusy)
             {
-                backgroundWorker3.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedIndex, chkHideImage.Checked, ddlMoveSection.Text));
+                return;
             }
+            if (PreviewPictureBox.Image == null)
+            {
+                MessageBox.Show("Select image first.");
+                return;
+            }
+            backgroundWorker2.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedIndex, chkHideImage.Checked, ddlMoveSection.Text, ""));
         }
+        #endregion
+
+
+        #region Section SelectedIndex
+
 
         private void backgroundWorker3_DoWork(object sender, DoWorkEventArgs e)
         {
@@ -516,43 +473,27 @@ namespace ManageImages
             ddlSections.InvokeEx(x => x.Enabled = true);
         }
 
-        private void btnSaveEdit_Click(object sender, EventArgs e)
+        private void ddlSections_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (backgroundWorker1.IsBusy || backgroundWorker2.IsBusy || backgroundWorker3.IsBusy || backgroundWorker4.IsBusy)
+            if (ddlSections.DataSource != null)
             {
-                return;
+                backgroundWorker3.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedIndex, chkHideImage.Checked, ddlMoveSection.Text, ""));
             }
-            if (Data.CheckImgExist(txtFilename.Text, ddlSections.SelectedValue.ToString()) == false)
-            {
-                MessageBox.Show("Selected image does not exist in server. Upload first before editing.");
-                return;
-            }
-            if (PreviewPictureBox.Image == null)
-            {
-                MessageBox.Show("Select image first.");
-                return;
-            }
-            if (txtDescription.Text == "")
-            {
-                txtDescription.Focus();
-                MessageBox.Show("Enter Description.");
-                return;
-            }
-            if (ddlGender.Text == "")
-            {
-                MessageBox.Show("Select Male or Female.");
-                return;
-            }
-            //if (MessageBox.Show("Save?", "Save Edit?", MessageBoxButtons.YesNo) == DialogResult.Yes)
-            //{
-            Data.UpdateImageDb(txtFilename.Text, ddlSections.SelectedValue.ToString(), GetLocalFileLength(ddlSections.SelectedValue.ToString(), txtFilename.Text), ddlGender.Text, txtDescription.Text, chkHideImage.Checked, false);
-                MessageBox.Show("Updated.");
-            //}
-
         }
+        #endregion
+
+
+        // Move section
+        #region Move Section
+
 
         private void backgroundWorker4_DoWork(object sender, DoWorkEventArgs e)
         {
+            ddlSections.InvokeEx(x => x.Enabled = false);
+            ddlMoveSection.InvokeEx(x => x.Enabled = false);
+            lblStatus.InvokeEx(x => x.Visible = true);
+            lblStatus.InvokeEx(x => x.Text = "Moving..");
+            pbStatus.InvokeEx(x => x.Visible = true);
             pbStatus.InvokeEx(x => x.Value = 20);
             data _data = (data)e.Argument;
             MoveImage(_data.folder, _data.filename, _data.ToFolder, _data.gender, _data.description, GetLocalFileLength(_data.folder, _data.filename), chkHideImage.Checked);
@@ -571,7 +512,7 @@ namespace ManageImages
 
         private void btnMoveSection_Click(object sender, EventArgs e)
         {
-            if (backgroundWorker1.IsBusy || backgroundWorker2.IsBusy || backgroundWorker3.IsBusy || backgroundWorker4.IsBusy)
+            if (backgroundWorker1.IsBusy || backgroundWorker2.IsBusy || backgroundWorker3.IsBusy || backgroundWorker4.IsBusy || backgroundWorker5.IsBusy)
             {
                 return;
             }
@@ -581,10 +522,79 @@ namespace ManageImages
                 MessageBox.Show("Please select a different section to move.");
                 return;
             }
-            ddlSections.Enabled = false;
-            ddlMoveSection.Enabled = false;
-            backgroundWorker4.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedIndex, chkHideImage.Checked, ddlMoveSection.SelectedValue.ToString()));
+            backgroundWorker4.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedIndex, chkHideImage.Checked, ddlMoveSection.SelectedValue.ToString(), ""));
         }
+
+        #endregion
+
+        #region Filters
+
+
+        private void backgroundWorker5_DoWork(object sender, DoWorkEventArgs e)
+        {
+            pbStatus.InvokeEx(x => x.Visible = true);
+            lblStatus.InvokeEx(x => x.Visible = true);
+            data _data = (data)e.Argument;
+
+            switch(_data.filterType)
+            {
+                case "hidden": lblStatus.InvokeEx(x => x.Text = "Searching hidden images.."); LoadFilteredImages(_data.folder, 40, _data.filename, false, "hidden", "1"); break;
+                case "default": if (LoadImages(_data.folder, 40, _data.filename, false) == true) { LoadImages(_data.folder, 90, _data.filename, false); } break;
+                case "Men": lblStatus.InvokeEx(x => x.Text = "Searching men images.."); LoadFilteredImages(_data.folder, 40, _data.filename, false, "gender", "Men"); break;
+                case "Women": lblStatus.InvokeEx(x => x.Text = "Searching women images.."); LoadFilteredImages(_data.folder, 40, _data.filename, false, "gender", "Women"); break;
+            }
+        }
+
+        private void backgroundWorker5_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            pbStatus.Visible = false;
+            lblStatus.Visible = false;
+            lblStatus.InvokeEx(x => x.Text = "Please wait..");
+            ResetInfo();
+        }
+
+        private void hiddenImagesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (backgroundWorker1.IsBusy || backgroundWorker2.IsBusy || backgroundWorker3.IsBusy || backgroundWorker4.IsBusy || backgroundWorker5.IsBusy)
+            {
+                return;
+            }
+
+            backgroundWorker5.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedIndex, chkHideImage.Checked, ddlMoveSection.SelectedValue.ToString(), "hidden"));
+        }
+
+        private void defaultToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (backgroundWorker1.IsBusy || backgroundWorker2.IsBusy || backgroundWorker3.IsBusy || backgroundWorker4.IsBusy || backgroundWorker5.IsBusy)
+            {
+                return;
+            }
+
+            backgroundWorker5.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedIndex, chkHideImage.Checked, ddlMoveSection.SelectedValue.ToString(), "default"));
+        }
+
+
+        private void menToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (backgroundWorker1.IsBusy || backgroundWorker2.IsBusy || backgroundWorker3.IsBusy || backgroundWorker4.IsBusy || backgroundWorker5.IsBusy)
+            {
+                return;
+            }
+
+            backgroundWorker5.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedIndex, chkHideImage.Checked, ddlMoveSection.SelectedValue.ToString(), "Men"));
+        }
+
+        private void womenToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (backgroundWorker1.IsBusy || backgroundWorker2.IsBusy || backgroundWorker3.IsBusy || backgroundWorker4.IsBusy || backgroundWorker5.IsBusy)
+            {
+                return;
+            }
+
+            backgroundWorker5.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedIndex, chkHideImage.Checked, ddlMoveSection.SelectedValue.ToString(), "Women"));
+        }
+
+        #endregion
 
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
@@ -625,9 +635,85 @@ namespace ManageImages
 
         #region Methods
 
+        private void ImportImagesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ImportImages();
+        }
+
+        public void ImportImages()
+        {
+            if (backgroundWorker1.IsBusy || backgroundWorker2.IsBusy || backgroundWorker3.IsBusy || backgroundWorker4.IsBusy || backgroundWorker5.IsBusy)
+            {
+                MessageBox.Show("Please wait until process is finished.");
+                return;
+            }
+
+            switch (imgSize)
+            {
+                case "x-small": sizeWidth = 30; sizeHeight = 30; break;
+                case "small": sizeWidth = 50; sizeHeight = 50; break;
+                case "medium": sizeWidth = 80; sizeHeight = 80; break;
+                case "large": sizeWidth = 160; sizeHeight = 160; break;
+                default: sizeWidth = 30; sizeHeight = 30; break;
+            }
+            if (pnControls.Controls.Count == 0)
+            {
+                lastImgX = locX;
+                lastImgY = locY;
+            }
+            else
+            {
+                lastImgX = lastImgX;
+                lastImgY = lastImgY;
+            }
+            FileStream file;
+            this.folderBrowserDlg.Filter = "(*.bmp, *.jpg, *.jpeg, *png)|*.bmp;*.jpg;*.jpeg;*.png";
+            this.folderBrowserDlg.Multiselect = true;
+            DialogResult result = this.folderBrowserDlg.ShowDialog();
+            bool exists = false;
+            if (result == DialogResult.OK)
+            {
+                foreach (var f in folderBrowserDlg.FileNames)
+                {
+                    string[] split = f.Split('\\');
+                    file = File.OpenRead(f);
+                    if (lastImgX >= pnControls.Width - sizeWidth - 10)
+                    {
+                        lastImgX = locX;
+                        locY = locY + sizeHeight + 30;
+                        lastImgY = locY;
+                    }
+                    else
+                    {
+                        lastImgY = locY;
+                    }
+                    // add pic name 
+                    PicArr.Add(split[split.Length - 1]);
+                    // add new image
+                    exists = loadImagestoPanel(split[split.Length - 1], f, lastImgX, lastImgY, false, false, "");
+                    // save locally if it doesnt exist
+                    if (exists == false)
+                    {
+                        // save local
+                        SaveLocal(file, split[split.Length - 1]);
+                        lastImgY = locY + sizeHeight + 10;
+                        lastImgX = lastImgX + sizeWidth + 10;
+                    }
+                    file.Close();
+                }
+
+                //LoadImages(ddlSections.SelectedValue.ToString(), 100, txtFilename.Text, false);
+                //if (exists == false)
+                //{
+                //    MessageBox.Show("Imported.");
+                //}
+            }
+        }
+
+
         public void LoadToolStrip(int _locX, int _locY, int _sizeWidth, int _sizeHeight)
         {
-            if (backgroundWorker1.IsBusy || backgroundWorker2.IsBusy || backgroundWorker3.IsBusy)
+            if (backgroundWorker1.IsBusy || backgroundWorker2.IsBusy || backgroundWorker3.IsBusy || backgroundWorker4.IsBusy || backgroundWorker5.IsBusy)
             {
                 return;
             }
@@ -729,6 +815,7 @@ namespace ManageImages
             }
         }
 
+        // default load
         public bool LoadImages(string folder, int cntBar, string filename, bool uploaded)
         {
             bool AddedNew = false;
@@ -834,6 +921,131 @@ namespace ManageImages
                         if (cntBar < 100)
                         {
                             pbStatus.InvokeEx(x => x.Value = cntBar);
+                        }
+                    }
+                }
+
+                lastImgX = locnewX;
+                lastImgY = locnewY;
+            }
+
+            //pbStatus.InvokeEx(x => x.Value = 100);
+            return AddedNew;
+        }
+
+        public bool LoadFilteredImages(string folder, int cntBar, string filename, bool uploaded, string columnName, string matchValue)
+        {
+            bool AddedNew = false;
+            DirectoryInfo Folder = new DirectoryInfo(GetLocalImgPath(folder));
+            FileInfo[] Images = Folder.GetFiles();
+            // download images from ftp folder
+            string[] files = GetFileList(folder);
+            ArrayList ImgNameArr = new ArrayList();
+            PicArr.Clear();
+            int fileLengthdb = 0;
+            string filterMatch = "";
+            string filenamedb = "";
+            foreach (FileInfo file in Images)
+            {
+                PicArr.Add(file.Name);
+            }
+            try
+            {
+                foreach (string file in files)
+                {
+                    // get length of image
+                    DataTable dt = Data.GetInfo(file, folder);
+                    if (dt.Rows.Count != 0)
+                    {
+                        fileLengthdb = Convert.ToInt32(dt.Rows[0]["length"]);
+                        filenamedb = dt.Rows[0]["filename"].ToString();
+                    }
+                    // image exists from server and local
+                    if (PicArr.Contains(file))
+                    {
+                        if (!file.Contains(".xml"))
+                        {
+                            int LocalFileLength = GetLocalFileLength(folder, file);
+                            // doesnt exist in website
+                            if (fileLengthdb.Equals(0) && filenamedb == "")
+                            {
+                                ;
+                            }
+                            // exists in website, now check if its hidden and only allow those matched to load
+                            else if (fileLengthdb == (LocalFileLength) && filenamedb.Equals(file, StringComparison.OrdinalIgnoreCase))
+                            {
+                                // check to see if its hidden
+                                filterMatch = dt.Rows[0][columnName].ToString();
+                                if (filterMatch.Equals(matchValue))
+                                {
+                                    ImgNameArr.Add(file);
+                                }
+                            }
+                        }
+                    }
+
+                    cntBar += cntBar / files.Length;
+                    if (cntBar < 100)
+                    {
+                        pbStatus.InvokeEx(x => x.Value = cntBar);
+                    }
+                }
+            }
+            catch
+            {
+
+            }
+            if (AddedNew == false)
+            {
+                // load images from folder
+                pnControls.InvokeEx(x => x.Controls.Clear());
+                switch (imgSize)
+                {
+                    case "x-small": locX = 20; locY = 10; sizeWidth = 30; sizeHeight = 30; break;
+                    case "small": locX = 20; locY = 10; sizeWidth = 50; sizeHeight = 50; break;
+                    case "medium": locX = 20; locY = 0; sizeWidth = 80; sizeHeight = 80; break;
+                    case "large": locX = 20; locY = 10; sizeWidth = 160; sizeHeight = 160; break;
+                    default: locX = 20; locY = 10; sizeWidth = 30; sizeHeight = 30; break;
+                }
+                int locnewX = locX;
+                int locnewY = locY;
+                lblStatus.InvokeEx(x => x.Text = "Loading images..");
+                foreach (FileInfo img in Images)
+                {
+                    if (ImgNameArr.Contains(img.Name))
+                    {
+                        if (img.Extension.ToLower() == ".png" || img.Extension.ToLower() == ".jpg" || img.Extension.ToLower() == ".gif" || img.Extension.ToLower() == ".jpeg" || img.Extension.ToLower() == ".bmp" || img.Extension.ToLower() == ".tif")
+                        {
+                            if (locnewX >= pnControls.Width - sizeWidth - 10)
+                            {
+                                locnewX = locX;
+                                locY = locY + sizeHeight + 30;
+                                locnewY = locY;
+                            }
+                            else
+                            {
+                                locnewY = locY;
+                            }
+                            if (Data.CheckImgExist(img.Name, folder) == true)
+                            {
+                                loadImagestoPanel(img.Name, img.FullName, locnewX, locnewY, true, uploaded, filename);
+                            }
+                            else
+                            {
+                                loadImagestoPanel(img.Name, img.FullName, locnewX, locnewY, false, uploaded, filename);
+                            }
+                            locnewY = locY + sizeHeight + 10;
+                            locnewX = locnewX + sizeWidth + 10;
+
+                            cntBar += (int)(cntBar / Images.Length) + 3;
+                            if (Images.Length < 6)
+                            {
+                                cntBar += 35;
+                            }
+                            if (cntBar < 100)
+                            {
+                                pbStatus.InvokeEx(x => x.Value = cntBar);
+                            }
                         }
                     }
                 }

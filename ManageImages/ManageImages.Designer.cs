@@ -32,7 +32,12 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ManageImages));
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.loadImageToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ImportImagesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.filterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.defaultToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.hiddenImagesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.menToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.womenToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pnControls = new System.Windows.Forms.Panel();
             this.pbStatus = new System.Windows.Forms.ProgressBar();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
@@ -56,22 +61,18 @@
             this.lblSection = new System.Windows.Forms.Label();
             this.ddlSections = new System.Windows.Forms.ComboBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.btnMoveSection = new System.Windows.Forms.Button();
             this.btnDeleteImg = new System.Windows.Forms.Button();
+            this.ddlMoveSection = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.backgroundWorker2 = new System.ComponentModel.BackgroundWorker();
             this.backgroundWorker3 = new System.ComponentModel.BackgroundWorker();
             this.lblStatus = new System.Windows.Forms.Label();
             this.grpbxMain = new System.Windows.Forms.GroupBox();
-            this.btnMoveSection = new System.Windows.Forms.Button();
-            this.ddlMoveSection = new System.Windows.Forms.ComboBox();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.backgroundWorker4 = new System.ComponentModel.BackgroundWorker();
-            this.filterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.defaultToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.hiddenImagesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.menToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.womenToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.backgroundWorker5 = new System.ComponentModel.BackgroundWorker();
             this.menuStrip.SuspendLayout();
             this.toolStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.PreviewPictureBox)).BeginInit();
@@ -93,18 +94,57 @@
             // fileToolStripMenuItem
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.loadImageToolStripMenuItem,
+            this.ImportImagesToolStripMenuItem,
             this.filterToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
             // 
-            // loadImageToolStripMenuItem
+            // ImportImagesToolStripMenuItem
             // 
-            this.loadImageToolStripMenuItem.Name = "loadImageToolStripMenuItem";
-            this.loadImageToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
-            this.loadImageToolStripMenuItem.Text = "Import Image";
-            this.loadImageToolStripMenuItem.Click += new System.EventHandler(this.loadImageToolStripMenuItem_Click);
+            this.ImportImagesToolStripMenuItem.Name = "ImportImagesToolStripMenuItem";
+            this.ImportImagesToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.ImportImagesToolStripMenuItem.Text = "Import Image";
+            this.ImportImagesToolStripMenuItem.Click += new System.EventHandler(this.ImportImagesToolStripMenuItem_Click);
+            // 
+            // filterToolStripMenuItem
+            // 
+            this.filterToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.defaultToolStripMenuItem,
+            this.hiddenImagesToolStripMenuItem,
+            this.menToolStripMenuItem,
+            this.womenToolStripMenuItem});
+            this.filterToolStripMenuItem.Name = "filterToolStripMenuItem";
+            this.filterToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.filterToolStripMenuItem.Text = "Filter By";
+            // 
+            // defaultToolStripMenuItem
+            // 
+            this.defaultToolStripMenuItem.Name = "defaultToolStripMenuItem";
+            this.defaultToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            this.defaultToolStripMenuItem.Text = "Default";
+            this.defaultToolStripMenuItem.Click += new System.EventHandler(this.defaultToolStripMenuItem_Click);
+            // 
+            // hiddenImagesToolStripMenuItem
+            // 
+            this.hiddenImagesToolStripMenuItem.Name = "hiddenImagesToolStripMenuItem";
+            this.hiddenImagesToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            this.hiddenImagesToolStripMenuItem.Text = "Hidden Images Only";
+            this.hiddenImagesToolStripMenuItem.Click += new System.EventHandler(this.hiddenImagesToolStripMenuItem_Click);
+            // 
+            // menToolStripMenuItem
+            // 
+            this.menToolStripMenuItem.Name = "menToolStripMenuItem";
+            this.menToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            this.menToolStripMenuItem.Text = "Men Only";
+            this.menToolStripMenuItem.Click += new System.EventHandler(this.menToolStripMenuItem_Click);
+            // 
+            // womenToolStripMenuItem
+            // 
+            this.womenToolStripMenuItem.Name = "womenToolStripMenuItem";
+            this.womenToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
+            this.womenToolStripMenuItem.Text = "Women Only";
+            this.womenToolStripMenuItem.Click += new System.EventHandler(this.womenToolStripMenuItem_Click);
             // 
             // pnControls
             // 
@@ -374,6 +414,20 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Image Preview";
             // 
+            // btnMoveSection
+            // 
+            this.btnMoveSection.BackColor = System.Drawing.Color.SlateGray;
+            this.btnMoveSection.Font = new System.Drawing.Font("Gulim", 8.5F);
+            this.btnMoveSection.ForeColor = System.Drawing.Color.White;
+            this.btnMoveSection.Location = new System.Drawing.Point(251, 15);
+            this.btnMoveSection.Name = "btnMoveSection";
+            this.btnMoveSection.Size = new System.Drawing.Size(82, 28);
+            this.btnMoveSection.TabIndex = 44;
+            this.btnMoveSection.Text = "Move";
+            this.btnMoveSection.UseVisualStyleBackColor = false;
+            this.btnMoveSection.Visible = false;
+            this.btnMoveSection.Click += new System.EventHandler(this.btnMoveSection_Click);
+            // 
             // btnDeleteImg
             // 
             this.btnDeleteImg.BackColor = System.Drawing.Color.SlateGray;
@@ -386,6 +440,19 @@
             this.btnDeleteImg.Text = "Delete";
             this.btnDeleteImg.UseVisualStyleBackColor = false;
             this.btnDeleteImg.Click += new System.EventHandler(this.btnDeleteImg_Click);
+            // 
+            // ddlMoveSection
+            // 
+            this.ddlMoveSection.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.ddlMoveSection.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ddlMoveSection.FormattingEnabled = true;
+            this.ddlMoveSection.Items.AddRange(new object[] {
+            "-- Select"});
+            this.ddlMoveSection.Location = new System.Drawing.Point(128, 19);
+            this.ddlMoveSection.Name = "ddlMoveSection";
+            this.ddlMoveSection.Size = new System.Drawing.Size(117, 21);
+            this.ddlMoveSection.TabIndex = 42;
+            this.ddlMoveSection.Visible = false;
             // 
             // label3
             // 
@@ -437,72 +504,15 @@
             this.grpbxMain.TabIndex = 41;
             this.grpbxMain.TabStop = false;
             // 
-            // btnMoveSection
-            // 
-            this.btnMoveSection.BackColor = System.Drawing.Color.SlateGray;
-            this.btnMoveSection.Font = new System.Drawing.Font("Gulim", 8.5F);
-            this.btnMoveSection.ForeColor = System.Drawing.Color.White;
-            this.btnMoveSection.Location = new System.Drawing.Point(251, 15);
-            this.btnMoveSection.Name = "btnMoveSection";
-            this.btnMoveSection.Size = new System.Drawing.Size(82, 28);
-            this.btnMoveSection.TabIndex = 44;
-            this.btnMoveSection.Text = "Move";
-            this.btnMoveSection.UseVisualStyleBackColor = false;
-            this.btnMoveSection.Visible = false;
-            this.btnMoveSection.Click += new System.EventHandler(this.btnMoveSection_Click);
-            // 
-            // ddlMoveSection
-            // 
-            this.ddlMoveSection.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.ddlMoveSection.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ddlMoveSection.FormattingEnabled = true;
-            this.ddlMoveSection.Items.AddRange(new object[] {
-            "-- Select"});
-            this.ddlMoveSection.Location = new System.Drawing.Point(128, 19);
-            this.ddlMoveSection.Name = "ddlMoveSection";
-            this.ddlMoveSection.Size = new System.Drawing.Size(117, 21);
-            this.ddlMoveSection.TabIndex = 42;
-            this.ddlMoveSection.Visible = false;
-            // 
             // backgroundWorker4
             // 
             this.backgroundWorker4.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker4_DoWork);
             this.backgroundWorker4.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker4_RunWorkerCompleted);
             // 
-            // filterToolStripMenuItem
+            // backgroundWorker5
             // 
-            this.filterToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.defaultToolStripMenuItem,
-            this.hiddenImagesToolStripMenuItem,
-            this.menToolStripMenuItem,
-            this.womenToolStripMenuItem});
-            this.filterToolStripMenuItem.Name = "filterToolStripMenuItem";
-            this.filterToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.filterToolStripMenuItem.Text = "Filter By";
-            // 
-            // defaultToolStripMenuItem
-            // 
-            this.defaultToolStripMenuItem.Name = "defaultToolStripMenuItem";
-            this.defaultToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
-            this.defaultToolStripMenuItem.Text = "Default";
-            // 
-            // hiddenImagesToolStripMenuItem
-            // 
-            this.hiddenImagesToolStripMenuItem.Name = "hiddenImagesToolStripMenuItem";
-            this.hiddenImagesToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
-            this.hiddenImagesToolStripMenuItem.Text = "Hidden Images Only";
-            // 
-            // menToolStripMenuItem
-            // 
-            this.menToolStripMenuItem.Name = "menToolStripMenuItem";
-            this.menToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
-            this.menToolStripMenuItem.Text = "Men Only";
-            // 
-            // womenToolStripMenuItem
-            // 
-            this.womenToolStripMenuItem.Name = "womenToolStripMenuItem";
-            this.womenToolStripMenuItem.Size = new System.Drawing.Size(182, 22);
-            this.womenToolStripMenuItem.Text = "Women Only";
+            this.backgroundWorker5.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker5_DoWork);
+            this.backgroundWorker5.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker5_RunWorkerCompleted);
             // 
             // ManageImages
             // 
@@ -546,7 +556,7 @@
         private System.Windows.Forms.ToolStripButton toolStripButton3;
         private System.Windows.Forms.ToolStripButton toolStripButton4;
         private System.Windows.Forms.PictureBox PreviewPictureBox;
-        private System.Windows.Forms.ToolStripMenuItem loadImageToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem ImportImagesToolStripMenuItem;
         private System.Windows.Forms.Button btnUploadImage;
         private System.Windows.Forms.Label lblFileName;
         private System.Windows.Forms.TextBox txtFilename;
@@ -579,6 +589,7 @@
         private System.Windows.Forms.ToolStripMenuItem hiddenImagesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem menToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem womenToolStripMenuItem;
+        private System.ComponentModel.BackgroundWorker backgroundWorker5;
     }
 }
 
