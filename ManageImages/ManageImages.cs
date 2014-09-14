@@ -46,7 +46,7 @@ namespace ManageImages
 
         private class data
         {
-            public data(string _folder, string _description, string _gender, string _filename, int _sectionIndex, bool _hidden, string _toFolder, string _filterType)
+            public data(string _folder, string _description, string _gender, string _filename, int _sectionIndex, bool _hidden, string _toFolder, string _filterType, bool _isCopy)
             {
                 folder = _folder;
                 description = _description;
@@ -56,6 +56,7 @@ namespace ManageImages
                 hidden = _hidden;
                 ToFolder = _toFolder;
                 filterType = _filterType;
+                IsCopy = _isCopy;
             }
             public string folder { get; set; }
             public string description { get; set; }
@@ -65,6 +66,7 @@ namespace ManageImages
             public bool hidden { get; set; }
             public string ToFolder { get; set; }
             public string filterType { get; set; }
+            public bool IsCopy { get; set; }
         }
 
         #endregion
@@ -309,7 +311,7 @@ namespace ManageImages
                 return;
             }
 
-            backgroundWorker1.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedIndex, chkHideImage.Checked, ddlMoveSection.Text, ""));
+            backgroundWorker1.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedIndex, chkHideImage.Checked, ddlMoveSection.Text, "", false));
         }
 
         #endregion
@@ -389,7 +391,7 @@ namespace ManageImages
                 MessageBox.Show("Select image first.");
                 return;
             }
-            backgroundWorker2.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedIndex, chkHideImage.Checked, ddlMoveSection.Text, ""));
+            backgroundWorker2.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedIndex, chkHideImage.Checked, ddlMoveSection.Text, "", false));
         }
         #endregion
 
@@ -399,8 +401,12 @@ namespace ManageImages
 
         private void backgroundWorker3_DoWork(object sender, DoWorkEventArgs e)
         {
+            // selects all radio button by default
+            rbAll.InvokeEx(x => x.Checked = true);
+
             // hide move to options
             btnMoveSection.InvokeEx(x => x.Visible = false);
+            btnCopySection.InvokeEx(x => x.Visible = false);
             ddlMoveSection.InvokeEx(x => x.Visible = false);
             // clear panel
             pnControls.InvokeEx(x => x.Controls.Clear());
@@ -477,8 +483,33 @@ namespace ManageImages
         {
             if (ddlSections.DataSource != null)
             {
-                backgroundWorker3.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedIndex, chkHideImage.Checked, ddlMoveSection.Text, ""));
+                backgroundWorker3.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedIndex, chkHideImage.Checked, ddlMoveSection.Text, "", false));
             }
+        }
+        #endregion
+
+        #region Copy Section
+
+
+        private void btnCopySection_Click(object sender, EventArgs e)
+        {
+            if (backgroundWorker1.IsBusy || backgroundWorker2.IsBusy || backgroundWorker3.IsBusy || backgroundWorker4.IsBusy || backgroundWorker5.IsBusy)
+            {
+                return;
+            }
+            if (ddlSections.Text == ddlMoveSection.Text)
+            {
+                MessageBox.Show("Please select a different section to copy.");
+                return;
+            }
+            // check if copying image exist in the target folder
+            if (Data.CheckImgExist(txtFilename.Text, ddlMoveSection.SelectedValue.ToString()) == true)
+            {
+                MessageBox.Show(string.Format("This image already exist in {0} folder.", ddlMoveSection.Text));
+                return;
+            }
+
+            backgroundWorker4.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedIndex, chkHideImage.Checked, ddlMoveSection.SelectedValue.ToString(), "", true));
         }
         #endregion
 
@@ -492,12 +523,21 @@ namespace ManageImages
             ddlSections.InvokeEx(x => x.Enabled = false);
             ddlMoveSection.InvokeEx(x => x.Enabled = false);
             lblStatus.InvokeEx(x => x.Visible = true);
-            lblStatus.InvokeEx(x => x.Text = "Moving..");
             pbStatus.InvokeEx(x => x.Visible = true);
             pbStatus.InvokeEx(x => x.Value = 20);
             data _data = (data)e.Argument;
-            MoveImage(_data.folder, _data.filename, _data.ToFolder, _data.gender, _data.description, GetLocalFileLength(_data.folder, _data.filename), chkHideImage.Checked);
-            MessageBox.Show("Moved");
+            if (_data.IsCopy == false)
+            {
+                lblStatus.InvokeEx(x => x.Text = "Moving..");
+                MoveImage(_data.folder, _data.filename, _data.ToFolder, _data.gender, _data.description, GetLocalFileLength(_data.folder, _data.filename), chkHideImage.Checked, false);
+                MessageBox.Show("Moved");
+            }
+            else
+            {
+                lblStatus.InvokeEx(x => x.Text = "Copying..");
+                MoveImage(_data.folder, _data.filename, _data.ToFolder, _data.gender, _data.description, GetLocalFileLength(_data.folder, _data.filename), chkHideImage.Checked, true);
+                MessageBox.Show("Copied");
+            }
         }
 
         private void backgroundWorker4_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -517,18 +557,81 @@ namespace ManageImages
                 return;
             }
 
+                        // check if copying image exist in the target folder
             if (ddlSections.Text == ddlMoveSection.Text)
             {
                 MessageBox.Show("Please select a different section to move.");
                 return;
             }
-            backgroundWorker4.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedIndex, chkHideImage.Checked, ddlMoveSection.SelectedValue.ToString(), ""));
+            if (Data.CheckImgExist(txtFilename.Text, ddlMoveSection.SelectedValue.ToString()) == true)
+            {
+                MessageBox.Show(string.Format("This image already exist in {0} folder.", ddlMoveSection.Text));
+                return;
+            }
+
+            backgroundWorker4.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedIndex, chkHideImage.Checked, ddlMoveSection.SelectedValue.ToString(), "", false));
         }
 
         #endregion
 
         #region Filters
 
+
+        private void rbWomen_CheckedChanged(object sender, EventArgs e)
+        {
+            if (backgroundWorker1.IsBusy || backgroundWorker2.IsBusy || backgroundWorker3.IsBusy || backgroundWorker4.IsBusy || backgroundWorker5.IsBusy)
+            {
+                return;
+            }
+            if (rbWomen.Checked == true)
+            {
+                ddlSections.InvokeEx(x => x.Enabled = false);
+                womenToolStripMenuItem_Click(sender, e);
+                ddlSections.InvokeEx(x => x.Enabled = true);
+            }
+        }
+
+        private void rbMen_CheckedChanged(object sender, EventArgs e)
+        {
+            if (backgroundWorker1.IsBusy || backgroundWorker2.IsBusy || backgroundWorker3.IsBusy || backgroundWorker4.IsBusy || backgroundWorker5.IsBusy)
+            {
+                return;
+            }
+            if (rbMen.Checked == true)
+            {
+                ddlSections.InvokeEx(x => x.Enabled = false);
+                menToolStripMenuItem_Click(sender, e);
+                ddlSections.InvokeEx(x => x.Enabled = true);
+            }
+        }
+
+        private void rbAll_CheckedChanged(object sender, EventArgs e)
+        {
+            if (backgroundWorker1.IsBusy || backgroundWorker2.IsBusy || backgroundWorker3.IsBusy || backgroundWorker4.IsBusy || backgroundWorker5.IsBusy)
+            {
+                return;
+            }
+            if (rbAll.Checked == true)
+            {
+                ddlSections.InvokeEx(x => x.Enabled = false);
+                defaultToolStripMenuItem_Click(sender, e);
+                ddlSections.InvokeEx(x => x.Enabled = true);
+            }
+        }
+
+        private void rbHidden_CheckedChanged(object sender, EventArgs e)
+        {
+            if (backgroundWorker1.IsBusy || backgroundWorker2.IsBusy || backgroundWorker3.IsBusy || backgroundWorker4.IsBusy || backgroundWorker5.IsBusy)
+            {
+                return;
+            }
+            if (rbHidden.Checked == true)
+            {
+                ddlSections.InvokeEx(x => x.Enabled = false);
+                hiddenImagesToolStripMenuItem_Click(sender, e);
+                ddlSections.InvokeEx(x => x.Enabled = true);
+            }
+        }
 
         private void backgroundWorker5_DoWork(object sender, DoWorkEventArgs e)
         {
@@ -547,8 +650,8 @@ namespace ManageImages
 
         private void backgroundWorker5_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            pbStatus.Visible = false;
-            lblStatus.Visible = false;
+            pbStatus.InvokeEx(x => x.Visible = false);
+            lblStatus.InvokeEx(x => x.Visible = false);
             lblStatus.InvokeEx(x => x.Text = "Please wait..");
             ResetInfo();
         }
@@ -560,7 +663,7 @@ namespace ManageImages
                 return;
             }
 
-            backgroundWorker5.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedIndex, chkHideImage.Checked, ddlMoveSection.SelectedValue.ToString(), "hidden"));
+            backgroundWorker5.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedIndex, chkHideImage.Checked, ddlMoveSection.SelectedValue.ToString(), "hidden", false));
         }
 
         private void defaultToolStripMenuItem_Click(object sender, EventArgs e)
@@ -570,7 +673,7 @@ namespace ManageImages
                 return;
             }
 
-            backgroundWorker5.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedIndex, chkHideImage.Checked, ddlMoveSection.SelectedValue.ToString(), "default"));
+            backgroundWorker5.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedIndex, chkHideImage.Checked, ddlMoveSection.SelectedValue.ToString(), "default", false));
         }
 
 
@@ -581,7 +684,7 @@ namespace ManageImages
                 return;
             }
 
-            backgroundWorker5.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedIndex, chkHideImage.Checked, ddlMoveSection.SelectedValue.ToString(), "Men"));
+            backgroundWorker5.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedIndex, chkHideImage.Checked, ddlMoveSection.SelectedValue.ToString(), "Men", false));
         }
 
         private void womenToolStripMenuItem_Click(object sender, EventArgs e)
@@ -591,7 +694,7 @@ namespace ManageImages
                 return;
             }
 
-            backgroundWorker5.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedIndex, chkHideImage.Checked, ddlMoveSection.SelectedValue.ToString(), "Women"));
+            backgroundWorker5.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedIndex, chkHideImage.Checked, ddlMoveSection.SelectedValue.ToString(), "Women", false));
         }
 
         #endregion
@@ -776,6 +879,7 @@ namespace ManageImages
                 btnUploadImage.InvokeEx(x => x.Enabled = false);
                 // show move to options
                 btnMoveSection.InvokeEx(x => x.Visible = true);
+                btnCopySection.InvokeEx(x => x.Visible = true);
                 ddlMoveSection.InvokeEx(x => x.Visible = true);
             }
             else
@@ -785,6 +889,7 @@ namespace ManageImages
                 btnUploadImage.InvokeEx(x => x.Enabled = true);
                 // show move to options
                 btnMoveSection.InvokeEx(x => x.Visible = false);
+                btnCopySection.InvokeEx(x => x.Visible = false);
                 ddlMoveSection.InvokeEx(x => x.Visible = false);
             }
         }
@@ -792,7 +897,7 @@ namespace ManageImages
         // resets after save
         public void ResetInfo()
         {
-            txtSection.InvokeEx(x => x.Text = "");
+            //txtSection.InvokeEx(x => x.Text = "");
             txtFilename.InvokeEx(x => x.Text = "");
             txtDescription.InvokeEx(x => x.Text = "");
             ddlGender.InvokeEx(x => x.SelectedIndex = -1);
@@ -800,6 +905,7 @@ namespace ManageImages
             chkHideImage.InvokeEx(x => x.Checked = false);
             // hide move to options
             btnMoveSection.InvokeEx(x => x.Visible = false);
+            btnCopySection.InvokeEx(x => x.Visible = false);
             ddlMoveSection.InvokeEx(x => x.Visible = false);
         }
 
@@ -1316,6 +1422,31 @@ namespace ManageImages
             ftpStream.Close();
         }
 
+        public void UploadCopyServerImg(string FromFolderName, string ToFolderName, string FromFileName, string ToFileName, int pbCnt)
+        {
+            FtpWebRequest request = (FtpWebRequest)WebRequest.Create("ftp://208.118.63.29/site2/" + ToFolderName + "/" + ToFileName);
+            request.KeepAlive = true;
+            request.Proxy = null;
+            request.UseBinary = true;
+            pbStatus.InvokeEx(x => x.Value = pbCnt + 20);
+            request.Method = WebRequestMethods.Ftp.UploadFile;
+            pbStatus.InvokeEx(x => x.Value = pbCnt + 20);
+            request.Credentials = new NetworkCredential("eplugplay-001", ConfigurationManager.ConnectionStrings["ftp"].ToString());
+            Stream ftpStream = request.GetRequestStream();
+            FileStream file = File.OpenRead(GetLocalImgPath(FromFolderName) + "\\" + FromFileName);
+            int length = 1024;
+            byte[] buffer = new byte[length];
+            int bytesRead = 0;
+            do
+            {
+                bytesRead = file.Read(buffer, 0, length);
+                ftpStream.Write(buffer, 0, bytesRead);
+            }
+            while (bytesRead != 0);
+            file.Close();
+            ftpStream.Close();
+        }
+
         public void DeleteServerImg(string folder, string file)
         {
             try
@@ -1347,29 +1478,38 @@ namespace ManageImages
             }
         }
 
-        // copies images to a target folder
-        public void MoveImage(string fromFolder, string filename, string toFolder, string gender, string description, int length, bool hidden)
+        // moves images to a different section
+        public void MoveImage(string fromFolder, string filename, string toFolder, string gender, string description, int length, bool hidden, bool IsCopy)
         {
             try
             {
                 pbStatus.InvokeEx(x => x.Value = 40);
                 // copy to target server/folder
-                UploadServerImg(fromFolder, toFolder, filename, 20);
-
-                pbStatus.InvokeEx(x => x.Value = 50);
-                // delete local file
-                File.Delete(GetLocalImgPath(fromFolder) + "//" + filename);
-
-                pbStatus.InvokeEx(x => x.Value = 70);
-                // delete image from server
-                DeleteServerImg(fromFolder, filename);
-
-                pbStatus.InvokeEx(x => x.Value = 90);
-                // update to db moved folder
-                Data.UpdateImageDb(filename, toFolder, length, gender, description, hidden, true);
+                if (IsCopy == false)
+                {
+                    UploadServerImg(fromFolder, toFolder, filename, 20);
+                    pbStatus.InvokeEx(x => x.Value = 50);
+                    File.Copy(GetLocalImgPath(fromFolder) + "//" + filename, GetLocalImgPath(toFolder) + "//" + filename);
+                    // delete local file
+                    File.Delete(GetLocalImgPath(fromFolder) + "//" + filename);
+                    pbStatus.InvokeEx(x => x.Value = 70);
+                    // delete image from server
+                    DeleteServerImg(fromFolder, filename);
+                    pbStatus.InvokeEx(x => x.Value = 90);
+                    // update to db moved folder
+                    Data.UpdateImageDb(filename, toFolder, length, gender, description, hidden, true);
+                    ReloadImages();
+                }
+                else
+                {
+                    string[] copyFileNameSplit = filename.Split('.');
+                    string copyFileName = copyFileNameSplit[0].ToString() + " Copy." + copyFileNameSplit[1].ToString();
+                    UploadCopyServerImg(fromFolder, toFolder, filename, copyFileName, 20);
+                    File.Copy(GetLocalImgPath(fromFolder) + "//" + filename, GetLocalImgPath(toFolder) + "//" + copyFileName);
+                    Data.SaveImageToDb(copyFileName, description, gender, toFolder, length, hidden);
+                }
 
                 pbStatus.InvokeEx(x => x.Value = 100);
-                ReloadImages();
             }
             catch
             {

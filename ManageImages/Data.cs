@@ -116,6 +116,7 @@ namespace ManageImages
             return false;
         }
 
+
         public static void UpdateImageDb(string filename, string folder, int length, string gender, string description, bool hidden, bool isMove)
         {
             int hiddenValue = 0;
