@@ -167,7 +167,7 @@
             // 
             // pbStatus
             // 
-            this.pbStatus.Location = new System.Drawing.Point(183, 32);
+            this.pbStatus.Location = new System.Drawing.Point(423, 60);
             this.pbStatus.Name = "pbStatus";
             this.pbStatus.Size = new System.Drawing.Size(100, 23);
             this.pbStatus.TabIndex = 38;
@@ -467,7 +467,7 @@
             // label3
             // 
             this.label3.Font = new System.Drawing.Font("Verdana", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(6, 39);
+            this.label3.Location = new System.Drawing.Point(3, 43);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(160, 19);
             this.label3.TabIndex = 38;
@@ -491,7 +491,9 @@
             // lblStatus
             // 
             this.lblStatus.AutoSize = true;
-            this.lblStatus.Location = new System.Drawing.Point(180, 14);
+            this.lblStatus.BackColor = System.Drawing.SystemColors.Window;
+            this.lblStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblStatus.Location = new System.Drawing.Point(420, 44);
             this.lblStatus.Name = "lblStatus";
             this.lblStatus.Size = new System.Drawing.Size(87, 13);
             this.lblStatus.TabIndex = 41;
@@ -502,9 +504,7 @@
             // 
             this.grpbxMain.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.grpbxMain.Controls.Add(this.groupBox1);
-            this.grpbxMain.Controls.Add(this.lblStatus);
             this.grpbxMain.Controls.Add(this.pnControls);
-            this.grpbxMain.Controls.Add(this.pbStatus);
             this.grpbxMain.Controls.Add(this.label4);
             this.grpbxMain.Controls.Add(this.label3);
             this.grpbxMain.Controls.Add(this.ddlSections);
@@ -568,7 +568,7 @@
             this.groupBox1.Controls.Add(this.rbAll);
             this.groupBox1.Controls.Add(this.rbMen);
             this.groupBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.groupBox1.Location = new System.Drawing.Point(301, 5);
+            this.groupBox1.Location = new System.Drawing.Point(140, 8);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(241, 32);
             this.groupBox1.TabIndex = 48;
@@ -608,7 +608,9 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(977, 712);
             this.Controls.Add(this.grpbxMain);
+            this.Controls.Add(this.lblStatus);
             this.Controls.Add(this.groupBox2);
+            this.Controls.Add(this.pbStatus);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.toolStrip);
             this.Controls.Add(this.menuStrip);
@@ -627,7 +629,6 @@
             this.groupBox2.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.grpbxMain.ResumeLayout(false);
-            this.grpbxMain.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.ResumeLayout(false);

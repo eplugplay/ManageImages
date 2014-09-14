@@ -642,7 +642,7 @@ namespace ManageImages
             switch(_data.filterType)
             {
                 case "hidden": lblStatus.InvokeEx(x => x.Text = "Searching hidden images.."); LoadFilteredImages(_data.folder, 40, _data.filename, false, "hidden", "1"); break;
-                case "default": if (LoadImages(_data.folder, 40, _data.filename, false) == true) { LoadImages(_data.folder, 90, _data.filename, false); } break;
+                case "default": lblStatus.InvokeEx(x => x.Text = "loading all images.."); if (LoadImages(_data.folder, 40, _data.filename, false) == true) { LoadImages(_data.folder, 90, _data.filename, false); } break;
                 case "Men": lblStatus.InvokeEx(x => x.Text = "Searching men images.."); LoadFilteredImages(_data.folder, 40, _data.filename, false, "gender", "Men"); break;
                 case "Women": lblStatus.InvokeEx(x => x.Text = "Searching women images.."); LoadFilteredImages(_data.folder, 40, _data.filename, false, "gender", "Women"); break;
             }
