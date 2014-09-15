@@ -92,6 +92,9 @@ namespace ManageImages
 
             // load sections
             LoadSections();
+
+            // make status label opaque
+            lblStatus.BackColor = Color.FromArgb(-20, 88, 44, 55);
         }
 
         // delete images that are local but not on web server on exit
@@ -250,6 +253,8 @@ namespace ManageImages
         {
             if (MessageBox.Show("Upload?", "Upload?", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
+                gpFilters.InvokeEx(x => x.Enabled = false);
+                ddlSections.InvokeEx(x => x.Enabled = false);
                 pbStatus.InvokeEx(x => x.Visible = true);
                 lblStatus.InvokeEx(x => x.Visible = true);
                 lblStatus.InvokeEx(x => x.Text = "Uploading..");
@@ -268,13 +273,14 @@ namespace ManageImages
                 Data.SaveImageToDb(FileName, Description, Gender, FolderName, GetLocalFileLength(FolderName, FileName), Hidden);
                 pbStatus.InvokeEx(x => x.Value = 100);
                 CheckImagesExist(FileName, FolderName);
-                //LoadImages(FolderName, 90, FileName, true);
                 MessageBox.Show("Successfully uploaded.");
             }
         }
 
         private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            gpFilters.InvokeEx(x => x.Enabled = true);
+            ddlSections.InvokeEx(x => x.Enabled = true);
             pbStatus.InvokeEx(x => x.Visible = false);
             lblStatus.InvokeEx(x => x.Visible = false);
             lblStatus.InvokeEx(x => x.Text = "Please wait..");
@@ -324,6 +330,8 @@ namespace ManageImages
         {
             if (MessageBox.Show("Delete?", "Delete?", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
+                gpFilters.InvokeEx(x => x.Enabled = false);
+                ddlSections.InvokeEx(x => x.Enabled = false);
                 data _data = (data)e.Argument;
                 string FolderName = _data.folder;
                 string FileName = _data.filename;
@@ -375,6 +383,8 @@ namespace ManageImages
 
         private void backgroundWorker2_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            gpFilters.InvokeEx(x => x.Enabled = true);
+            ddlSections.InvokeEx(x => x.Enabled = true);
             pbStatus.InvokeEx(x => x.Visible = false);
             lblStatus.InvokeEx(x => x.Visible = false);
             lblStatus.InvokeEx(x => x.Text = "Please wait..");
@@ -520,6 +530,7 @@ namespace ManageImages
 
         private void backgroundWorker4_DoWork(object sender, DoWorkEventArgs e)
         {
+            gpFilters.InvokeEx(x => x.Enabled = false);
             ddlSections.InvokeEx(x => x.Enabled = false);
             ddlMoveSection.InvokeEx(x => x.Enabled = false);
             lblStatus.InvokeEx(x => x.Visible = true);
@@ -542,6 +553,7 @@ namespace ManageImages
 
         private void backgroundWorker4_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            gpFilters.InvokeEx(x => x.Enabled = true);
             ddlSections.InvokeEx(x => x.Enabled = true);
             ddlMoveSection.InvokeEx(x => x.Enabled = true);
             pbStatus.InvokeEx(x => x.Visible = false);

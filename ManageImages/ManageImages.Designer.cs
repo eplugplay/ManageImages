@@ -61,6 +61,7 @@
             this.lblSection = new System.Windows.Forms.Label();
             this.ddlSections = new System.Windows.Forms.ComboBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.btnCopySection = new System.Windows.Forms.Button();
             this.btnMoveSection = new System.Windows.Forms.Button();
             this.btnDeleteImg = new System.Windows.Forms.Button();
             this.ddlMoveSection = new System.Windows.Forms.ComboBox();
@@ -70,22 +71,21 @@
             this.backgroundWorker3 = new System.ComponentModel.BackgroundWorker();
             this.lblStatus = new System.Windows.Forms.Label();
             this.grpbxMain = new System.Windows.Forms.GroupBox();
+            this.gpFilters = new System.Windows.Forms.GroupBox();
+            this.rbHidden = new System.Windows.Forms.RadioButton();
+            this.rbWomen = new System.Windows.Forms.RadioButton();
+            this.rbAll = new System.Windows.Forms.RadioButton();
+            this.rbMen = new System.Windows.Forms.RadioButton();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.backgroundWorker4 = new System.ComponentModel.BackgroundWorker();
             this.backgroundWorker5 = new System.ComponentModel.BackgroundWorker();
-            this.rbMen = new System.Windows.Forms.RadioButton();
-            this.rbWomen = new System.Windows.Forms.RadioButton();
-            this.rbAll = new System.Windows.Forms.RadioButton();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.rbHidden = new System.Windows.Forms.RadioButton();
-            this.btnCopySection = new System.Windows.Forms.Button();
             this.menuStrip.SuspendLayout();
             this.toolStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.PreviewPictureBox)).BeginInit();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.grpbxMain.SuspendLayout();
-            this.groupBox1.SuspendLayout();
+            this.gpFilters.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip
@@ -110,7 +110,7 @@
             // ImportImagesToolStripMenuItem
             // 
             this.ImportImagesToolStripMenuItem.Name = "ImportImagesToolStripMenuItem";
-            this.ImportImagesToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.ImportImagesToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.ImportImagesToolStripMenuItem.Text = "Import Image";
             this.ImportImagesToolStripMenuItem.Click += new System.EventHandler(this.ImportImagesToolStripMenuItem_Click);
             // 
@@ -122,35 +122,35 @@
             this.menToolStripMenuItem,
             this.womenToolStripMenuItem});
             this.filterToolStripMenuItem.Name = "filterToolStripMenuItem";
-            this.filterToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.filterToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
             this.filterToolStripMenuItem.Text = "Filter By";
             this.filterToolStripMenuItem.Visible = false;
             // 
             // defaultToolStripMenuItem
             // 
             this.defaultToolStripMenuItem.Name = "defaultToolStripMenuItem";
-            this.defaultToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.defaultToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.defaultToolStripMenuItem.Text = "Default";
             this.defaultToolStripMenuItem.Click += new System.EventHandler(this.defaultToolStripMenuItem_Click);
             // 
             // hiddenImagesToolStripMenuItem
             // 
             this.hiddenImagesToolStripMenuItem.Name = "hiddenImagesToolStripMenuItem";
-            this.hiddenImagesToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.hiddenImagesToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.hiddenImagesToolStripMenuItem.Text = "Hidden";
             this.hiddenImagesToolStripMenuItem.Click += new System.EventHandler(this.hiddenImagesToolStripMenuItem_Click);
             // 
             // menToolStripMenuItem
             // 
             this.menToolStripMenuItem.Name = "menToolStripMenuItem";
-            this.menToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.menToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.menToolStripMenuItem.Text = "Men";
             this.menToolStripMenuItem.Click += new System.EventHandler(this.menToolStripMenuItem_Click);
             // 
             // womenToolStripMenuItem
             // 
             this.womenToolStripMenuItem.Name = "womenToolStripMenuItem";
-            this.womenToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.womenToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.womenToolStripMenuItem.Text = "Women";
             this.womenToolStripMenuItem.Click += new System.EventHandler(this.womenToolStripMenuItem_Click);
             // 
@@ -423,6 +423,21 @@
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Image Preview";
             // 
+            // btnCopySection
+            // 
+            this.btnCopySection.BackColor = System.Drawing.Color.SlateGray;
+            this.btnCopySection.Font = new System.Drawing.Font("Gulim", 8.5F);
+            this.btnCopySection.ForeColor = System.Drawing.Color.White;
+            this.btnCopySection.Location = new System.Drawing.Point(252, 17);
+            this.btnCopySection.Name = "btnCopySection";
+            this.btnCopySection.Size = new System.Drawing.Size(82, 28);
+            this.btnCopySection.TabIndex = 45;
+            this.btnCopySection.Text = "Copy to:";
+            this.toolTip.SetToolTip(this.btnCopySection, "Keeps selected image in current section and copies it to another section.");
+            this.btnCopySection.UseVisualStyleBackColor = false;
+            this.btnCopySection.Visible = false;
+            this.btnCopySection.Click += new System.EventHandler(this.btnCopySection_Click);
+            // 
             // btnMoveSection
             // 
             this.btnMoveSection.BackColor = System.Drawing.Color.SlateGray;
@@ -491,7 +506,7 @@
             // lblStatus
             // 
             this.lblStatus.AutoSize = true;
-            this.lblStatus.BackColor = System.Drawing.SystemColors.Window;
+            this.lblStatus.BackColor = System.Drawing.Color.Transparent;
             this.lblStatus.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblStatus.Location = new System.Drawing.Point(420, 44);
             this.lblStatus.Name = "lblStatus";
@@ -503,7 +518,7 @@
             // grpbxMain
             // 
             this.grpbxMain.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.grpbxMain.Controls.Add(this.groupBox1);
+            this.grpbxMain.Controls.Add(this.gpFilters);
             this.grpbxMain.Controls.Add(this.pnControls);
             this.grpbxMain.Controls.Add(this.label4);
             this.grpbxMain.Controls.Add(this.label3);
@@ -515,27 +530,31 @@
             this.grpbxMain.TabIndex = 41;
             this.grpbxMain.TabStop = false;
             // 
-            // backgroundWorker4
+            // gpFilters
             // 
-            this.backgroundWorker4.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker4_DoWork);
-            this.backgroundWorker4.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker4_RunWorkerCompleted);
+            this.gpFilters.Controls.Add(this.rbHidden);
+            this.gpFilters.Controls.Add(this.rbWomen);
+            this.gpFilters.Controls.Add(this.rbAll);
+            this.gpFilters.Controls.Add(this.rbMen);
+            this.gpFilters.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.gpFilters.Location = new System.Drawing.Point(140, 8);
+            this.gpFilters.Name = "gpFilters";
+            this.gpFilters.Size = new System.Drawing.Size(241, 32);
+            this.gpFilters.TabIndex = 48;
+            this.gpFilters.TabStop = false;
+            this.gpFilters.Text = "Filter By:";
             // 
-            // backgroundWorker5
+            // rbHidden
             // 
-            this.backgroundWorker5.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker5_DoWork);
-            this.backgroundWorker5.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker5_RunWorkerCompleted);
-            // 
-            // rbMen
-            // 
-            this.rbMen.AutoSize = true;
-            this.rbMen.Location = new System.Drawing.Point(121, 12);
-            this.rbMen.Name = "rbMen";
-            this.rbMen.Size = new System.Drawing.Size(49, 17);
-            this.rbMen.TabIndex = 45;
-            this.rbMen.TabStop = true;
-            this.rbMen.Text = "Men";
-            this.rbMen.UseVisualStyleBackColor = true;
-            this.rbMen.CheckedChanged += new System.EventHandler(this.rbMen_CheckedChanged);
+            this.rbHidden.AutoSize = true;
+            this.rbHidden.Location = new System.Drawing.Point(172, 12);
+            this.rbHidden.Name = "rbHidden";
+            this.rbHidden.Size = new System.Drawing.Size(65, 17);
+            this.rbHidden.TabIndex = 47;
+            this.rbHidden.TabStop = true;
+            this.rbHidden.Text = "Hidden";
+            this.rbHidden.UseVisualStyleBackColor = true;
+            this.rbHidden.CheckedChanged += new System.EventHandler(this.rbHidden_CheckedChanged);
             // 
             // rbWomen
             // 
@@ -561,46 +580,27 @@
             this.rbAll.UseVisualStyleBackColor = true;
             this.rbAll.CheckedChanged += new System.EventHandler(this.rbAll_CheckedChanged);
             // 
-            // groupBox1
+            // rbMen
             // 
-            this.groupBox1.Controls.Add(this.rbHidden);
-            this.groupBox1.Controls.Add(this.rbWomen);
-            this.groupBox1.Controls.Add(this.rbAll);
-            this.groupBox1.Controls.Add(this.rbMen);
-            this.groupBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.groupBox1.Location = new System.Drawing.Point(140, 8);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(241, 32);
-            this.groupBox1.TabIndex = 48;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Filter By:";
+            this.rbMen.AutoSize = true;
+            this.rbMen.Location = new System.Drawing.Point(121, 12);
+            this.rbMen.Name = "rbMen";
+            this.rbMen.Size = new System.Drawing.Size(49, 17);
+            this.rbMen.TabIndex = 45;
+            this.rbMen.TabStop = true;
+            this.rbMen.Text = "Men";
+            this.rbMen.UseVisualStyleBackColor = true;
+            this.rbMen.CheckedChanged += new System.EventHandler(this.rbMen_CheckedChanged);
             // 
-            // rbHidden
+            // backgroundWorker4
             // 
-            this.rbHidden.AutoSize = true;
-            this.rbHidden.Location = new System.Drawing.Point(172, 12);
-            this.rbHidden.Name = "rbHidden";
-            this.rbHidden.Size = new System.Drawing.Size(65, 17);
-            this.rbHidden.TabIndex = 47;
-            this.rbHidden.TabStop = true;
-            this.rbHidden.Text = "Hidden";
-            this.rbHidden.UseVisualStyleBackColor = true;
-            this.rbHidden.CheckedChanged += new System.EventHandler(this.rbHidden_CheckedChanged);
+            this.backgroundWorker4.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker4_DoWork);
+            this.backgroundWorker4.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker4_RunWorkerCompleted);
             // 
-            // btnCopySection
+            // backgroundWorker5
             // 
-            this.btnCopySection.BackColor = System.Drawing.Color.SlateGray;
-            this.btnCopySection.Font = new System.Drawing.Font("Gulim", 8.5F);
-            this.btnCopySection.ForeColor = System.Drawing.Color.White;
-            this.btnCopySection.Location = new System.Drawing.Point(252, 17);
-            this.btnCopySection.Name = "btnCopySection";
-            this.btnCopySection.Size = new System.Drawing.Size(82, 28);
-            this.btnCopySection.TabIndex = 45;
-            this.btnCopySection.Text = "Copy to:";
-            this.toolTip.SetToolTip(this.btnCopySection, "Keeps selected image in current section and copies it to another section.");
-            this.btnCopySection.UseVisualStyleBackColor = false;
-            this.btnCopySection.Visible = false;
-            this.btnCopySection.Click += new System.EventHandler(this.btnCopySection_Click);
+            this.backgroundWorker5.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker5_DoWork);
+            this.backgroundWorker5.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker5_RunWorkerCompleted);
             // 
             // ManageImages
             // 
@@ -629,8 +629,8 @@
             this.groupBox2.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.grpbxMain.ResumeLayout(false);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
+            this.gpFilters.ResumeLayout(false);
+            this.gpFilters.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -684,7 +684,7 @@
         private System.Windows.Forms.RadioButton rbMen;
         private System.Windows.Forms.RadioButton rbWomen;
         private System.Windows.Forms.RadioButton rbAll;
-        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.GroupBox gpFilters;
         private System.Windows.Forms.RadioButton rbHidden;
         private System.Windows.Forms.Button btnCopySection;
     }
