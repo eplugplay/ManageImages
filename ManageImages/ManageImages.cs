@@ -202,6 +202,11 @@ namespace ManageImages
                     case 1: chkHideImage.Checked = true; break;
                 }
             }
+            if (ddlSections.SelectedIndex == 5)
+            {
+                ddlGender.InvokeEx(x => x.SelectedIndex = 0);
+                ddlGender.InvokeEx(x => x.Enabled = false);
+            }
             CheckImagesExist(txtFilename.Text, ddlSections.SelectedValue.ToString());
         }
 
