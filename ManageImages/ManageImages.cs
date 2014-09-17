@@ -546,13 +546,13 @@ namespace ManageImages
             {
                 lblStatus.InvokeEx(x => x.Text = "Moving..");
                 MoveImage(_data.folder, _data.filename, _data.ToFolder, _data.gender, _data.description, GetLocalFileLength(_data.folder, _data.filename), chkHideImage.Checked, false);
-                MessageBox.Show("Moved");
+                //MessageBox.Show("Moved");
             }
             else
             {
                 lblStatus.InvokeEx(x => x.Text = "Copying..");
                 MoveImage(_data.folder, _data.filename, _data.ToFolder, _data.gender, _data.description, GetLocalFileLength(_data.folder, _data.filename), chkHideImage.Checked, true);
-                MessageBox.Show("Copied");
+                //MessageBox.Show("Copied");
             }
         }
 
