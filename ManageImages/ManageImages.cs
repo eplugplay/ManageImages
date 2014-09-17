@@ -92,6 +92,9 @@ namespace ManageImages
 
             // load sections
             LoadSections();
+
+            // set inital size
+            imgSize = "medium";
         }
 
         // delete images that are local but not on web server on exit
