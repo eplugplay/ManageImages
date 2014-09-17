@@ -92,9 +92,6 @@ namespace ManageImages
 
             // load sections
             LoadSections();
-
-            // make status label opaque
-            lblStatus.BackColor = Color.FromArgb(-20, 88, 44, 55);
         }
 
         // delete images that are local but not on web server on exit
