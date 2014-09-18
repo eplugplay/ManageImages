@@ -90,15 +90,16 @@ namespace ManageImages
         }
 
         // check if already exists
-        public static bool CheckImgExist(string filename, string folder)
+        public static bool CheckImgExist(string filename, int length, string folder)
         {
             using (MySqlConnection cnn = new MySqlConnection(ConfigurationManager.ConnectionStrings["MyConnection"].ToString()))
             {
                 cnn.Open();
                 using (var cmd = cnn.CreateCommand())
                 {
-                    cmd.CommandText = "SELECT COUNT(*) AS count FROM mybusiness_images WHERE filename=@filename AND folder=@folder";
+                    cmd.CommandText = "SELECT COUNT(*) AS count FROM mybusiness_images WHERE filename=@filename AND folder=@folder AND length=@length";
                     cmd.Parameters.AddWithValue("filename", filename);
+                    cmd.Parameters.AddWithValue("length", length);
                     cmd.Parameters.AddWithValue("folder", folder);
                     using (var rdr = cmd.ExecuteReader())
                     {
@@ -114,6 +115,33 @@ namespace ManageImages
                 }
             }
             return false;
+        }
+
+        // check if already exists in db when uploading
+        public static string CheckImgAllExist(string filename, int length)
+        {
+            string toReturn = "";
+            using (MySqlConnection cnn = new MySqlConnection(ConfigurationManager.ConnectionStrings["MyConnection"].ToString()))
+            {
+                cnn.Open();
+                using (var cmd = cnn.CreateCommand())
+                {
+                    cmd.CommandText = "SELECT folder FROM mybusiness_images WHERE filename=@filename AND length=@length";
+                    cmd.Parameters.AddWithValue("filename", filename);
+                    cmd.Parameters.AddWithValue("length", length);
+                    using (var rdr = cmd.ExecuteReader())
+                    {
+                        if (rdr.HasRows)
+                        {
+                            while (rdr.Read())
+                            {
+                                toReturn = rdr["folder"].ToString();
+                            }
+                        }
+                    }
+                }
+            }
+            return toReturn;
         }
 
 

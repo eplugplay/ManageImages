@@ -207,7 +207,7 @@ namespace ManageImages
                 ddlGender.InvokeEx(x => x.SelectedIndex = 0);
                 ddlGender.InvokeEx(x => x.Enabled = false);
             }
-            CheckImagesExist(txtFilename.Text, ddlSections.SelectedValue.ToString());
+            CheckImagesExist(txtFilename.Text, GetLocalFileLength(ddlSections.SelectedValue.ToString(), txtFilename.Text), ddlSections.SelectedValue.ToString());
         }
 
         // save edit
@@ -219,7 +219,7 @@ namespace ManageImages
             {
                 return;
             }
-            if (Data.CheckImgExist(txtFilename.Text, ddlSections.SelectedValue.ToString()) == false)
+            if (Data.CheckImgExist(txtFilename.Text, GetLocalFileLength(ddlSections.SelectedValue.ToString(), txtFilename.Text), ddlSections.SelectedValue.ToString()) == false)
             {
                 MessageBox.Show("Selected image does not exist in server. Upload first before editing.");
                 return;
@@ -277,7 +277,7 @@ namespace ManageImages
                 //save to db
                 Data.SaveImageToDb(FileName, Description, Gender, FolderName, GetLocalFileLength(FolderName, FileName), Hidden);
                 pbStatus.InvokeEx(x => x.Value = 100);
-                CheckImagesExist(FileName, FolderName);
+                CheckImagesExist(FileName, GetLocalFileLength(FolderName, FileName), FolderName);
                 MessageBox.Show("Successfully uploaded.");
             }
         }
@@ -316,9 +316,15 @@ namespace ManageImages
                 MessageBox.Show("Select Male or Female.");
                 return;
             }
-            if (Data.CheckImgExist(txtFilename.Text, ddlSections.SelectedValue.ToString()) == true)
+            if (Data.CheckImgExist(txtFilename.Text, GetLocalFileLength(ddlSections.SelectedValue.ToString(), txtFilename.Text), ddlSections.SelectedValue.ToString()) == true)
             {
-                MessageBox.Show("Already exist in website.");
+                MessageBox.Show(string.Format("Already exist in section {0} of the website.", ddlSections.SelectedValue.ToString()));
+                return;
+            }
+            string folderName = Data.CheckImgAllExist(txtFilename.Text, GetLocalFileLength(ddlSections.SelectedValue.ToString(), txtFilename.Text));
+            if(folderName != "")
+            {
+                MessageBox.Show(string.Format("Image already exist in section {0} of the website.", folderName));
                 return;
             }
 
@@ -347,13 +353,29 @@ namespace ManageImages
                 lblStatus.InvokeEx(x => x.Visible = true);
                 lblStatus.InvokeEx(x => x.Text = "Deleting..");
                 pbStatus.InvokeEx(x => x.Value = 40);
-                if (btnUploadImage.Enabled == false)
-                {
-                    // delete from server
-                    DeleteServerImg(FolderName, FileName);
-                }
+                //if (btnUploadImage.Enabled == false)
+                //{
+                //    // delete from server
+                //    DeleteServerImg(FolderName, FileName);
+                //}
                 // delete from db
                 Data.DeleteImageDb(FileName, Gender, FolderName, GetLocalFileLength(FolderName, FileName));
+                try
+                {
+                    // delete image from server if it exists
+                    DeleteServerImg(FolderName, FileName);
+                }
+                catch(Exception)
+                {
+
+                }
+
+                Thread.Sleep(1000);
+                pbStatus.InvokeEx(x => x.Value = 100);
+                // reload images
+                ReloadImages();
+                CheckImagesExist(FileName, GetLocalFileLength(FolderName, FileName), FolderName);
+
                 // delete from local
                 if (File.Exists(GetLocalImgPath(FolderName) + "\\" + FileName))
                 {
@@ -366,11 +388,7 @@ namespace ManageImages
 
                     }
                 }
-                Thread.Sleep(1000);
-                pbStatus.InvokeEx(x => x.Value = 100);
-                // reload images
-                ReloadImages();
-                CheckImagesExist(FileName, FolderName);
+
                 //switch (imgSize)
                 //{
                 //    case "x-small": LoadToolStrip(20, 10, 30, 30); break;
@@ -518,9 +536,9 @@ namespace ManageImages
                 return;
             }
             // check if copying image exist in the target folder
-            if (Data.CheckImgExist(txtFilename.Text, ddlMoveSection.SelectedValue.ToString()) == true)
+            if (Data.CheckImgExist(txtFilename.Text, GetLocalFileLength(ddlSections.SelectedValue.ToString(), txtFilename.Text), ddlMoveSection.SelectedValue.ToString()) == true)
             {
-                MessageBox.Show(string.Format("This image already exist in {0} folder.", ddlMoveSection.Text));
+                MessageBox.Show(string.Format("This image already exist in {0} section.", ddlMoveSection.SelectedValue.ToString()));
                 return;
             }
 
@@ -544,6 +562,9 @@ namespace ManageImages
             data _data = (data)e.Argument;
             if (_data.IsCopy == false)
             {
+                // check if exist in db before moving
+
+
                 lblStatus.InvokeEx(x => x.Text = "Moving..");
                 MoveImage(_data.folder, _data.filename, _data.ToFolder, _data.gender, _data.description, GetLocalFileLength(_data.folder, _data.filename), chkHideImage.Checked, false);
                 //MessageBox.Show("Moved");
@@ -580,9 +601,9 @@ namespace ManageImages
                 MessageBox.Show("Please select a different section to move.");
                 return;
             }
-            if (Data.CheckImgExist(txtFilename.Text, ddlMoveSection.SelectedValue.ToString()) == true)
+            if (Data.CheckImgExist(txtFilename.Text, GetLocalFileLength(ddlSections.SelectedValue.ToString(), txtFilename.Text), ddlMoveSection.SelectedValue.ToString()) == true)
             {
-                MessageBox.Show(string.Format("This image already exist in {0} folder.", ddlMoveSection.Text));
+                MessageBox.Show(string.Format("This image already exist in {0} section.", ddlMoveSection.SelectedValue.ToString()));
                 return;
             }
 
@@ -887,9 +908,9 @@ namespace ManageImages
             ddlMoveSection.DataSource = Data.LoadSections();
         }
 
-        public void CheckImagesExist(string filename, string folder)
+        public void CheckImagesExist(string filename, int length, string folder)
         {
-            if (Data.CheckImgExist(filename, folder) == true)
+            if (Data.CheckImgExist(filename, length, folder) == true)
             {
                 btnSaveEdit.InvokeEx(x => x.Enabled = true);
                 //btnDeleteImg.InvokeEx(x => x.Enabled = true);
@@ -1025,7 +1046,7 @@ namespace ManageImages
                         {
                             locnewY = locY;
                         }
-                        if (Data.CheckImgExist(img.Name, folder) == true)
+                        if (Data.CheckImgExist(img.Name, Convert.ToInt32(img.Length), folder) == true)
                         {
                             loadImagestoPanel(img.Name, img.FullName, locnewX, locnewY, true, uploaded, filename);
                         }
@@ -1149,7 +1170,7 @@ namespace ManageImages
                             {
                                 locnewY = locY;
                             }
-                            if (Data.CheckImgExist(img.Name, folder) == true)
+                            if (Data.CheckImgExist(img.Name, Convert.ToInt32(img.Length), folder) == true)
                             {
                                 loadImagestoPanel(img.Name, img.FullName, locnewX, locnewY, true, uploaded, filename);
                             }
