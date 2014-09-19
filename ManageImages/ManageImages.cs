@@ -23,7 +23,8 @@ namespace ManageImages
         private int lastImgY { get; set; }
         // currently selected image
         private string currentImg { get; set; }
-        List<string> PicArr = new List<string>(); 
+        List<string> PicArr = new List<string>();
+        Dictionary<string, Image> MultiSelectedImages = new Dictionary<string, Image>();
         private System.Windows.Forms.OpenFileDialog folderBrowserDlg;
         int locX = 20;
         int locY = 10;
@@ -102,11 +103,6 @@ namespace ManageImages
         {
             string[] Directories = new string[] { "C:\\ManageImages\\", "C:\\ManageImages\\ApparelsImages", "C:\\ManageImages\\NewArrivalsImages", "C:\\ManageImages\\PantsImages", "C:\\ManageImages\\RhinestoneImages", "C:\\ManageImages\\ShirtsImages", "C:\\ManageImages\\ShoesImages" };
             string folder = "";
-            //int cntr = 0;
-            //lblStatus.Text = "Deleting local files not on web site.";
-            //lblStatus.Visible = true;
-            //pbStatus.Visible = true;
-            //pbStatus.Value = 20;
             for (int i = 0; i < Directories.Length; i++)
             {
                 if (i != 0)
@@ -119,7 +115,6 @@ namespace ManageImages
                     {
                         foreach (FileInfo file in Images)
                         {
-                            //pbStatus.Value = cntr;
                             int fileLengthdb = 0;
                             string filenamedb = "";
                             // get length of image
@@ -129,22 +124,15 @@ namespace ManageImages
                                 fileLengthdb = Convert.ToInt32(dt.Rows[0]["length"]);
                                 filenamedb = dt.Rows[0]["filename"].ToString();
                             }
-                            //int FtpFileLength = Convert.ToInt32(GetFtpFileLength(folder, file));
                             int LocalFileLength = GetLocalFileLength(folder, file.Name);
                             if (fileLengthdb.Equals(0) && filenamedb == "")
                             {
                                 File.Delete(GetLocalImgPath(folder) + "\\" + file.Name);
-                                //Download(folder, file);
                             }
                             else if (fileLengthdb != (LocalFileLength) && filenamedb.Equals(file.Name, StringComparison.OrdinalIgnoreCase))
                             {
                                 File.Delete(GetLocalImgPath(folder) + "\\" + file.Name);
-                                //Download(folder, file);
                             }
-                            //if (cntr < 100)
-                            //{
-                            //    cntr += cntr / Directories.Length;
-                            //}
                         }
                     }
                     catch
@@ -152,8 +140,6 @@ namespace ManageImages
 
                     }
                 }
-                //lblStatus.Text = "Finished.";
-                //pbStatus.Value = cntr + Directories.Length;
             }
             pbStatus.Value = 90;
             this.FormClosing -= DeleteLocalOnClose;
@@ -176,7 +162,75 @@ namespace ManageImages
             txtDescription.Text = "";
             Control control = (Control)sender;
             PictureBox pic = (PictureBox)control;
+            ArrayList allArr = new ArrayList();
+            // control left click on images
+            if (e.Button == MouseButtons.Left && (ModifierKeys & Keys.Control) == Keys.Control)
+            {
+                AfterCtrlLeftClick();
+                ArrayList KeysToAddArr = new ArrayList();
+                ArrayList KeysToRemoveArr = new ArrayList();
+                if (MultiSelectedImages.Count == 0)
+                {
+                    MultiSelectedImages.Add(pic.Name, pic.Image);
+                    ColorImage(pic, "select");
+                }
+                else
+                {
+                    foreach (KeyValuePair<string, Image> pair in MultiSelectedImages)
+                    {
+                        allArr.Add(pair.Key);
+                    }
+
+                    foreach (KeyValuePair<string, Image> pair in MultiSelectedImages)
+                    {
+                        if (MultiSelectedImages.Keys.Contains(pic.Name))
+                        {
+                            KeysToRemoveArr.Add(pair.Key);
+                            ColorImage(pic, "unselect");
+                            break;
+                        }
+                        else
+                        {
+                            KeysToAddArr.Add(pair.Key);
+                            ColorImage(pic, "select");
+                            break;
+                        }
+                    }
+                }
+
+                foreach (string s in KeysToAddArr)
+                {
+                   MultiSelectedImages.Add(pic.Name, pic.Image);
+                }
+
+                for (int i = 0; i < allArr.Count; i++)
+                {
+                    if (pic.Name == allArr[i].ToString())
+                    {
+                        MultiSelectedImages.Remove(allArr[i].ToString());
+                    }
+                }
+                pic.Refresh();
+                PreviewPictureBox.Image = null;
+                return;
+            }
+
+            // reset images
+            foreach (KeyValuePair<string, Image> pair in MultiSelectedImages)
+            {
+                foreach (PictureBox p in pnControls.Controls)
+                {
+                    if (p.Name.Contains(pair.Key))
+                    {
+                        ColorImage(p, "unselect");
+                        p.Refresh();
+                    }
+                }
+            }
+
+            MultiSelectedImages.Clear();
             PreviewPictureBox.Image = pic.Image;
+
             // load image info
             txtFilename.Text = control.Tag.ToString();
             // currently clicked img
@@ -207,7 +261,7 @@ namespace ManageImages
                 ddlGender.InvokeEx(x => x.SelectedIndex = 0);
                 ddlGender.InvokeEx(x => x.Enabled = false);
             }
-            CheckImagesExist(txtFilename.Text, GetLocalFileLength(ddlSections.SelectedValue.ToString(), txtFilename.Text), ddlSections.SelectedValue.ToString());
+            AfterImgClick(txtFilename.Text, GetLocalFileLength(ddlSections.SelectedValue.ToString(), txtFilename.Text), ddlSections.SelectedValue.ToString());
         }
 
         // save edit
@@ -256,8 +310,8 @@ namespace ManageImages
 
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
-            if (MessageBox.Show("Upload?", "Upload?", MessageBoxButtons.YesNo) == DialogResult.Yes)
-            {
+            //if (MessageBox.Show("Upload?", "Upload?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            //{
                 gpFilters.InvokeEx(x => x.Enabled = false);
                 ddlSections.InvokeEx(x => x.Enabled = false);
                 pbStatus.InvokeEx(x => x.Visible = true);
@@ -277,9 +331,9 @@ namespace ManageImages
                 //save to db
                 Data.SaveImageToDb(FileName, Description, Gender, FolderName, GetLocalFileLength(FolderName, FileName), Hidden);
                 pbStatus.InvokeEx(x => x.Value = 100);
-                CheckImagesExist(FileName, GetLocalFileLength(FolderName, FileName), FolderName);
+                AfterUpload();
                 MessageBox.Show("Successfully uploaded.");
-            }
+            //}
         }
 
         private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -339,7 +393,7 @@ namespace ManageImages
 
         private void backgroundWorker2_DoWork(object sender, DoWorkEventArgs e)
         {
-            if (MessageBox.Show("Delete?", "Delete?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (MessageBox.Show("Delete Selected Image(s)?", "Delete?", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 gpFilters.InvokeEx(x => x.Enabled = false);
                 ddlSections.InvokeEx(x => x.Enabled = false);
@@ -353,41 +407,82 @@ namespace ManageImages
                 lblStatus.InvokeEx(x => x.Visible = true);
                 lblStatus.InvokeEx(x => x.Text = "Deleting..");
                 pbStatus.InvokeEx(x => x.Value = 40);
-                //if (btnUploadImage.Enabled == false)
-                //{
-                //    // delete from server
-                //    DeleteServerImg(FolderName, FileName);
-                //}
-                // delete from db
-                Data.DeleteImageDb(FileName, Gender, FolderName, GetLocalFileLength(FolderName, FileName));
-                try
+
+                // delete from db multiple images
+                if (MultiSelectedImages.Count > 0)
                 {
-                    // delete image from server if it exists
-                    DeleteServerImg(FolderName, FileName);
+                    foreach (KeyValuePair<string, Image> pair in MultiSelectedImages)
+                    {
+                        DataTable dt = Data.GetInfo(pair.Key, FolderName);
+                        try
+                        {
+                            if (dt.Rows.Count > 0)
+                            {
+                                Data.DeleteImageDb(pair.Key, dt.Rows[0]["gender"].ToString(), FolderName, GetLocalFileLength(FolderName, pair.Key));
+                                // delete image from server if it exists
+                                DeleteServerImg(FolderName, pair.Key);
+                            }
+                        }
+                        catch (Exception)
+                        {
+
+                        }
+
+                        // delete from local
+                        if (File.Exists(GetLocalImgPath(FolderName) + "\\" + pair.Key))
+                        {
+                            try
+                            {
+                                File.Delete(GetLocalImgPath(FolderName) + "\\" + pair.Key);
+                            }
+                            catch (Exception)
+                            {
+
+                            }
+                        }
+                        // reload images
+                        ReloadImages(pair.Key);
+                    }
+                    MultiSelectedImages.Clear();
                 }
-                catch(Exception)
-                {
-
-                }
-
-                Thread.Sleep(1000);
-                pbStatus.InvokeEx(x => x.Value = 100);
-                // reload images
-                ReloadImages();
-                CheckImagesExist(FileName, GetLocalFileLength(FolderName, FileName), FolderName);
-
-                // delete from local
-                if (File.Exists(GetLocalImgPath(FolderName) + "\\" + FileName))
+                    // single images
+                else
                 {
                     try
                     {
-                        File.Delete(GetLocalImgPath(FolderName) + "\\" + FileName);
+                        DataTable dt = Data.GetInfo(FileName, FolderName);
+                        if (dt.Rows.Count > 0)
+                        {
+                            Data.DeleteImageDb(FileName, Gender, FolderName, GetLocalFileLength(FolderName, FileName));
+                            // delete image from server if it exists
+                            DeleteServerImg(FolderName, FileName);
+                        }
                     }
                     catch (Exception)
                     {
 
                     }
+                    // delete from local
+                    if (File.Exists(GetLocalImgPath(FolderName) + "\\" + FileName))
+                    {
+                        try
+                        {
+                            File.Delete(GetLocalImgPath(FolderName) + "\\" + FileName);
+                        }
+                        catch (Exception)
+                        {
+
+                        }
+                    }
+
+                    // reload images
+                    ReloadImages(FileName);
                 }
+
+                AfterDelete();
+                Thread.Sleep(1000);
+                pbStatus.InvokeEx(x => x.Value = 100);
+
 
                 //switch (imgSize)
                 //{
@@ -419,11 +514,11 @@ namespace ManageImages
             {
                 return;
             }
-            if (PreviewPictureBox.Image == null)
-            {
-                MessageBox.Show("Select image first.");
-                return;
-            }
+            //if (PreviewPictureBox.Image == null)
+            //{
+            //    MessageBox.Show("Select image first.");
+            //    return;
+            //}
             backgroundWorker2.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedIndex, chkHideImage.Checked, ddlMoveSection.Text, "", false));
         }
         #endregion
@@ -434,6 +529,10 @@ namespace ManageImages
 
         private void backgroundWorker3_DoWork(object sender, DoWorkEventArgs e)
         {
+
+            // reset multi selected images
+            MultiSelectedImages.Clear();
+
             // selects all radio button by default
             rbAll.InvokeEx(x => x.Checked = true);
 
@@ -737,6 +836,11 @@ namespace ManageImages
 
         #endregion
 
+        private void ImportImagesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ImportImages();
+        }
+
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
             LoadToolStrip(20, 10, 30, 30);
@@ -776,9 +880,21 @@ namespace ManageImages
 
         #region Methods
 
-        private void ImportImagesToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ColorImage(PictureBox pic, string color)
         {
-            ImportImages();
+            Graphics g = Graphics.FromImage(pic.Image);
+            Pen Pen;
+            if (color == "select")
+            {
+                Pen = new Pen(Color.Red, 15);
+
+            }
+            else
+            {
+                Pen = new Pen(Color.Black, 15);
+            }
+            g.DrawRectangle(Pen, 0, 0, pic.Image.Width, pic.Image.Height);
+            g.Save();
         }
 
         public void ImportImages()
@@ -908,12 +1024,11 @@ namespace ManageImages
             ddlMoveSection.DataSource = Data.LoadSections();
         }
 
-        public void CheckImagesExist(string filename, int length, string folder)
+        public void AfterImgClick(string filename, int length, string folder)
         {
             if (Data.CheckImgExist(filename, length, folder) == true)
             {
                 btnSaveEdit.InvokeEx(x => x.Enabled = true);
-                //btnDeleteImg.InvokeEx(x => x.Enabled = true);
                 btnUploadImage.InvokeEx(x => x.Enabled = false);
                 // show move to options
                 btnMoveSection.InvokeEx(x => x.Visible = true);
@@ -923,13 +1038,49 @@ namespace ManageImages
             else
             {
                 btnSaveEdit.InvokeEx(x => x.Enabled = false);
-                //btnDeleteImg.InvokeEx(x => x.Enabled = false);
                 btnUploadImage.InvokeEx(x => x.Enabled = true);
                 // show move to options
                 btnMoveSection.InvokeEx(x => x.Visible = false);
                 btnCopySection.InvokeEx(x => x.Visible = false);
                 ddlMoveSection.InvokeEx(x => x.Visible = false);
+                chkHideImage.InvokeEx(x => x.Checked = false);
             }
+        }
+
+        public void AfterCtrlLeftClick()
+        {
+            btnSaveEdit.InvokeEx(x => x.Enabled = false);
+            btnUploadImage.InvokeEx(x => x.Enabled = false);
+            // show move to options
+            btnMoveSection.InvokeEx(x => x.Visible = false);
+            btnCopySection.InvokeEx(x => x.Visible = false);
+            ddlMoveSection.InvokeEx(x => x.Visible = false);
+            chkHideImage.InvokeEx(x => x.Checked = false);
+            txtDescription.InvokeEx(x => x.Clear());
+            txtFilename.InvokeEx(x => x.Clear());
+
+        }
+
+        public void AfterUpload()
+        {
+            btnSaveEdit.InvokeEx(x => x.Enabled = true);
+            btnUploadImage.InvokeEx(x => x.Enabled = false);
+            // show move to options
+            btnMoveSection.InvokeEx(x => x.Visible = true);
+            btnCopySection.InvokeEx(x => x.Visible = true);
+            ddlMoveSection.InvokeEx(x => x.Visible = true);
+        }
+
+        public void AfterDelete()
+        {
+            btnSaveEdit.InvokeEx(x => x.Enabled = false);
+            //btnDeleteImg.InvokeEx(x => x.Enabled = false);
+            btnUploadImage.InvokeEx(x => x.Enabled = true);
+            // show move to options
+            btnMoveSection.InvokeEx(x => x.Visible = false);
+            btnCopySection.InvokeEx(x => x.Visible = false);
+            ddlMoveSection.InvokeEx(x => x.Visible = false);
+            chkHideImage.InvokeEx(x => x.Checked = false);
         }
 
         // resets after save
@@ -1224,7 +1375,9 @@ namespace ManageImages
                 {
                     PictureBox ctrl = new PictureBox();
                     ctrl.Image = FromFile(ImageFullName);
-                    ctrl.BorderStyle = BorderStyle.FixedSingle;
+
+                    ColorImage(ctrl, "unselect");
+                    //ctrl.BorderStyle = BorderStyle.FixedSingle;
                     ctrl.Tag = imageName;
                     ctrl.Name = imageName;
                     // if just uploaded select uploaded, set uploaded image to preview
@@ -1235,21 +1388,6 @@ namespace ManageImages
                             PreviewPictureBox.Image = ctrl.Image;
                         }
                     }
-                    //if (live == true)
-                    //{
-                    //    Graphics g = Graphics.FromImage(ctrl.Image);
-                    //    Pen bluePen = new Pen(Color.Blue, 4);
-                    //    g.DrawRectangle(bluePen, 0, 0, ctrl.Image.Width, ctrl.Image.Height);
-                    //    g.Save();
-
-                    //}
-                    //else
-                    //{
-                    //    Graphics g = Graphics.FromImage(ctrl.Image);
-                    //    Pen redPen = new Pen(Color.Red, 4);
-                    //    g.DrawRectangle(redPen, 0, 0, ctrl.Image.Width, ctrl.Image.Height);
-                    //    g.Save();
-                    //}
                     ctrl.Location = new Point(newLocX, newLocY);
                     ctrl.Size = new System.Drawing.Size(sizeWidth, sizeHeight);
                     ctrl.SizeMode = PictureBoxSizeMode.StretchImage;
@@ -1536,7 +1674,7 @@ namespace ManageImages
                     pbStatus.InvokeEx(x => x.Value = 90);
                     // update to db moved folder
                     Data.UpdateImageDb(filename, toFolder, length, gender, description, hidden, true);
-                    ReloadImages();
+                    ReloadImages(filename);
                 }
                 else
                 {
@@ -1555,11 +1693,11 @@ namespace ManageImages
             }
         }
 
-        public void ReloadImages()
+        public void ReloadImages(string imgName)
         {
             foreach (PictureBox p in pnControls.Controls)
             {
-                if (p.Name == currentImg)
+                if (p.Name == imgName)
                 {
                     pnControls.InvokeEx(x => x.Controls.Remove(p));
                 }
