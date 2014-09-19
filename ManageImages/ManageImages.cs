@@ -836,6 +836,8 @@ namespace ManageImages
 
         #endregion
 
+
+        #region Tool Strip Options
         private void ImportImagesToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ImportImages();
@@ -866,9 +868,16 @@ namespace ManageImages
             imgSize = "large";
         }
 
+
+        private void checkDbToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+
         #endregion
 
-
+        #endregion
 
 
 

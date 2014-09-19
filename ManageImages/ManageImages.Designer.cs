@@ -79,6 +79,7 @@
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.backgroundWorker4 = new System.ComponentModel.BackgroundWorker();
             this.backgroundWorker5 = new System.ComponentModel.BackgroundWorker();
+            this.checkDbToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip.SuspendLayout();
             this.toolStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.PreviewPictureBox)).BeginInit();
@@ -102,7 +103,8 @@
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ImportImagesToolStripMenuItem,
-            this.filterToolStripMenuItem});
+            this.filterToolStripMenuItem,
+            this.checkDbToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
@@ -602,6 +604,13 @@
             this.backgroundWorker5.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker5_DoWork);
             this.backgroundWorker5.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker5_RunWorkerCompleted);
             // 
+            // checkDbToolStripMenuItem
+            // 
+            this.checkDbToolStripMenuItem.Name = "checkDbToolStripMenuItem";
+            this.checkDbToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.checkDbToolStripMenuItem.Text = "Check Db";
+            this.checkDbToolStripMenuItem.Click += new System.EventHandler(this.checkDbToolStripMenuItem_Click);
+            // 
             // ManageImages
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -688,6 +697,7 @@
         private System.Windows.Forms.GroupBox gpFilters;
         private System.Windows.Forms.RadioButton rbHidden;
         private System.Windows.Forms.Button btnCopySection;
+        private System.Windows.Forms.ToolStripMenuItem checkDbToolStripMenuItem;
     }
 }
 
