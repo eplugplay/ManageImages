@@ -47,13 +47,13 @@ namespace ManageImages
 
         private class data
         {
-            public data(string _folder, string _description, string _gender, string _filename, int _sectionIndex, bool _hidden, string _toFolder, string _filterType, bool _isCopy)
+            public data(string _folder, string _description, string _gender, string _filename, string _sectionValue, bool _hidden, string _toFolder, string _filterType, bool _isCopy)
             {
                 folder = _folder;
                 description = _description;
                 gender = _gender;
                 filename = _filename;
-                sectionIndex = _sectionIndex;
+                sectionValue = _sectionValue;
                 hidden = _hidden;
                 ToFolder = _toFolder;
                 filterType = _filterType;
@@ -63,7 +63,7 @@ namespace ManageImages
             public string description { get; set; }
             public string gender { get; set; }
             public string filename { get; set; }
-            public int sectionIndex { get; set; }
+            public string sectionValue { get; set; }
             public bool hidden { get; set; }
             public string ToFolder { get; set; }
             public string filterType { get; set; }
@@ -241,7 +241,7 @@ namespace ManageImages
             {
                 txtDescription.Text = dt.Rows[0]["description"].ToString();
                 // always selects women if shoe images category selected
-                if (ddlSections.SelectedIndex == 5)
+                if (ddlSections.SelectedValue.ToString() == "ShoesImages")
                 {
                     ddlGender.SelectedIndex = 0;
                 }
@@ -256,7 +256,7 @@ namespace ManageImages
                     case 1: chkHideImage.Checked = true; break;
                 }
             }
-            if (ddlSections.SelectedIndex == 5)
+            if (ddlSections.SelectedValue.ToString() == "ShoesImages")
             {
                 ddlGender.InvokeEx(x => x.SelectedIndex = 0);
                 ddlGender.InvokeEx(x => x.Enabled = false);
@@ -382,7 +382,7 @@ namespace ManageImages
                 return;
             }
 
-            backgroundWorker1.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedIndex, chkHideImage.Checked, ddlMoveSection.Text, "", false));
+            backgroundWorker1.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedValue.ToString(), chkHideImage.Checked, ddlMoveSection.Text, "", false));
         }
 
         #endregion
@@ -519,7 +519,7 @@ namespace ManageImages
             //    MessageBox.Show("Select image first.");
             //    return;
             //}
-            backgroundWorker2.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedIndex, chkHideImage.Checked, ddlMoveSection.Text, "", false));
+            backgroundWorker2.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedValue.ToString(), chkHideImage.Checked, ddlMoveSection.Text, "", false));
         }
         #endregion
 
@@ -565,7 +565,7 @@ namespace ManageImages
             string FileName = _data.filename;
             string Gender = _data.gender;
             string Description = _data.description;
-            int SelectedIndex = _data.sectionIndex;
+            string SelectedValue = _data.sectionValue;
 
             PreviewPictureBox.InvokeEx(x => x.Image = null);
             txtDescription.InvokeEx(x => x.Text = "");
@@ -576,23 +576,23 @@ namespace ManageImages
             chkHideImage.InvokeEx(x => x.Checked = false);
             // 40% bar
             pbStatus.InvokeEx(x => x.Value = 40);
-            switch (SelectedIndex)
+            switch (SelectedValue)
             {
-                case 0: txtSection.InvokeEx(x => x.Text = "Apparels"); break;
-                case 1: txtSection.InvokeEx(x => x.Text = "New Arrivals"); break;
-                case 2: txtSection.InvokeEx(x => x.Text = "Pants"); break;
-                case 3: txtSection.InvokeEx(x => x.Text = "Rhinestones"); break;
-                case 4: txtSection.InvokeEx(x => x.Text = "Shirts"); break;
-                case 5: txtSection.InvokeEx(x => x.Text = "Women's Shoes"); break;
+                case "ApparelsImages": txtSection.InvokeEx(x => x.Text = "Apparels"); break;
+                case "NewArrivalsImages": txtSection.InvokeEx(x => x.Text = "New Arrivals"); break;
+                case "PantsImages": txtSection.InvokeEx(x => x.Text = "Pants"); break;
+                case "RhinestoneImages": txtSection.InvokeEx(x => x.Text = "Rhinestones"); break;
+                case "ShirtsImages": txtSection.InvokeEx(x => x.Text = "Shirts"); break;
+                case "ShoesImages": txtSection.InvokeEx(x => x.Text = "Women's Shoes"); break;
             }
-            if (SelectedIndex != -1)
+            if (SelectedValue != null)
             {
                 if (LoadImages(FolderName, 40, FileName, false) == true)
                 {
                     LoadImages(FolderName, 90, FileName, false);
                 }
             }
-            if (SelectedIndex == 5)
+            if (SelectedValue == "ShoesImages")
             {
                 ddlGender.InvokeEx(x => x.SelectedIndex = 0);
                 ddlGender.InvokeEx(x => x.Enabled = false);
@@ -615,7 +615,7 @@ namespace ManageImages
         {
             if (ddlSections.DataSource != null)
             {
-                backgroundWorker3.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedIndex, chkHideImage.Checked, ddlMoveSection.Text, "", false));
+                backgroundWorker3.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedValue.ToString(), chkHideImage.Checked, ddlMoveSection.Text, "", false));
             }
         }
         #endregion
@@ -641,7 +641,7 @@ namespace ManageImages
                 return;
             }
 
-            backgroundWorker4.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedIndex, chkHideImage.Checked, ddlMoveSection.SelectedValue.ToString(), "", true));
+            backgroundWorker4.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedValue.ToString(), chkHideImage.Checked, ddlMoveSection.SelectedValue.ToString(), "", true));
         }
         #endregion
 
@@ -706,7 +706,7 @@ namespace ManageImages
                 return;
             }
 
-            backgroundWorker4.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedIndex, chkHideImage.Checked, ddlMoveSection.SelectedValue.ToString(), "", false));
+            backgroundWorker4.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedValue.ToString(), chkHideImage.Checked, ddlMoveSection.SelectedValue.ToString(), "", false));
         }
 
         #endregion
@@ -800,7 +800,7 @@ namespace ManageImages
                 return;
             }
 
-            backgroundWorker5.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedIndex, chkHideImage.Checked, ddlMoveSection.SelectedValue.ToString(), "hidden", false));
+            backgroundWorker5.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedValue.ToString(), chkHideImage.Checked, ddlMoveSection.SelectedValue.ToString(), "hidden", false));
         }
 
         private void defaultToolStripMenuItem_Click(object sender, EventArgs e)
@@ -810,7 +810,7 @@ namespace ManageImages
                 return;
             }
 
-            backgroundWorker5.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedIndex, chkHideImage.Checked, ddlMoveSection.SelectedValue.ToString(), "default", false));
+            backgroundWorker5.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedValue.ToString(), chkHideImage.Checked, ddlMoveSection.SelectedValue.ToString(), "default", false));
         }
 
 
@@ -821,7 +821,7 @@ namespace ManageImages
                 return;
             }
 
-            backgroundWorker5.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedIndex, chkHideImage.Checked, ddlMoveSection.SelectedValue.ToString(), "Men", false));
+            backgroundWorker5.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedValue.ToString(), chkHideImage.Checked, ddlMoveSection.SelectedValue.ToString(), "Men", false));
         }
 
         private void womenToolStripMenuItem_Click(object sender, EventArgs e)
@@ -831,7 +831,7 @@ namespace ManageImages
                 return;
             }
 
-            backgroundWorker5.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedIndex, chkHideImage.Checked, ddlMoveSection.SelectedValue.ToString(), "Women", false));
+            backgroundWorker5.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedValue.ToString(), chkHideImage.Checked, ddlMoveSection.SelectedValue.ToString(), "Women", false));
         }
 
         #endregion
