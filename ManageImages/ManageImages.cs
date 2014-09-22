@@ -18,6 +18,7 @@ namespace ManageImages
 {
     public partial class ManageImages : Form
     {
+        //private ManageImages frm = (ManageImages)Application.OpenForms["ManageImages"];
         private string imgSize { get; set; }
         private int lastImgX { get; set; }
         private int lastImgY { get; set; }
@@ -342,6 +343,7 @@ namespace ManageImages
             ddlSections.InvokeEx(x => x.Enabled = true);
             pbStatus.InvokeEx(x => x.Visible = false);
             lblStatus.InvokeEx(x => x.Visible = false);
+            CloseButton.EnableDisable(this, true);
             lblStatus.InvokeEx(x => x.Text = "Please wait..");
         }
 
@@ -381,7 +383,7 @@ namespace ManageImages
                 MessageBox.Show(string.Format("Image already exist in section {0} of the website.", folderName));
                 return;
             }
-
+            CloseButton.EnableDisable(this, false);
             backgroundWorker1.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedValue.ToString(), chkHideImage.Checked, ddlMoveSection.Text, "", false));
         }
 
@@ -505,6 +507,7 @@ namespace ManageImages
             ddlSections.InvokeEx(x => x.Enabled = true);
             pbStatus.InvokeEx(x => x.Visible = false);
             lblStatus.InvokeEx(x => x.Visible = false);
+            CloseButton.EnableDisable(this, true);
             lblStatus.InvokeEx(x => x.Text = "Please wait..");
         }
 
@@ -514,6 +517,7 @@ namespace ManageImages
             {
                 return;
             }
+            CloseButton.EnableDisable(this, false);
             //if (PreviewPictureBox.Image == null)
             //{
             //    MessageBox.Show("Select image first.");
@@ -640,7 +644,7 @@ namespace ManageImages
                 MessageBox.Show(string.Format("This image already exist in {0} section.", ddlMoveSection.SelectedValue.ToString()));
                 return;
             }
-
+            CloseButton.EnableDisable(this, false);
             backgroundWorker4.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedValue.ToString(), chkHideImage.Checked, ddlMoveSection.SelectedValue.ToString(), "", true));
         }
         #endregion
@@ -683,6 +687,7 @@ namespace ManageImages
             ddlMoveSection.InvokeEx(x => x.Enabled = true);
             pbStatus.InvokeEx(x => x.Visible = false);
             lblStatus.InvokeEx(x => x.Visible = false);
+            CloseButton.EnableDisable(this, true);
             ResetInfo();
             lblStatus.InvokeEx(x => x.Text = "Please Wait..");
         }
@@ -694,7 +699,7 @@ namespace ManageImages
                 return;
             }
 
-                        // check if copying image exist in the target folder
+            // check if copying image exist in the target folder
             if (ddlSections.Text == ddlMoveSection.Text)
             {
                 MessageBox.Show("Please select a different section to move.");
@@ -705,7 +710,7 @@ namespace ManageImages
                 MessageBox.Show(string.Format("This image already exist in {0} section.", ddlMoveSection.SelectedValue.ToString()));
                 return;
             }
-
+            CloseButton.EnableDisable(this, false);
             backgroundWorker4.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedValue.ToString(), chkHideImage.Checked, ddlMoveSection.SelectedValue.ToString(), "", false));
         }
 
