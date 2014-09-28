@@ -18,7 +18,24 @@ namespace ManageImages
                 cnn.Open();
                 using (var cmd = cnn.CreateCommand())
                 {
-                    cmd.CommandText = "SELECT * FROM mybusiness_categories";
+                    cmd.CommandText = "SELECT * FROM mybusiness_categories ORDER BY category ASC";
+                    cmd.ExecuteNonQuery();
+                    var dt = new DataTable();
+                    var da = new MySqlDataAdapter(cmd);
+                    da.Fill(dt);
+                    return dt;
+                }
+            }
+        }
+
+        public static DataTable GetAllCategories()
+        {
+            using (MySqlConnection cnn = new MySqlConnection(ConfigurationManager.ConnectionStrings["MyConnection"].ToString()))
+            {
+                cnn.Open();
+                using (var cmd = cnn.CreateCommand())
+                {
+                    cmd.CommandText = "SELECT id FROM mybusiness_categories";
                     cmd.ExecuteNonQuery();
                     var dt = new DataTable();
                     var da = new MySqlDataAdapter(cmd);

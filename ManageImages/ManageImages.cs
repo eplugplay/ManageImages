@@ -102,13 +102,22 @@ namespace ManageImages
         // delete images that are local but not on web server on exit
         private void DeleteLocalOnClose(object sender, FormClosingEventArgs e)
         {
-            string[] Directories = new string[] { "C:\\ManageImages\\", "C:\\ManageImages\\ApparelsImages", "C:\\ManageImages\\NewArrivalsImages", "C:\\ManageImages\\PantsImages", "C:\\ManageImages\\RhinestoneImages", "C:\\ManageImages\\ShirtsImages", "C:\\ManageImages\\ShoesImages" };
-            string folder = "";
-            for (int i = 0; i < Directories.Length; i++)
+            //string[] Directories = new string[] { "C:\\ManageImages\\", "C:\\ManageImages\\ApparelsImages", "C:\\ManageImages\\NewArrivalsImages", "C:\\ManageImages\\PantsImages", "C:\\ManageImages\\RhinestoneImages", "C:\\ManageImages\\ShirtsImages", "C:\\ManageImages\\ShoesImages" };
+
+
+            ArrayList DirectoriesArr = new ArrayList();
+            DataTable dtCategories = Data.GetAllCategories();
+            for (int i = 0; i < dtCategories.Rows.Count; i++)
             {
-                if (i != 0)
-                {
-                    string[] Tempfolder = Directories[i].ToString().Split('\\');
+                DirectoriesArr.Add("C:\\ManageImages\\" + dtCategories.Rows[i]["id"].ToString());
+            }
+
+            string folder = "";
+            for (int i = 0; i < DirectoriesArr.Count; i++)
+            {
+                //if (i != 0)
+                //{
+                    string[] Tempfolder = DirectoriesArr[i].ToString().Split('\\');
                     folder = Tempfolder[2].ToString();
                     DirectoryInfo Folder = new DirectoryInfo(GetLocalImgPath(folder));
                     FileInfo[] Images = Folder.GetFiles();
@@ -140,7 +149,7 @@ namespace ManageImages
                     {
 
                     }
-                }
+                //}
             }
             pbStatus.Value = 90;
             this.FormClosing -= DeleteLocalOnClose;
@@ -295,6 +304,23 @@ namespace ManageImages
                 MessageBox.Show("Select Male or Female.");
                 return;
             }
+
+            if (ddlSections.Text.Contains("Kids"))
+            {
+                if (ddlGender.Text == "Men" || ddlGender.Text == "Women")
+                {
+                    MessageBox.Show("Select only Girls or Boys.");
+                    return;
+                }
+            }
+            else
+            {
+                if (ddlGender.Text == "Boys" || ddlGender.Text == "Girls")
+                {
+                    MessageBox.Show("Select only Women or Men.");
+                    return;
+                }
+            }
             //if (MessageBox.Show("Save?", "Save Edit?", MessageBoxButtons.YesNo) == DialogResult.Yes)
             //{
             Data.UpdateImageDb(txtFilename.Text, ddlSections.SelectedValue.ToString(), GetLocalFileLength(ddlSections.SelectedValue.ToString(), txtFilename.Text), ddlGender.Text, txtDescription.Text, chkHideImage.Checked, false);
@@ -372,6 +398,24 @@ namespace ManageImages
                 MessageBox.Show("Select Male or Female.");
                 return;
             }
+
+            if (ddlSections.Text.Contains("Kids"))
+            {
+                if (ddlGender.Text == "Men" || ddlGender.Text == "Women")
+                {
+                    MessageBox.Show("Select only Girls or Boys.");
+                    return;
+                }
+            }
+            else
+            {
+                if (ddlGender.Text == "Boys" || ddlGender.Text == "Girls")
+                {
+                    MessageBox.Show("Select only Women or Men.");
+                    return;
+                }
+            }
+
             if (Data.CheckImgExist(txtFilename.Text, GetLocalFileLength(ddlSections.SelectedValue.ToString(), txtFilename.Text), ddlSections.SelectedValue.ToString()) == true)
             {
                 MessageBox.Show(string.Format("Already exist in section {0} of the website.", ddlSections.SelectedValue.ToString()));
@@ -588,6 +632,13 @@ namespace ManageImages
                 case "RhinestoneImages": txtSection.InvokeEx(x => x.Text = "Rhinestones"); break;
                 case "ShirtsImages": txtSection.InvokeEx(x => x.Text = "Shirts"); break;
                 case "ShoesImages": txtSection.InvokeEx(x => x.Text = "Women's Shoes"); break;
+                case "EmCapsImages": txtSection.InvokeEx(x => x.Text = "Embroidery Caps"); break;
+                case "EmShirtsImages": txtSection.InvokeEx(x => x.Text = "Embroidery Shirts"); break;
+                case "EmPursesImages": txtSection.InvokeEx(x => x.Text = "Embroidery Purses"); break;
+                case "KidsCapsImages": txtSection.InvokeEx(x => x.Text = "Kids Caps"); break;
+                case "KidsPantsImages": txtSection.InvokeEx(x => x.Text = "Kids Pants"); break;
+                case "KidsShirtsImages": txtSection.InvokeEx(x => x.Text = "Kids Shirts"); break;
+                case "GlitterShirtsImages": txtSection.InvokeEx(x => x.Text = "Glitter Shirts"); break;
             }
             if (SelectedValue != null)
             {
@@ -596,7 +647,7 @@ namespace ManageImages
                     LoadImages(FolderName, 90, FileName, false);
                 }
             }
-            if (SelectedValue == "ShoesImages")
+            if (SelectedValue == "ShoesImages" || SelectedValue == "EmPursesImages")
             {
                 ddlGender.InvokeEx(x => x.SelectedIndex = 0);
                 ddlGender.InvokeEx(x => x.Enabled = false);
@@ -633,6 +684,24 @@ namespace ManageImages
             {
                 return;
             }
+
+            if (ddlMoveSection.Text.Contains("Kids"))
+            {
+                if (ddlGender.Text == "Men" || ddlGender.Text == "Women")
+                {
+                    MessageBox.Show("Select only Girls or Boys.");
+                    return;
+                }
+            }
+            else
+            {
+                if (ddlGender.Text == "Boys" || ddlGender.Text == "Girls")
+                {
+                    MessageBox.Show("Select only Women or Men.");
+                    return;
+                }
+            }
+
             if (ddlSections.Text == ddlMoveSection.Text)
             {
                 MessageBox.Show("Please select a different section to copy.");
@@ -699,6 +768,23 @@ namespace ManageImages
                 return;
             }
 
+            if (ddlMoveSection.Text.Contains("Kids"))
+            {
+                if (ddlGender.Text == "Men" || ddlGender.Text == "Women")
+                {
+                    MessageBox.Show("Select only Girls or Boys.");
+                    return;
+                }
+            }
+            else
+            {
+                if (ddlGender.Text == "Boys" || ddlGender.Text == "Girls")
+                {
+                    MessageBox.Show("Select only Women or Men.");
+                    return;
+                }
+            }
+
             // check if copying image exist in the target folder
             if (ddlSections.Text == ddlMoveSection.Text)
             {
@@ -747,6 +833,35 @@ namespace ManageImages
             }
         }
 
+        private void rbGirls_CheckedChanged(object sender, EventArgs e)
+        {
+            if (backgroundWorker1.IsBusy || backgroundWorker2.IsBusy || backgroundWorker3.IsBusy || backgroundWorker4.IsBusy || backgroundWorker5.IsBusy)
+            {
+                return;
+            }
+            if (rbGirls.Checked == true)
+            {
+                ddlSections.InvokeEx(x => x.Enabled = false);
+                backgroundWorker5.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedValue.ToString(), chkHideImage.Checked, ddlMoveSection.SelectedValue.ToString(), "Girls", false));
+                ddlSections.InvokeEx(x => x.Enabled = true);
+            }
+        }
+
+        private void rbBoys_CheckedChanged(object sender, EventArgs e)
+        {
+            if (backgroundWorker1.IsBusy || backgroundWorker2.IsBusy || backgroundWorker3.IsBusy || backgroundWorker4.IsBusy || backgroundWorker5.IsBusy)
+            {
+                return;
+            }
+            if (rbBoys.Checked == true)
+            {
+                ddlSections.InvokeEx(x => x.Enabled = false);
+                backgroundWorker5.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedValue.ToString(), chkHideImage.Checked, ddlMoveSection.SelectedValue.ToString(), "Boys", false));
+                ddlSections.InvokeEx(x => x.Enabled = true);
+            }
+        }
+
+
         private void rbAll_CheckedChanged(object sender, EventArgs e)
         {
             if (backgroundWorker1.IsBusy || backgroundWorker2.IsBusy || backgroundWorker3.IsBusy || backgroundWorker4.IsBusy || backgroundWorker5.IsBusy)
@@ -787,6 +902,8 @@ namespace ManageImages
                 case "default": lblStatus.InvokeEx(x => x.Text = "loading all images.."); if (LoadImages(_data.folder, 40, _data.filename, false) == true) { LoadImages(_data.folder, 90, _data.filename, false); } break;
                 case "Men": lblStatus.InvokeEx(x => x.Text = "Searching men images.."); LoadFilteredImages(_data.folder, 40, _data.filename, false, "gender", "Men"); break;
                 case "Women": lblStatus.InvokeEx(x => x.Text = "Searching women images.."); LoadFilteredImages(_data.folder, 40, _data.filename, false, "gender", "Women"); break;
+                case "Boys": lblStatus.InvokeEx(x => x.Text = "Searching men images.."); LoadFilteredImages(_data.folder, 40, _data.filename, false, "gender", "Boys"); break;
+                case "Girls": lblStatus.InvokeEx(x => x.Text = "Searching women images.."); LoadFilteredImages(_data.folder, 40, _data.filename, false, "gender", "Girls"); break;
             }
         }
 
@@ -1563,18 +1680,35 @@ namespace ManageImages
             //System.IO.DirectoryInfo directoryInfo2 = System.IO.Directory.GetParent(directoryInfo.FullName);
             //string path = directoryInfo2.FullName + @"\Images\" + folder;
 
-            string[] Directories = new string[] { "C:\\ManageImages\\", "C:\\ManageImages\\ApparelsImages", "C:\\ManageImages\\NewArrivalsImages", "C:\\ManageImages\\PantsImages", "C:\\ManageImages\\RhinestoneImages", "C:\\ManageImages\\ShirtsImages", "C:\\ManageImages\\ShoesImages", "C:\\ManageImages\\CapsImages" };
+            ArrayList DirectoriesArr = new ArrayList();
+            DataTable dt = Data.GetAllCategories();
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                DirectoriesArr.Add("C:\\ManageImages\\" + dt.Rows[i]["id"].ToString());
+            }
+
+            //string[] Directories = new string[] { "C:\\ManageImages\\", "C:\\ManageImages\\ApparelsImages", "C:\\ManageImages\\NewArrivalsImages", 
+            //    "C:\\ManageImages\\PantsImages", "C:\\ManageImages\\RhinestoneImages", "C:\\ManageImages\\ShirtsImages", "C:\\ManageImages\\ShoesImages",
+            //    "C:\\ManageImages\\CapsImages" };
 
             try
             {
-                for (int i = 0; i < Directories.Length; i++)
+                for (int i = 0; i < DirectoriesArr.Count; i++)
                 {
                     // If the directory doesn't exist, create it.
-                    if (!Directory.Exists(Directories[i].ToString()))
+                    if (!Directory.Exists(DirectoriesArr[i].ToString()))
                     {
-                        Directory.CreateDirectory(Directories[i].ToString());
+                        Directory.CreateDirectory(DirectoriesArr[i].ToString());
                     }
                 }
+                //for (int i = 0; i < Directories.Length; i++)
+                //{
+                //    // If the directory doesn't exist, create it.
+                //    if (!Directory.Exists(Directories[i].ToString()))
+                //    {
+                //        Directory.CreateDirectory(Directories[i].ToString());
+                //    }
+                //}
             }
             catch (Exception)
             {

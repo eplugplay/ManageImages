@@ -38,6 +38,7 @@
             this.hiddenImagesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.womenToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.checkDbToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pnControls = new System.Windows.Forms.Panel();
             this.pbStatus = new System.Windows.Forms.ProgressBar();
             this.toolStrip = new System.Windows.Forms.ToolStrip();
@@ -71,15 +72,16 @@
             this.backgroundWorker3 = new System.ComponentModel.BackgroundWorker();
             this.lblStatus = new System.Windows.Forms.Label();
             this.grpbxMain = new System.Windows.Forms.GroupBox();
+            this.rbGirls = new System.Windows.Forms.RadioButton();
             this.gpFilters = new System.Windows.Forms.GroupBox();
             this.rbHidden = new System.Windows.Forms.RadioButton();
             this.rbWomen = new System.Windows.Forms.RadioButton();
+            this.rbBoys = new System.Windows.Forms.RadioButton();
             this.rbAll = new System.Windows.Forms.RadioButton();
             this.rbMen = new System.Windows.Forms.RadioButton();
             this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.backgroundWorker4 = new System.ComponentModel.BackgroundWorker();
             this.backgroundWorker5 = new System.ComponentModel.BackgroundWorker();
-            this.checkDbToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip.SuspendLayout();
             this.toolStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.PreviewPictureBox)).BeginInit();
@@ -155,6 +157,13 @@
             this.womenToolStripMenuItem.Size = new System.Drawing.Size(116, 22);
             this.womenToolStripMenuItem.Text = "Women";
             this.womenToolStripMenuItem.Click += new System.EventHandler(this.womenToolStripMenuItem_Click);
+            // 
+            // checkDbToolStripMenuItem
+            // 
+            this.checkDbToolStripMenuItem.Name = "checkDbToolStripMenuItem";
+            this.checkDbToolStripMenuItem.Size = new System.Drawing.Size(146, 22);
+            this.checkDbToolStripMenuItem.Text = "Check Db";
+            this.checkDbToolStripMenuItem.Click += new System.EventHandler(this.checkDbToolStripMenuItem_Click);
             // 
             // pnControls
             // 
@@ -289,7 +298,9 @@
             this.ddlGender.ItemHeight = 13;
             this.ddlGender.Items.AddRange(new object[] {
             "Women",
-            "Men"});
+            "Men",
+            "Boys",
+            "Girls"});
             this.ddlGender.Location = new System.Drawing.Point(122, 133);
             this.ddlGender.Name = "ddlGender";
             this.ddlGender.Size = new System.Drawing.Size(185, 21);
@@ -532,16 +543,30 @@
             this.grpbxMain.TabIndex = 41;
             this.grpbxMain.TabStop = false;
             // 
+            // rbGirls
+            // 
+            this.rbGirls.AutoSize = true;
+            this.rbGirls.Location = new System.Drawing.Point(243, 12);
+            this.rbGirls.Name = "rbGirls";
+            this.rbGirls.Size = new System.Drawing.Size(50, 17);
+            this.rbGirls.TabIndex = 48;
+            this.rbGirls.TabStop = true;
+            this.rbGirls.Text = "Girls";
+            this.rbGirls.UseVisualStyleBackColor = true;
+            this.rbGirls.CheckedChanged += new System.EventHandler(this.rbGirls_CheckedChanged);
+            // 
             // gpFilters
             // 
+            this.gpFilters.Controls.Add(this.rbGirls);
             this.gpFilters.Controls.Add(this.rbHidden);
             this.gpFilters.Controls.Add(this.rbWomen);
+            this.gpFilters.Controls.Add(this.rbBoys);
             this.gpFilters.Controls.Add(this.rbAll);
             this.gpFilters.Controls.Add(this.rbMen);
             this.gpFilters.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.gpFilters.Location = new System.Drawing.Point(140, 8);
+            this.gpFilters.Location = new System.Drawing.Point(93, 5);
             this.gpFilters.Name = "gpFilters";
-            this.gpFilters.Size = new System.Drawing.Size(241, 32);
+            this.gpFilters.Size = new System.Drawing.Size(356, 32);
             this.gpFilters.TabIndex = 48;
             this.gpFilters.TabStop = false;
             this.gpFilters.Text = "Filter By:";
@@ -569,6 +594,18 @@
             this.rbWomen.Text = "Women";
             this.rbWomen.UseVisualStyleBackColor = true;
             this.rbWomen.CheckedChanged += new System.EventHandler(this.rbWomen_CheckedChanged);
+            // 
+            // rbBoys
+            // 
+            this.rbBoys.AutoSize = true;
+            this.rbBoys.Location = new System.Drawing.Point(295, 12);
+            this.rbBoys.Name = "rbBoys";
+            this.rbBoys.Size = new System.Drawing.Size(52, 17);
+            this.rbBoys.TabIndex = 49;
+            this.rbBoys.TabStop = true;
+            this.rbBoys.Text = "Boys";
+            this.rbBoys.UseVisualStyleBackColor = true;
+            this.rbBoys.CheckedChanged += new System.EventHandler(this.rbBoys_CheckedChanged);
             // 
             // rbAll
             // 
@@ -603,13 +640,6 @@
             // 
             this.backgroundWorker5.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker5_DoWork);
             this.backgroundWorker5.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker5_RunWorkerCompleted);
-            // 
-            // checkDbToolStripMenuItem
-            // 
-            this.checkDbToolStripMenuItem.Name = "checkDbToolStripMenuItem";
-            this.checkDbToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.checkDbToolStripMenuItem.Text = "Check Db";
-            this.checkDbToolStripMenuItem.Click += new System.EventHandler(this.checkDbToolStripMenuItem_Click);
             // 
             // ManageImages
             // 
@@ -698,6 +728,8 @@
         private System.Windows.Forms.RadioButton rbHidden;
         private System.Windows.Forms.Button btnCopySection;
         private System.Windows.Forms.ToolStripMenuItem checkDbToolStripMenuItem;
+        private System.Windows.Forms.RadioButton rbGirls;
+        private System.Windows.Forms.RadioButton rbBoys;
     }
 }
 
