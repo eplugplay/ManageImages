@@ -631,6 +631,7 @@ namespace ManageImages
                 case "PantsImages": txtSection.InvokeEx(x => x.Text = "Pants"); break;
                 case "RhinestoneImages": txtSection.InvokeEx(x => x.Text = "Rhinestones"); break;
                 case "ShirtsImages": txtSection.InvokeEx(x => x.Text = "Shirts"); break;
+                case "CapsImages": txtSection.InvokeEx(x => x.Text = "Caps"); break;
                 case "ShoesImages": txtSection.InvokeEx(x => x.Text = "Women's Shoes"); break;
                 case "EmCapsImages": txtSection.InvokeEx(x => x.Text = "Embroidery Caps"); break;
                 case "EmShirtsImages": txtSection.InvokeEx(x => x.Text = "Embroidery Shirts"); break;
