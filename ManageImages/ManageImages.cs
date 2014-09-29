@@ -639,7 +639,7 @@ namespace ManageImages
                 case "KidsPantsImages": txtSection.InvokeEx(x => x.Text = "Kids Pants"); break;
                 case "KidsShirtsImages": txtSection.InvokeEx(x => x.Text = "Kids Shirts"); break;
                 case "GlitterShirtsImages": txtSection.InvokeEx(x => x.Text = "Glitter Shirts"); break;
-                case "HomeScrollImages": txtSection.InvokeEx(x => x.Text = "Home Page"); break;
+                case "HomeScrollImages": txtSection.InvokeEx(x => x.Text = "Home Page Scroll Images"); break;
             }
             if (SelectedValue != null)
             {
