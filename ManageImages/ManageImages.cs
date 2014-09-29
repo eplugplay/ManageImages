@@ -34,7 +34,7 @@ namespace ManageImages
         public ManageImages()
         {
             InitializeComponent();
-            this.FormClosing += DeleteLocalOnClose;
+            //this.FormClosing += DeleteLocalOnClose;
         }
 
 
