@@ -7,15 +7,6 @@ c:\users\steve yi\documents\visual studio 2010\Projects\ManageImages\ManageImage
 c:\users\steve yi\documents\visual studio 2010\Projects\ManageImages\ManageImages\obj\x86\Debug\ManageImages.exe
 c:\users\steve yi\documents\visual studio 2010\Projects\ManageImages\ManageImages\obj\x86\Debug\ManageImages.pdb
 c:\users\steve yi\documents\visual studio 2010\Projects\ManageImages\ManageImages\bin\Debug\MySql.Data.dll
-C:\Users\stevey\Documents\GitHub\ManageImages\ManageImages\bin\Debug\ManageImages.exe.config
-C:\Users\stevey\Documents\GitHub\ManageImages\ManageImages\bin\Debug\ManageImages.exe
-C:\Users\stevey\Documents\GitHub\ManageImages\ManageImages\bin\Debug\ManageImages.pdb
-C:\Users\stevey\Documents\GitHub\ManageImages\ManageImages\bin\Debug\MySql.Data.dll
-C:\Users\stevey\Documents\GitHub\ManageImages\ManageImages\obj\x86\Debug\ManageImages.ManageImages.resources
-C:\Users\stevey\Documents\GitHub\ManageImages\ManageImages\obj\x86\Debug\ManageImages.Properties.Resources.resources
-C:\Users\stevey\Documents\GitHub\ManageImages\ManageImages\obj\x86\Debug\ManageImages.csproj.GenerateResource.Cache
-C:\Users\stevey\Documents\GitHub\ManageImages\ManageImages\obj\x86\Debug\ManageImages.exe
-C:\Users\stevey\Documents\GitHub\ManageImages\ManageImages\obj\x86\Debug\ManageImages.pdb
 C:\Users\Steve Yi\Documents\GitHub\ManageImages\ManageImages\bin\Debug\ManageImages.exe.config
 C:\Users\Steve Yi\Documents\GitHub\ManageImages\ManageImages\bin\Debug\ManageImages.exe
 C:\Users\Steve Yi\Documents\GitHub\ManageImages\ManageImages\bin\Debug\ManageImages.pdb
@@ -25,3 +16,12 @@ C:\Users\Steve Yi\Documents\GitHub\ManageImages\ManageImages\obj\x86\Debug\Manag
 C:\Users\Steve Yi\Documents\GitHub\ManageImages\ManageImages\obj\x86\Debug\ManageImages.csproj.GenerateResource.Cache
 C:\Users\Steve Yi\Documents\GitHub\ManageImages\ManageImages\obj\x86\Debug\ManageImages.exe
 C:\Users\Steve Yi\Documents\GitHub\ManageImages\ManageImages\obj\x86\Debug\ManageImages.pdb
+C:\Users\stevey\Documents\GitHub\ManageImages\ManageImages\bin\Debug\ManageImages.exe.config
+C:\Users\stevey\Documents\GitHub\ManageImages\ManageImages\bin\Debug\ManageImages.exe
+C:\Users\stevey\Documents\GitHub\ManageImages\ManageImages\bin\Debug\ManageImages.pdb
+C:\Users\stevey\Documents\GitHub\ManageImages\ManageImages\bin\Debug\MySql.Data.dll
+C:\Users\stevey\Documents\GitHub\ManageImages\ManageImages\obj\x86\Debug\ManageImages.ManageImages.resources
+C:\Users\stevey\Documents\GitHub\ManageImages\ManageImages\obj\x86\Debug\ManageImages.Properties.Resources.resources
+C:\Users\stevey\Documents\GitHub\ManageImages\ManageImages\obj\x86\Debug\ManageImages.csproj.GenerateResource.Cache
+C:\Users\stevey\Documents\GitHub\ManageImages\ManageImages\obj\x86\Debug\ManageImages.exe
+C:\Users\stevey\Documents\GitHub\ManageImages\ManageImages\obj\x86\Debug\ManageImages.pdb
