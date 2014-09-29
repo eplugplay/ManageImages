@@ -72,8 +72,8 @@
             this.backgroundWorker3 = new System.ComponentModel.BackgroundWorker();
             this.lblStatus = new System.Windows.Forms.Label();
             this.grpbxMain = new System.Windows.Forms.GroupBox();
-            this.rbGirls = new System.Windows.Forms.RadioButton();
             this.gpFilters = new System.Windows.Forms.GroupBox();
+            this.rbGirls = new System.Windows.Forms.RadioButton();
             this.rbHidden = new System.Windows.Forms.RadioButton();
             this.rbWomen = new System.Windows.Forms.RadioButton();
             this.rbBoys = new System.Windows.Forms.RadioButton();
@@ -543,18 +543,6 @@
             this.grpbxMain.TabIndex = 41;
             this.grpbxMain.TabStop = false;
             // 
-            // rbGirls
-            // 
-            this.rbGirls.AutoSize = true;
-            this.rbGirls.Location = new System.Drawing.Point(243, 12);
-            this.rbGirls.Name = "rbGirls";
-            this.rbGirls.Size = new System.Drawing.Size(50, 17);
-            this.rbGirls.TabIndex = 48;
-            this.rbGirls.TabStop = true;
-            this.rbGirls.Text = "Girls";
-            this.rbGirls.UseVisualStyleBackColor = true;
-            this.rbGirls.CheckedChanged += new System.EventHandler(this.rbGirls_CheckedChanged);
-            // 
             // gpFilters
             // 
             this.gpFilters.Controls.Add(this.rbGirls);
@@ -571,10 +559,22 @@
             this.gpFilters.TabStop = false;
             this.gpFilters.Text = "Filter By:";
             // 
+            // rbGirls
+            // 
+            this.rbGirls.AutoSize = true;
+            this.rbGirls.Location = new System.Drawing.Point(243, 12);
+            this.rbGirls.Name = "rbGirls";
+            this.rbGirls.Size = new System.Drawing.Size(50, 17);
+            this.rbGirls.TabIndex = 48;
+            this.rbGirls.TabStop = true;
+            this.rbGirls.Text = "Girls";
+            this.rbGirls.UseVisualStyleBackColor = true;
+            this.rbGirls.CheckedChanged += new System.EventHandler(this.rbGirls_CheckedChanged);
+            // 
             // rbHidden
             // 
             this.rbHidden.AutoSize = true;
-            this.rbHidden.Location = new System.Drawing.Point(172, 12);
+            this.rbHidden.Location = new System.Drawing.Point(49, 12);
             this.rbHidden.Name = "rbHidden";
             this.rbHidden.Size = new System.Drawing.Size(65, 17);
             this.rbHidden.TabIndex = 47;
@@ -586,7 +586,7 @@
             // rbWomen
             // 
             this.rbWomen.AutoSize = true;
-            this.rbWomen.Location = new System.Drawing.Point(53, 12);
+            this.rbWomen.Location = new System.Drawing.Point(120, 12);
             this.rbWomen.Name = "rbWomen";
             this.rbWomen.Size = new System.Drawing.Size(67, 17);
             this.rbWomen.TabIndex = 44;
@@ -622,7 +622,7 @@
             // rbMen
             // 
             this.rbMen.AutoSize = true;
-            this.rbMen.Location = new System.Drawing.Point(121, 12);
+            this.rbMen.Location = new System.Drawing.Point(188, 12);
             this.rbMen.Name = "rbMen";
             this.rbMen.Size = new System.Drawing.Size(49, 17);
             this.rbMen.TabIndex = 45;

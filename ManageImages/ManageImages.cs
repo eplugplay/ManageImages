@@ -647,6 +647,20 @@ namespace ManageImages
                     LoadImages(FolderName, 90, FileName, false);
                 }
             }
+            if (SelectedValue.Contains("Kids"))
+            {
+                rbBoys.InvokeEx(x => x.Enabled = true);
+                rbGirls.InvokeEx(x => x.Enabled = true);
+                rbWomen.InvokeEx(x => x.Enabled = false);
+                rbMen.InvokeEx(x => x.Enabled = false);
+            }
+            else
+            {
+                rbWomen.InvokeEx(x => x.Enabled = true);
+                rbMen.InvokeEx(x => x.Enabled = true);
+                rbBoys.InvokeEx(x => x.Enabled = false);
+                rbGirls.InvokeEx(x => x.Enabled = false);
+            }
             if (SelectedValue == "ShoesImages" || SelectedValue == "EmPursesImages")
             {
                 ddlGender.InvokeEx(x => x.SelectedIndex = 0);
@@ -813,9 +827,8 @@ namespace ManageImages
             }
             if (rbWomen.Checked == true)
             {
-                ddlSections.InvokeEx(x => x.Enabled = false);
+                ddlSections.Enabled = false;
                 womenToolStripMenuItem_Click(sender, e);
-                ddlSections.InvokeEx(x => x.Enabled = true);
             }
         }
 
@@ -827,9 +840,8 @@ namespace ManageImages
             }
             if (rbMen.Checked == true)
             {
-                ddlSections.InvokeEx(x => x.Enabled = false);
+                ddlSections.Enabled = false;
                 menToolStripMenuItem_Click(sender, e);
-                ddlSections.InvokeEx(x => x.Enabled = true);
             }
         }
 
@@ -841,9 +853,8 @@ namespace ManageImages
             }
             if (rbGirls.Checked == true)
             {
-                ddlSections.InvokeEx(x => x.Enabled = false);
+                ddlSections.Enabled = false;
                 backgroundWorker5.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedValue.ToString(), chkHideImage.Checked, ddlMoveSection.SelectedValue.ToString(), "Girls", false));
-                ddlSections.InvokeEx(x => x.Enabled = true);
             }
         }
 
@@ -855,9 +866,8 @@ namespace ManageImages
             }
             if (rbBoys.Checked == true)
             {
-                ddlSections.InvokeEx(x => x.Enabled = false);
+                ddlSections.Enabled = false;
                 backgroundWorker5.RunWorkerAsync(new data(ddlSections.SelectedValue.ToString(), txtDescription.Text, ddlGender.Text, txtFilename.Text, ddlSections.SelectedValue.ToString(), chkHideImage.Checked, ddlMoveSection.SelectedValue.ToString(), "Boys", false));
-                ddlSections.InvokeEx(x => x.Enabled = true);
             }
         }
 
@@ -870,9 +880,8 @@ namespace ManageImages
             }
             if (rbAll.Checked == true)
             {
-                ddlSections.InvokeEx(x => x.Enabled = false);
+                ddlSections.Enabled = false;
                 defaultToolStripMenuItem_Click(sender, e);
-                ddlSections.InvokeEx(x => x.Enabled = true);
             }
         }
 
@@ -884,9 +893,8 @@ namespace ManageImages
             }
             if (rbHidden.Checked == true)
             {
-                ddlSections.InvokeEx(x => x.Enabled = false);
+                ddlSections.Enabled = false;
                 hiddenImagesToolStripMenuItem_Click(sender, e);
-                ddlSections.InvokeEx(x => x.Enabled = true);
             }
         }
 
@@ -902,8 +910,8 @@ namespace ManageImages
                 case "default": lblStatus.InvokeEx(x => x.Text = "loading all images.."); if (LoadImages(_data.folder, 40, _data.filename, false) == true) { LoadImages(_data.folder, 90, _data.filename, false); } break;
                 case "Men": lblStatus.InvokeEx(x => x.Text = "Searching men images.."); LoadFilteredImages(_data.folder, 40, _data.filename, false, "gender", "Men"); break;
                 case "Women": lblStatus.InvokeEx(x => x.Text = "Searching women images.."); LoadFilteredImages(_data.folder, 40, _data.filename, false, "gender", "Women"); break;
-                case "Boys": lblStatus.InvokeEx(x => x.Text = "Searching men images.."); LoadFilteredImages(_data.folder, 40, _data.filename, false, "gender", "Boys"); break;
-                case "Girls": lblStatus.InvokeEx(x => x.Text = "Searching women images.."); LoadFilteredImages(_data.folder, 40, _data.filename, false, "gender", "Girls"); break;
+                case "Boys": lblStatus.InvokeEx(x => x.Text = "Searching boys images.."); LoadFilteredImages(_data.folder, 40, _data.filename, false, "gender", "Boys"); break;
+                case "Girls": lblStatus.InvokeEx(x => x.Text = "Searching girls images.."); LoadFilteredImages(_data.folder, 40, _data.filename, false, "gender", "Girls"); break;
             }
         }
 
@@ -912,6 +920,7 @@ namespace ManageImages
             pbStatus.InvokeEx(x => x.Visible = false);
             lblStatus.InvokeEx(x => x.Visible = false);
             lblStatus.InvokeEx(x => x.Text = "Please wait..");
+            ddlSections.InvokeEx(x => x.Enabled = true);
             ResetInfo();
         }
 
