@@ -1,0 +1,8 @@
+#Ignore WebDeploy publish profiles
+
+
+*.Publish.xml
+
+#Ignore web config 
+
+App.config
